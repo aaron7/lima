@@ -11,7 +11,7 @@ Matthew Huxatable - tigermatt
 
 Aaron Kirkbride - Aaron7
 
-Simon Hollingshead - ???
+Simon Hollingshead - simonhollingshead
 
 Jan Polasek - ???
 
