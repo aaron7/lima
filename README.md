@@ -13,7 +13,7 @@ Aaron Kirkbride - Aaron7
 
 Simon Hollingshead - simonhollingshead
 
-Jan Polasek - ???
+Jan Polasek - Polasek
 
 Ernest Zeidman - ???
 
