@@ -6,7 +6,7 @@ Group Project Lima - please: git clone https://github.com/Aaron7/lima.git or set
 Please view the wiki for all documents and information.
 
 Team members:
-
+===
 Matthew Huxatable - tigermatt
 
 Aaron Kirkbride - Aaron7
