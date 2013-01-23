@@ -15,7 +15,7 @@ Simon Hollingshead - simonhollingshead
 
 Jan Polasek - Polasek
 
-Ernest Zeidman - ???
+Ernest Zeidman - ezeidman
 
 Alex Marshall - ???
 
