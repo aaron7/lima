@@ -1,0 +1,3 @@
+python-env is the virtual enviroment which I am using to run python and the necessary modules.
+
+To activate the virtual enviroment, to start and run the pyton server, use the command: source bin/activate
