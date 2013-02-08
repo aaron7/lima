@@ -43,8 +43,7 @@ local.properties
 .idea/
 ################
 
-###python-env
-python-env/
+###python-env/
 
 ###localtemp folder for random stuff which shouldn't be on git
 localtemp/
