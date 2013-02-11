@@ -1873,6 +1873,79 @@ Group Management Strategy
 \end_layout
 
 \begin_layout Standard
+The group has come to a consensus that none of its members will assume the
+ role of Project Leader.
+ It was felt that decisions as to the design or management of the project
+ would impact all team members, and thus they had every right to express
+ their views upon it.
+ As such, the delegation of the work has largely been such that each module
+ is assigned to the member that displays the greatest aptitude for the task,
+ by agreement with all members of the group.
+ For complex modules or those which are time-consuming to implement, at
+ least two members have been assigned to prevent overloading any particular
+ member of the group.
+\end_layout
+
+\begin_layout Standard
+The member or members assigned to the implementation of each module are
+ responsible for the design of its public interface, the flow of data within
+ the module, and for providing routine feedback to the group as to their
+ progress on implementation by supplying appropriate documentation.
+\end_layout
+
+\begin_layout Standard
+Each module has been assigned to group members as follows:
+\end_layout
+
+\begin_layout Itemize
+File Importer: Simon Hollingshead and Matthew Huxtable.
+\end_layout
+
+\begin_layout Itemize
+MapReduce Jobs: Jan Polášek, who will implement the algorithmic analysis
+ of the data.
+\end_layout
+
+\begin_layout Itemize
+Hadoop Infrastructure and Control framework: Aaron Kirkbride and Ernest
+ Zeidman.
+\end_layout
+
+\begin_layout Itemize
+HBase DB Storage: Aaron and Ernest.
+\end_layout
+
+\begin_layout Itemize
+HBase Cleanup Utility: Alex Marshall.
+\end_layout
+
+\begin_layout Itemize
+Event Monitor: Simon and Matthew.
+\end_layout
+
+\begin_layout Itemize
+PostgreSQL Database Administration: Aaron and Ernest.
+\end_layout
+
+\begin_layout Itemize
+Python webserver: Aaron.
+\end_layout
+
+\begin_layout Standard
+In addition to the implementation of the modules, there is also a significant
+ amount of formal documentation to be prepared as the project progresses.
+ The documentation for public interfaces and implementation-specific details
+ will be provided by each team member.
+ However, there is also a general requirement for documentation of the project
+ as a whole and for collation of the information provided by each team.
+ It was felt that having each member of the team write significant amounts
+ of documentation would detract from the time available to them to implement
+ their modules.
+ Instead, this responsibility has been assigned to a specific team as if
+ it were a module of sorts, and will fall to Simon and Matthew.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
 
@@ -2013,7 +2086,13 @@ Event Monitor Flowchart
 \end_layout
 
 \begin_layout Standard
-#TODO
+\begin_inset Graphics
+	filename appendix_event_monitor.pdf
+	scale 60
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
