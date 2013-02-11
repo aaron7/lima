@@ -1,0 +1,2036 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage[all]{xy}
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}
+%\usepackage{pgfplots}
+%\usepackage{etex}
+%\usepackage{tikz}
+%\usepackage{tikz-qtree}
+\usepackage{datetime}
+\usepackage{bussproofs}
+\def\fCenter{\ \implies\ }
+\usepackage{siunitx}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1cm
+\topmargin 1cm
+\rightmargin 1cm
+\bottommargin 2cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Terabyte Threat Analysis
+\begin_inset Newline newline
+\end_inset
+
+Requirements Specification
+\end_layout
+
+\begin_layout Author
+Team Lima
+\begin_inset Newline newline
+\end_inset
+
+For Paul Reid on behalf of BT
+\end_layout
+
+\begin_layout Date
+12th February, 2013
+\end_layout
+
+\begin_layout Abstract
+This report is the result of a single client meeting between Team Lima,
+ a group of students from the University of Cambridge Computer Laboratory,
+ and Paul Reid, a representative of British Telecom (BT), pertaining to
+ a software system to analyse threats and data flows across the BT network.
+ It contains a list of technical requirements that the final software system
+ is expected to conform to, along with plans of system implementation and
+ testing criteria.
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+This section outlines the aims and intentions of this requirements specification
+, and its usefulness and relevance in the guidance of this software project.
+\end_layout
+
+\begin_layout Subsection
+Document Scope
+\end_layout
+
+\begin_layout Standard
+This document and all material herein are intended to outline the high-level
+ corporate motivation, justification and requirements behind the development
+ of a near real-time network threat analysis system over massive datasets.
+ It is intended to be suitable for distribution to all parties associated
+ with the project, regardless of their background or degree of technical
+ involvement, if any.
+ It is imperative that the users of any proposed system are fully informed
+ and involved in outlining their demands on the system in order for the
+ project’s success to be measured.
+ Nevertheless, it is also crucial for the developers to have a thorough
+ understanding of the design of the proposed system in order to facilitate
+ proper implementation.
+ To that end, we seek to outline the proposed system’s impact on business
+ processes which are of relevance to all stakeholders, while also providing
+ an overview of the technical implementation.
+\end_layout
+
+\begin_layout Subsection
+Motivation
+\end_layout
+
+\begin_layout Standard
+BT is one of the world’s oldest and largest communications providers, responsibl
+e for the provision of telephony and data services to a variety of homes,
+ businesses and corporations in the UK and internationally.
+ Its network core consists of a large collection of network routers, devices
+ tasked with directing the flow of data packets for BT’s customers between
+ the source and destination computer networks in a timely manner.
+ Each router provides logs and statistical data about the packets of data
+ which have travelled through it, which BT have not utilised up to this
+ point.
+\end_layout
+
+\begin_layout Standard
+As one of BT’s largest and most important assets, all network monitoring
+ systems are put in place with the express intent of avoiding all possible
+ downtime with respect to routine equipment failures, an ever-increasing
+ level of cyber attacks, and other day-to-day operational issues.
+ BT’s commitment to monitoring plays a role in its efforts to build customer
+ trust in the reliability of its systems, thereby encouraging customers
+ to retain BT as their service provider.
+\end_layout
+
+\begin_layout Standard
+This system aims to be the first indication as to whether the additional
+ data provided by the network routers can be usefully analysed to add value
+ to the current monitoring tools or, alternatively, to answer questions
+ that can be posed about the state of their network for a given period.
+\end_layout
+
+\begin_layout Subsection
+System Overview
+\end_layout
+
+\begin_layout Standard
+BT currently makes use of a number of tools, most of which are freely available,
+ to capture, analyse and visualise the operational data about its network.
+ The network infrastructure currently takes samples of packets flowing through
+ the system and creates logfiles in a standard format known as `nfcapd'.
+ These existing files can be placed in a directory for this new software
+ system to read, a tool such as nfdump
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://nfdump.sourceforge.net, BSD 3-clause License
+\end_layout
+
+\end_inset
+
+ converting the data into a more usable comma separated values format.
+ A script will run to process this data into a file system more capable
+ of handling such large amounts of data, namely the Hadoop High Performance
+ File System (HDFS
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://hadoop.apache.org, Apache v2 License
+\end_layout
+
+\end_inset
+
+), where it will be accessible to a cluster of processing nodes running
+ Hadoop
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+\emph on
+ibid.
+\end_layout
+
+\end_inset
+
+.
+ This is another open source product capable of abstracting away the distributio
+n of data analysis across many nodes, providing a scalable system whose
+ computational capabilities can be trivially extended as system demands
+ require by simply adding nodes to the cluster.
+ Hadoop is a well-known, industry-standard tool for this purpose.
+\end_layout
+
+\begin_layout Standard
+A number of statistics have been identified through use of sample data from
+ the live network as potential indicators of threats.
+ These statistics have been made the subject of our forthcoming research
+ and implementation into the threat analysis.
+ The nodes in the distributed computing cluster will be programmed with
+ jobs to reduce and aggregate the input data into smaller datasets.
+ The specific jobs assigned to the nodes will remove all extraneous, missing
+ and duplicate information and will exploit the nature of Hadoop to conduct
+ the heavy-lifting to identify interesting events, which will subsequently
+ be stored into a database.
+ The database technology selected, HBase
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://hbase.apache.org/, Apache v2 License
+\end_layout
+
+\end_inset
+
+, is closely coupled to the Hadoop distributed computing environment to
+ assure performance at scale.
+\end_layout
+
+\begin_layout Standard
+A single Java module will be responsible for parsing these events, selecting
+ only current issues that are detected on the system to pass forward towards
+ the user interface.
+ The data will be placed into a relational database, PostgreSQL
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://www.postgresql.org/, PostgreSQL License
+\end_layout
+
+\end_inset
+
+, directly queryable and modifiable from a python-based web server implementatio
+n in Flask
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://flask.pocoo.org/, BSD 3-clause License
+\end_layout
+
+\end_inset
+
+ through a library called PsycoPG
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://initd.org/psycopg/, GNU Lesser General Public License
+\end_layout
+
+\end_inset
+
+.
+ This will serve pages written in HTML, CSS and Javascript to the end user’s
+ browser to display the information from the database.
+ In addition, Thrift
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://thrift.apache.org/, Apache v2 License
+\end_layout
+
+\end_inset
+
+ will be used to complete the feedback loop and allow user input to be written
+ back to the underlying HBase database.
+\end_layout
+
+\begin_layout Standard
+This method of implementing a Graphical User Interface (GUI) is noted for
+ being ubiquitous in the delivery of modern software front-end environments
+ and for its widespread support in today’s Internet browsers.
+ Using Asynchronous Javascript and XML (AJAX), the interface will be capable
+ of dynamically updating the user’s display as new information enters the
+ database.
+ Furthermore, the GUI’s use of modern 
+\emph on
+Web 2.0
+\emph default
+ technologies complements those already implemented by BT for similar purposes,
+ permitting a future integration of systems should the demand arise.
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Modular Structure
+\end_layout
+
+\begin_layout Standard
+Several key components have been identified which internally divide the
+ system into workunits capable of being assigned to separate developers.
+ These components, along with the associated design requirements and constraints
+, are the subject of this section.
+ For diagrams of these sections, please see the appendices.
+\end_layout
+
+\begin_layout Subsection
+Importer Tool
+\end_layout
+
+\begin_layout Standard
+This tool will comprise of a single shell script with the sole task of convertin
+g .nfcapd binary files into comma separated value text files capable of being
+ loaded into Hadoop, and placing them in a location accessible by the next
+ stage.
+ This is a relatively simple tool, since it uses third-party tools to do
+ the transformation, wrapping them up in a single workflow for simplicity.
+ The file will be run through nfdump, then the result transferred through
+ a named pipe directly into the HDFS.
+ However, this tool will fire periodically through 
+\emph on
+cron
+\emph default
+ to poll the directory for new files to copy, so it is possible that two
+ instances of the tool may end up running simultaneously.
+ In this case, a lockfile should be used to ensure only one instance has
+ access to the files, the other exiting with no work done to ensure consistency.
+\end_layout
+
+\begin_layout Standard
+As this module implements behaviour which acts at the file system level,
+ it was considered more appropriate to implement this using a shell script
+ rather than a service written in Java.
+ The number of lines of code would be minimal, making maintenance much easier.
+ In addition, a shell script is very conveniently scheduled as a 
+\emph on
+cron
+\emph default
+ task.
+ Having many instances of the script around is unlikely to lead to adverse
+ system performance, unlike an implementation which spawns many instances
+ of a bulky Java Virtual Machine (JVM) at once, on what could be a machine
+ with a specification at the lower-end of the scale.
+\end_layout
+
+\begin_layout Subsection
+MapReduce Jobs
+\end_layout
+
+\begin_layout Standard
+The main technology used to handle the large amounts of data provided will
+ be MapReduce, the core algorithm implemented by Hadoop to process and aggregate
+ data at a large scale.
+ It is necessary for each analytic stage to form its own MapReduce job,
+ and thus a list of data that needs to be extracted from the initially provided
+ mass of raw data must be located.
+ For the purpose of identifying threats, a rule-based detection system will
+ be implemented, since most algorithmic models are liable to provide much
+ higher rates of false positives.
+ It has been agreed that the system needs to be careful in how eager it
+ is to report issues so as not to cause operators `the boy who cried wolf'
+ effect.
+ However, it has also been acknowledged that, given this dataset, it is
+ also entirely feasible to provide system statistics and metrics on the
+ frontend in addition, the details of which can be found below.
+\end_layout
+
+\begin_layout Standard
+The statistics for each router will be calculated separately by a Hadoop
+ job, aggregating on a time period pre-defined to the system.
+ Initially, it is expected that a `per minute' basis will be acceptable.
+ As it is not expected to be the case that the length of time represented
+ in the file is a multiple of the provided variable, it will be necessary
+ to aggregate the start of each file with the trailing end of the prior
+ file at the same time.
+ The statistics the system will be able to extract will include
+\end_layout
+
+\begin_layout Itemize
+the number of packets that have flown through the router, split into
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+TCP,
+\end_layout
+
+\begin_layout Itemize
+UDP, and
+\end_layout
+
+\begin_layout Itemize
+ICMP,
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+the number of flows through the router, and
+\end_layout
+
+\begin_layout Itemize
+the total size of data transported through the router.
+\end_layout
+
+\begin_layout Standard
+The threat analysis portion of the MapReduce jobs can be split into two
+ categories:
+\end_layout
+
+\begin_layout Itemize
+Threats detectable by single flow analysis: A single MapReduce job will
+ be sufficient to identify instances of these threats, not requiring data
+ from the network as a whole.
+ Any flows that are likely suspect will be recorded in the database, based
+ upon thresholds set and fine-tuned during operation.
+ The MapReduce jobs created will mirror known flow-based methods (Kim 
+\emph on
+et al.
+
+\emph default
+ 2004
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://dpnm.postech.ac.kr/papers/NOMS/04/security-analysis/camera-ready/attack-anal
+ysis-v5-revision.pdf
+\end_layout
+
+\end_inset
+
+, pp.
+ 4-5, 7).
+\end_layout
+
+\begin_layout Itemize
+Threats detectable only by multiple flow analysis: Denial of Service (DoS),
+ Distributed Denial of Service (DDoS) attacks, and incoming port scans.
+ These attacks do not only affect one router, nor do they have a common
+ endpoint within the BT network.
+ It is unclear exactly how detectable a port scan will be, since the logfile
+ sample is for 0.1% of all packets, however Kim 
+\emph on
+et al.
+
+\emph default
+ (2004
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+\size normal
+\emph on
+ibid.
+\end_layout
+
+\end_inset
+
+) does suggest that it is still feasible.
+ A MapReduce job can break flows into 10s timeframes, attempting to identify
+ short bursts of excessive activity.
+\end_layout
+
+\begin_layout Standard
+There is the potential for this stage of the data pipeline to act as a bottlenec
+k, as the rate at which data is analysed is bound by several factors.
+ Namely,
+\end_layout
+
+\begin_layout Itemize
+the bandwidth of the network backbone for the exchange of the datasets,
+\end_layout
+
+\begin_layout Itemize
+the rate at which HDFS can accept reads,
+\end_layout
+
+\begin_layout Itemize
+the rate at which HBase can perform writes, and
+\end_layout
+
+\begin_layout Itemize
+the number of nodes available (and their associated performance) in the
+ Hadoop cluster for data processing.
+\end_layout
+
+\begin_layout Subsection
+HBase Storage Format
+\end_layout
+
+\begin_layout Standard
+HBase will be responsible for storing intermediate data from Hadoop.
+ Two tables are expected to be required.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Statistics
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Column Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+routerID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+A unique identifier for a given router.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+timeframe
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The start of the given analysis period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+flowCount
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of flows in the time period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+packetCount
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of packets in the time period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+totalDataSize
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sum of all the data travelling through the router for the period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TCPCount
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of TCP packets in the time period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UDPCount
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of UDP packets in the time period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ICMPCount
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of ICMP packets in the time period.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+sep
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Threat
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Column Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+timeProcessed
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The time the data is recorded into the database.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+routerID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+A unique identifier for the router in question.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+attackType
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One of the enumeration of possible attack types.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+startTime
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The detected start time of the threat.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+endTime
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The detected end time of the threat.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+sourceIP
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Optional data pertaining to the specific threat.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+destIP
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+flowCount
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+flowDataAvg
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+flowDataTotal
+\end_layout
+
+\end_inset
+</cell>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+HBase Cleanup
+\end_layout
+
+\begin_layout Standard
+The architecture of the HBase database means it is capable of scaling to
+ store exceptionally large quantities of data.
+ Nevertheless, it may be naïve to simply allow data to accumulate indefinitely.
+\end_layout
+
+\begin_layout Standard
+Firstly, the relevance of historic data decreases continually with the passage
+ of time.
+ Secondly, it would be impolite to simply fill up the storage medium with
+ unused records, since this is not the only system that is expected to use
+ the Hadoop cluster.
+ Thirdly, a greater amount of data means added effort and issue if attempting
+ to alter records, export and import to a new system, or simply change the
+ existing schema.
+\end_layout
+
+\begin_layout Standard
+This tool is expected to stand separately from the main dataflow of the
+ project.
+ To avoid performance issues during levels of extensive data processing,
+ it will be configured to run as a 
+\emph on
+cron
+\emph default
+ job over a period of low database activity.
+ When executed, it will prune data from the HBase database in accordance
+ with some configurable criteria, such as the age of a particular data item
+ for it to be considered as suitable for deletion.
+\end_layout
+
+\begin_layout Standard
+The cleaner object will expose the 
+\begin_inset Formula $\texttt{clean()}$
+\end_inset
+
+ method with two different sets of parameters.
+ In the case of a table and a timestamp, a result set of all rows older
+ than that timestamp are returned for subsequent deletion.
+ In the case of a configuration file, table and timestamp, the former command
+ is called on a newly created table made via the configuration file's parameters.
+\end_layout
+
+\begin_layout Subsection
+Event Monitor
+\end_layout
+
+\begin_layout Standard
+This module acts as an interface between two separate components of the
+ data pipeline: HBase and the PostgreSQL database which backs the system
+ front-end.
+\end_layout
+
+\begin_layout Standard
+While it is entirely appropriate for Hadoop to use HBase as a back-end data
+ storage location for performance and scalability reasons, a NoSQL database
+ is not necessarily the best format for integration with a front-end.
+ For instance, it will be necessary for the front-end to display aggregated
+ data, such as statistics concerning number of global packets or the number
+ for a particular router, perhaps grouped over some time frame.
+ Retrieving this data from HBase directly and processing it in the front-end
+ does not represent a good level of modularity.
+ Such an implementation would place undue demands on hardware.
+ It would not be particularly performant, nor would it be efficient for
+ us to duplicate the well-tuned implementations of any of the freely available
+ relational database management systems (RDBMS).
+\end_layout
+
+\begin_layout Standard
+In order to interface between the two databases, it will be necessary to
+ build a module which ferries data in an appropriate form between the two,
+ extracting the necessary information and converting between the respective
+ database schemas in the process.
+ The Event Monitor, to be implemented as a Java service, will perform precisely
+ this task.
+ It will be notified of job completion by monitoring the Hadoop job queue
+ to determine the point at which a job completes and fresh data appears
+ in HBase.
+\end_layout
+
+\begin_layout Subsection
+PostgreSQL Storage Format
+\end_layout
+
+\begin_layout Standard
+Our PostgreSQL database is responsible for storing the data to be represented
+ by the GUI, as previously outlined.
+ Two tables are expected to be required, and their schemas are provided
+ below.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Router
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Column Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Datatype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+routerIP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unique identifier for the router that the data pertains to.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+lastSeen
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+timestamp
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The timestamp of the last known flow through this router.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+flowsPH
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Flows per hour.
+ Calculated by moving average.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+packetsPH
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Packets per hour.
+ Calculated by moving average.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+bytesPH
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bytes per hour.
+ Calculated by moving average.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Phantom Phantom
+status open
+
+\begin_layout Plain Layout
+sep
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Event
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Column Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Datatype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\bar under
+eventID
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Unique identifier for the event.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+routerIP
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Foreign Key (Router.routerIP).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ip
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IP of attacker/victim within the BT network.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+char(20)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Enumerated value for the type of attack.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+status
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+char(20)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Enumerated value as to whether this event is active.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+message
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+text
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Any extra user-definable notes that are relevant to this event.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+createTS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+timestamp
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The date and time the event were made.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Python-based Web Server
+\end_layout
+
+\begin_layout Standard
+#TODO
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Specific Requirements
+\end_layout
+
+\begin_layout Subsection
+Performance Requirements
+\end_layout
+
+\begin_layout Standard
+The system works on a pipeline principle.
+ As such, the slowest of all of the processes will dictate the total time
+ that the data takes to be processed and displayed after input.
+ The only hard requirement is that logs must not pile up in the input directory,
+ which implies that the entire system must have a throughput greater than
+ the filesize of logs generated on a per-day basis.
+ Since this data has no requirement to be hard realtime, it is acceptable
+ to be running at a slight backlog during peak hours if this entirely clears
+ during off-peak, such as overnight.
+\end_layout
+
+\begin_layout Subsection
+System Attributes
+\end_layout
+
+\begin_layout Subsubsection
+Reliability & Availability
+\end_layout
+
+\begin_layout Standard
+This system is not a network critical system.
+ Its failure in any sense of the word must not cause BT’s core network or
+ any portion thereof to fail to route data for customers.
+ With proper isolation from the core network, perhaps on a separate management
+ network, this would not be the case.
+\end_layout
+
+\begin_layout Standard
+However, there are many failure modes by which the system could fail.
+ If business processes are adapted to incorporate this system as a critical
+ part of the monitoring framework, it would be reasonable to assume the
+ uptime expected of this system may not be dissimilar from the uptime expected
+ of the core network itself.
+ Furthermore, the increasing systemisation of monitoring routines can cause
+ users to become dependent on such systems, which places further demands
+ on the developers to ensure a high level of uptime, and to ensure the system
+ produces reliable data.
+\end_layout
+
+\begin_layout Standard
+The use of appropriate testing frameworks will be necessary to ensure the
+ behaviour of each module conforms to its published documentation.
+ For example, unit testing each Java module is an appropriate method, and
+ will be the subject of the testing methodology elsewhere in this document.
+ Such tests may not consider every failure scenario, nor is it possible
+ to test how the system scales to many nodes without actually doing so.
+ Finally, there is an implicit assumption that the third-party tools and
+ systems employed on this project are free from bugs.
+\end_layout
+
+\begin_layout Subsubsection
+Handling of Private Data
+\end_layout
+
+\begin_layout Standard
+The data that this system will be handling is sensitive, in that it pertains
+ directly to customers of BT’s network.
+ It is entirely possible, from the packet logs, to not only identify one
+ household as the source of the request, but to also identify the destination
+ of the request.
+ Using reverse DNS, this would even give a possible domain name associated
+ with the packet, implying their current browsing habits.
+ In order to consider data privacy laws and best practises, this information
+ should not be displayed prominently in a human-readable manner, instead
+ opting for graphs, charts and other aggregate displays to portray the state
+ of the network to equivalent or better effect.
+\end_layout
+
+\begin_layout Standard
+While it is possible to mask raw packet data from the users of the system,
+ it will still be necessary to have access to IP addresses and other sensitive
+ data about packet flow in the back-end infrastructure.
+ This is inevitable for conducting data analysis, and can hardly be avoided.
+ However, this does raises two issues:
+\end_layout
+
+\begin_layout Standard
+The data will move between many systems as it flows through the data pipeline,
+ including different databases and different services, each of which will
+ modify the data in various ways.
+ Each system is likely to sit on one or more servers, and in the case of
+ Hadoop and HBase, will reside across many servers in their respective cluster.
+ This places demands on the physical security of the infrastructure on which
+ this system will operate, such that the physical machines should be located
+ in a secure datacentre environment.
+ In addition, it would be preferable for the data to be exchanged between
+ systems in a secured environment, preferably isolated entirely from the
+ Internet.
+ If data must transit untrusted or insecure networks, it will be necessary
+ to enforce some degree of encryption on such connections, although that
+ is beyond the scope of this project.
+ Similarly, if the terminals used by the users are not known to be secure,
+ some internal access control system may need to be implemented on the front-end
+ to prevent unauthorised access.
+ Through efficient code development, it is hoped this would not be too much
+ work to integrate with existing systems.
+\end_layout
+
+\begin_layout Subsubsection
+Maintainability
+\end_layout
+
+\begin_layout Standard
+It is expected, at completion of the project, for the code to be provided
+ in a suitable format for integration with existing systems and for future
+ development work by the client’s engineers to be possible.
+\end_layout
+
+\begin_layout Standard
+To facilitate this, the behaviour of all code will be documented in-line.
+ Additional notes as to interfaces and design decisions will also be provided
+ on completion where these are considered appropriate, or where it may not
+ be possible to derive the intention behind particular design decisions
+ from the code itself.
+ The well-known 
+\emph on
+Javadoc
+\emph default
+ method of documentation will be used in the methods of Java code for, at
+ the very least, any method exposed as a public interface.
+\end_layout
+
+\begin_layout Standard
+By virtue of the effective use of modularity to subdivide the project into
+ independent components, it is expected that each module will be clearly
+ defined in the codebase.
+ In addition, documentation such as this is produced partly for the purpose
+ of future use within BT, as high-level design decisions and the data flow
+ through each module are presented for the benefit of future developers.
+ The intention is that such coding standards are simple to implement on-the-fly
+ as code is written, so they may be continued in future iterations of project
+ development with little effort.
+\end_layout
+
+\begin_layout Subsubsection
+Portability
+\end_layout
+
+\begin_layout Standard
+There are a considerable number of modules which comprise this project,
+ which suggests its final integration will be complex.
+ This is to be expected of any system whose data processing will be distributed
+ over many nodes and in which there are specific requirements to present
+ data in a particular manner to the end-user.
+ Many of the modules will be tied to particular machines or infrastructure
+ which should already be in place, such as a Hadoop cluster and the presence
+ of a reporting framework for the routers.
+ Nevertheless, the modules have complex interactions with each other, which
+ somewhat restricts the possibility of moving particular services or daemons
+ to other hosts on a whim.
+\end_layout
+
+\begin_layout Standard
+In addition, there are specific requirements on the Hadoop and HBase frameworks
+ which the project will be closely coupled to.
+ The virtual machine environment provided by Cloudera for Hadoop processing
+ will be used.
+ This is a common Hadoop implementation across many enterprises, and complements
+ BT’s usage of the same provider.
+ The code could, in principle, work with any vanilla Hadoop installation,
+ but certain aspects may be restricted in functionality or broken if the
+ versions are dissimilar.
+ Cloudera CDH4 will be the specific release used for this project.
+\end_layout
+
+\begin_layout Standard
+The version of Java used will be Java 6, since Cloudera control the update
+ servers for the distribution, and that is the version they provide for
+ download.
+ However, there is no reason for a migration to a newer version of a JVM
+ - such as a Java 7 JVM - to be impractical when the Cloudera image is updated.
+\end_layout
+
+\begin_layout Standard
+There is no reason the finished product could not be utilised on a network
+ other than BT’s.
+ However, many decisions have gone into the design of the algorithmic analysis
+ and presentation of data which are specific to BT’s use cases, closely
+ coupling the final product to their business processes.
+ Porting the product to monitor another provider’s core network, such as
+ in the case where BT wished to license it as a product, would involve a
+ non-trivial amount of work.
+ Design decisions must be generalised and adapted to the specific hardware
+ in the network, should it not provide the same input file format, and to
+ the types of data that the provider expected to be able to retrieve, since
+ each MapReduce job is specifically intended to answer a certain question
+ about the state of the overall network.
+\end_layout
+
+\begin_layout Subsection
+Testing Methodology and Acceptance Criteria
+\end_layout
+
+\begin_layout Standard
+#TODO
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Group Management Strategy
+\end_layout
+
+\begin_layout Standard
+#TODO
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Overall System Overview
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename appendix_system_overview.pdf
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Importer Tool Flowchart
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename importer.pdf
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+MapReduce
+\end_layout
+
+\begin_layout Subsection
+Single-flow Threats
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename appendix_single_flow_threat.pdf
+	scale 42
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+DoS Attacks
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename appendix_dos_threat.pdf
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Port Scanning
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename appendix_portscan_threat.pdf
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Statistics
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename appendix_statistics.pdf
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+HBase Cleanup Flowchart
+\end_layout
+
+\begin_layout Standard
+#TODO
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Event Monitor Flowchart
+\end_layout
+
+\begin_layout Standard
+#TODO
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Web Server Data Flow Diagram
+\end_layout
+
+\begin_layout Standard
+#TODO
+\end_layout
+
+\end_body
+\end_document
