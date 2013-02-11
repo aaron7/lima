@@ -21,14 +21,14 @@
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="259.55992549999985" width="440.35624999999936" x="1180.897875" y="366.18407449999995"/>
+              <y:Geometry height="259.55992549999985" width="440.35624999999936" x="636.3475000000001" y="776.5840744999999"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
               <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="440.35624999999936" x="0.0" y="0.0">Javascript Frontend</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-              <y:BorderInsets bottom="29" bottomF="29.20074399999976" left="90" leftF="90.27412500000014" right="45" rightF="45.07412499999941" top="0" topF="0.0"/>
+              <y:BorderInsets bottom="22" bottomF="22.498243999999772" left="82" leftF="82.27412500000014" right="53" rightF="53.07412499999941" top="7" topF="6.702499999999986"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="1088.2759999999998" y="171.94751200000002"/>
@@ -48,7 +48,7 @@
           <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.entityRelationship.small_entity">
-              <y:Geometry height="42.59500000000014" width="227.19999999999982" x="1310.0760000000002" y="472.6450119999999"/>
+              <y:Geometry height="42.59500000000014" width="227.19999999999982" x="757.5256250000002" y="889.7475119999999"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="203.20703125" x="11.996484374999909" y="12.31312500000007">Parse data for Javascript libraries<y:LabelModel>
@@ -68,7 +68,7 @@
           <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.flowchart.loopLimit">
-              <y:Geometry height="39.99999999999994" width="161.60000000000014" x="1342.8760000000002" y="402.64501199999995"/>
+              <y:Geometry height="39.99999999999994" width="161.60000000000014" x="790.3256250000002" y="819.7475119999999"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" modelName="custom" textColor="#000000" visible="true" width="4.0" x="78.80000000000018" y="18.0">
@@ -93,7 +93,7 @@
           <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.entityRelationship.small_entity">
-              <y:Geometry height="42.59500000000014" width="275.0079999999998" x="1286.1720000000003" y="538.9482559999999"/>
+              <y:Geometry height="42.59500000000014" width="275.0079999999998" x="733.6216250000002" y="956.0507559999999"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" textColor="#000000" visible="true" width="253.94921875" x="10.529390624999905" y="5.328750000000127">Update graphs via Rickshaw or Flotcharts
@@ -396,27 +396,6 @@ and update information via jQuery<y:LabelModel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e4" source="n1::n3" target="n0">
-      <data key="d9"/>
-      <data key="d10">
-        <y:SplineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="1052.476" y="656.147512"/>
-            <y:Point x="1105.276" y="477.747512"/>
-          </y:Path>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="48.419921875" x="102.26798723299964" y="-108.829744947736">via SSE<y:LabelModel>
-              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="24.791142739844034" distanceToCenter="true" position="left" ratio="0.24345735357756798" segment="1"/>
-            </y:ModelParameter>
-            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-          </y:EdgeLabel>
-        </y:SplineEdge>
-      </data>
-    </edge>
     <edge id="n0::e0" source="n0::n1" target="n0::n0">
       <data key="d9"/>
       <data key="d10">
@@ -435,6 +414,25 @@ and update information via jQuery<y:LabelModel>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
         </y:SplineEdge>
+      </data>
+    </edge>
+    <edge id="e4" source="n1::n3" target="n0">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="48.419921875" x="2.467476756644828" y="20.664218542966523">via SSE<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="27.06010983050831" distanceToCenter="true" position="left" ratio="0.735097051001261" segment="-1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
       </data>
     </edge>
   </graph>
