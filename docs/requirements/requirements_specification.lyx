@@ -1873,10 +1873,6 @@ Group Management Strategy
 \end_layout
 
 \begin_layout Standard
-#TODO
-\end_layout
-
-\begin_layout Standard
 \begin_inset Newpage clearpage
 \end_inset
 
@@ -2028,11 +2024,35 @@ Event Monitor Flowchart
 \end_layout
 
 \begin_layout Section
-Web Server Data Flow Diagram
+Web Server
+\end_layout
+
+\begin_layout Subsection
+Class Diagram
 \end_layout
 
 \begin_layout Standard
-#TODO
+\begin_inset Graphics
+	filename appendix_web_classes.pdf
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Data Flow Diagram
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename appendix_web_dfd.pdf
+	scale 70
+
+\end_inset
+
+
 \end_layout
 
 \end_body
