@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<project name="lima" basedir="." default="jar">
+    <property name="src" value="src"/>
+    <property name="output" value="bin"/>
+ 
+    <target name="compile" depends="create">
+        <javac destdir="bin">
+            <src path="${src}"/>
+            <classpath refid="java"/>
+        </javac>
+    </target>
+    	
+    <target name="jar" depends="compile">
+        <jar destfile="lima-testbuild.jar">
+            <fileset dir="bin"/>
+        </jar>
+    </target>
+ 
+    <target name="clean">
+        <delete dir="${output}"/>
+    </target>
+ 
+    <target name="create" depends="clean">
+        <mkdir dir="${output}"/>
+    </target>
+ 
+    <path id="java">
+        <fileset dir="D:JarsHibernate">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+        <!-- Import the actual build file.
+
+         To customize existing targets, there are two options:
+         - Customize only one target:
+             - copy/paste the target into this file, *before* the
+               <import> task.
+             - customize it to your needs.
+         - Customize the whole content of build.xml
+             - copy/paste the content of the rules files (minus the top node)
+               into this file, replacing the <import> task.
+             - customize to your needs.
+
+         ***********************
+         ****** IMPORTANT ******
+         ***********************
+         In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
+         in order to avoid having your file be overridden by tools such as "android update project"
+    -->
+    <!-- version-tag: custom -->
+    
+</project>
