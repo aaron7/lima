@@ -1079,11 +1079,8 @@ The cleaner object will expose the
 \begin_inset Formula $\texttt{clean()}$
 \end_inset
 
- method with two different sets of parameters.
- In the case of a table and a timestamp, a result set of all rows older
- than that timestamp are returned for subsequent deletion.
- In the case of a configuration file, table and timestamp, the former command
- is called on a newly created table made via the configuration file's parameters.
+ method without parameters.
+ A hardcoded time limit within the program determines what is to be removed.
 \end_layout
 
 \begin_layout Subsection
