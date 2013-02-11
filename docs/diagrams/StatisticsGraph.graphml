@@ -16,15 +16,14 @@
     <data key="d7"/>
     <node id="n0" yfiles.foldertype="group">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="144.33677749999993" width="328.79999999999995" x="265.6722222222222" y="310.6735549999999"/>
+              <y:Geometry height="114.37646484375" width="542.0" x="159.0722222222222" y="166.2970901562499"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="328.79999999999995" x="0.0" y="0.0">Reduce</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="542.0" x="0.0" y="0.0">Map</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
@@ -34,7 +33,7 @@
               <y:Geometry height="50.0" width="50.0" x="0.0" y="60.0"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="65.201171875" x="-7.6005859375" y="0.0">Folder 3</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="59.02685546875" x="-4.513427734375" y="0.0">Folder 1</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="true" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="5" bottomF="5.0" left="5" leftF="5.0" right="5" rightF="5.0" top="5" topF="5.0"/>
@@ -45,30 +44,12 @@
       </data>
       <graph edgedefault="directed" id="n0:">
         <node id="n0::n0">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.flowchart.process">
-              <y:Geometry height="27.875839999999926" width="296.79999999999995" x="281.6722222222222" y="347.1344924999999"/>
+              <y:Geometry height="62.0" width="510.0" x="175.0722222222222" y="203.6735549999999"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="288.3203125" x="4.239843749999977" y="4.953544999999963">Aggregate collected records with the same key<y:LabelModel>
-                  <y:SmartNodeLabelModel distance="4.0"/>
-                </y:LabelModel>
-                <y:ModelParameter>
-                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-                </y:ModelParameter>
-              </y:NodeLabel>
-            </y:GenericNode>
-          </data>
-        </node>
-        <node id="n0::n1">
-          <data key="d5"/>
-          <data key="d6">
-            <y:GenericNode configuration="com.yworks.flowchart.process">
-              <y:Geometry height="35.0" width="252.30709333333334" x="303.9186755555555" y="405.01033249999983"/>
-              <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
-              <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="252.373046875" x="-0.03297677083332928" y="8.515625">Output each aggregated record to HBase<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="427.884765625" x="41.0576171875" y="21.6494140625">Collect the appropriate fields of the flow with key=(FlowStartTime/60000)*60000<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -82,15 +63,14 @@
     </node>
     <node id="n1" yfiles.foldertype="group">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="113.4609375" width="542.0" x="159.0722222222222" y="167.2126174999999"/>
+              <y:Geometry height="145.25230484374993" width="328.79999999999995" x="265.6722222222222" y="309.7580276562499"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="542.0" x="0.0" y="0.0">Map</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="328.79999999999995" x="0.0" y="0.0">Reduce</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
@@ -100,7 +80,7 @@
               <y:Geometry height="50.0" width="50.0" x="0.0" y="60.0"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="21.4609375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="65.201171875" x="-7.6005859375" y="0.0">Folder 1</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" modelName="internal" modelPosition="t" textColor="#000000" visible="true" width="59.02685546875" x="-4.513427734375" y="0.0">Folder 3</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="true" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="5" bottomF="5.0" left="5" leftF="5.0" right="5" rightF="5.0" top="5" topF="5.0"/>
@@ -111,13 +91,28 @@
       </data>
       <graph edgedefault="directed" id="n1:">
         <node id="n1::n0">
-          <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.flowchart.process">
-              <y:Geometry height="62.0" width="510.0" x="175.0722222222222" y="203.6735549999999"/>
+              <y:Geometry height="27.875839999999926" width="296.79999999999995" x="281.6722222222222" y="347.1344924999999"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="492.736328125" x="8.6318359375" y="22.015625">Collect the appropriate fields of the flow with key=(FlowStartTime/60000)*60000<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="252.794921875" x="22.002539062499977" y="4.587334062499963">Aggregate collected records with the same key<y:LabelModel>
+                  <y:SmartNodeLabelModel distance="4.0"/>
+                </y:LabelModel>
+                <y:ModelParameter>
+                  <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+                </y:ModelParameter>
+              </y:NodeLabel>
+            </y:GenericNode>
+          </data>
+        </node>
+        <node id="n1::n1">
+          <data key="d6">
+            <y:GenericNode configuration="com.yworks.flowchart.process">
+              <y:Geometry height="35.0" width="252.30709333333334" x="303.9186755555555" y="405.01033249999983"/>
+              <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
+              <y:BorderStyle color="#000000" type="line" width="1.0"/>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="223.474609375" x="14.41624197916667" y="8.1494140625">Output each aggregated record to HBase<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -130,13 +125,12 @@
       </graph>
     </node>
     <node id="n2">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.start1">
           <y:Geometry height="46.33507676160002" width="136.54392562346652" x="361.80025941048893" y="16.500850369199952"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="101.95703125" x="17.29344718673326" y="14.18316338080001">run(ndfump file)<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="66.009765625" x="35.26707999923326" y="13.81695244330001">run(csv file)<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -147,13 +141,12 @@
       </data>
     </node>
     <node id="n3">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.process">
           <y:Geometry height="27.875839999999982" width="193.8141866666665" x="333.16512888888894" y="109.33677749999993"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="166.216796875" x="13.79869489583325" y="4.953544999999991">Hadoop splits file into lines<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="146.078125" x="23.86803083333325" y="4.587334062499991">Hadoop splits file into lines<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -164,13 +157,12 @@
       </data>
     </node>
     <node id="n4">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.dataBase">
           <y:Geometry height="73.0" width="92.0" x="122.4" y="500.0103324999998"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="42.244140625" x="24.8779296875" y="27.515625">HBase<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="custom" textColor="#000000" visible="true" width="40.017578125" x="25.9912109375" y="27.1494140625">HBase<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -181,7 +173,6 @@
       </data>
     </node>
     <edge id="e0" source="n2" target="n3">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="23.16753838080001" tx="0.0" ty="-13.937919999999991"/>
@@ -191,8 +182,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n3" target="n1::n0">
-      <data key="d9"/>
+    <edge id="e1" source="n3" target="n0::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="13.937919999999991" tx="0.0" ty="-31.0"/>
@@ -202,8 +192,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e2" source="n1::n0" target="n0::n0">
-      <data key="d9"/>
+    <edge id="e2" source="n0::n0" target="n1::n0">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="31.0" tx="0.0" ty="-13.937919999999963"/>
@@ -213,8 +202,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="n0::e0" source="n0::n0" target="n0::n1">
-      <data key="d9"/>
+    <edge id="n1::e0" source="n1::n0" target="n1::n1">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="13.937919999999963" tx="0.0" ty="-17.5"/>
@@ -224,8 +212,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e3" source="n0::n1" target="n4">
-      <data key="d9"/>
+    <edge id="e3" source="n1::n1" target="n4">
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="17.5" tx="0.0" ty="-32.84375">
