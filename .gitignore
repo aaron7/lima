@@ -90,4 +90,8 @@ nosetests.xml
 .project
 .pydevproject
 
+###LyX###
+.lyx#
+.lyx~
+
 ##############################
