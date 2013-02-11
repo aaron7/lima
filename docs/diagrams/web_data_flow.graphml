@@ -28,7 +28,7 @@
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-              <y:BorderInsets bottom="29" bottomF="29.20074399999976" left="99" leftF="98.97812500000009" right="54" rightF="53.77812499999936" top="0" topF="0.0"/>
+              <y:BorderInsets bottom="29" bottomF="29.20074399999976" left="90" leftF="90.27412500000014" right="45" rightF="45.07412499999941" top="0" topF="0.0"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="1088.2759999999998" y="171.94751200000002"/>
@@ -93,10 +93,10 @@
           <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.entityRelationship.small_entity">
-              <y:Geometry height="42.59500000000014" width="257.5999999999999" x="1294.8760000000002" y="538.9482559999999"/>
+              <y:Geometry height="42.59500000000014" width="275.0079999999998" x="1286.1720000000003" y="538.9482559999999"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" textColor="#000000" visible="true" width="253.94921875" x="1.8253906249999545" y="5.328750000000014">Update graphs via Rickshaw or Flotcharts
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" textColor="#000000" visible="true" width="253.94921875" x="10.529390624999905" y="5.328750000000127">Update graphs via Rickshaw or Flotcharts
 and update information via jQuery<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
@@ -126,7 +126,7 @@ and update information via jQuery<y:LabelModel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-              <y:BorderInsets bottom="0" bottomF="0.0" left="163" leftF="162.8013906249996" right="163" rightF="162.80139062499984" top="67" topF="67.33757449999996"/>
+              <y:BorderInsets bottom="0" bottomF="0.0" left="147" leftF="147.18539062499963" right="147" rightF="147.18539062499985" top="67" topF="67.33757449999996"/>
             </y:GroupNode>
             <y:GroupNode>
               <y:Geometry height="50.0" width="50.0" x="1134.8959999999997" y="280.0"/>
@@ -166,10 +166,10 @@ and update information via jQuery<y:LabelModel>
           <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.entityRelationship.small_entity">
-              <y:Geometry height="40.0" width="220.0" x="749.109625" y="559.347512"/>
+              <y:Geometry height="40.0" width="251.23199999999997" x="733.4936250000001" y="559.347512"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="215.587890625" x="2.2060546875" y="11.015625">Parse data ready to push to web UI<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="215.587890625" x="17.822054687499985" y="11.015625">Parse data ready to push to web UI<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -186,10 +186,10 @@ and update information via jQuery<y:LabelModel>
           <data key="d5"/>
           <data key="d6">
             <y:GenericNode configuration="com.yworks.entityRelationship.small_entity">
-              <y:Geometry height="40.0" width="215.19999999999993" x="751.5096250000001" y="629.347512"/>
+              <y:Geometry height="40.0" width="233.2159999999999" x="742.5016250000001" y="629.347512"/>
               <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
               <y:BorderStyle color="#000000" type="line" width="1.0"/>
-              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="210.806640625" x="2.1966796875000227" y="11.015625">Get related HBase data if required<y:LabelModel>
+              <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="210.806640625" x="11.204679687499947" y="11.015625">Get related HBase data if required<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
                 <y:ModelParameter>
@@ -278,10 +278,10 @@ and update information via jQuery<y:LabelModel>
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.flowchart.loopLimit">
-          <y:Geometry height="40.0" width="220.0" x="749.109625" y="395.94251199999997"/>
+          <y:Geometry height="40.0" width="235.61599999999999" x="741.3016250000001" y="395.94251199999997"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="215.23046875" x="2.384765625" y="11.015625">Poll from PostgreSQL database<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="215.23046875" x="10.192765624999993" y="11.015625">Poll from PostgreSQL database<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
