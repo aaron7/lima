@@ -301,12 +301,12 @@ http://initd.org/psycopg/, GNU Lesser General Public License
 .
  This will serve pages written in HTML, CSS and Javascript to the end user’s
  browser to display the information from the database.
- In addition, Thrift
+ In addition, Happybase
 \begin_inset Foot
 status open
 
 \begin_layout Plain Layout
-http://thrift.apache.org/, Apache v2 License
+http://happybase.readthedocs.org/en/latest/, MIT License
 \end_layout
 
 \end_inset
@@ -1910,7 +1910,7 @@ Importer Tool Flowchart
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename importer.pdf
+	filename appendix_importer.pdf
 
 \end_inset
 
@@ -1996,7 +1996,13 @@ HBase Cleanup Flowchart
 \end_layout
 
 \begin_layout Standard
-#TODO
+\begin_inset Graphics
+	filename appendix_cleaner.pdf
+	scale 50
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
