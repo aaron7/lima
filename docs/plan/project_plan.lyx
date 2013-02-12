@@ -361,12 +361,12 @@ Google Drive
  This facility provides convenient tools for multiple group members to collabora
 te simultaneously on documents and spreadsheets.
  The team is relying on Google’s knowledge of distributed and clustered
- computing to protect the data, and that the company is of a sufficient
+ computing to protect the data, and working on the assumption that the company is of a sufficient
  size and level of technical knowhow to fend off attacks or attempts to
  harm or remove our data from its infrastructure.
  Nevertheless, the data stored on Google Drive will be purely incidental
  data, particularly for formal reports, which will eventually be typeset
- and shared with all group members for safekeeping.
+ and shared with all group members through the git repository for safekeeping.
 \end_layout
 
 \begin_layout Standard
@@ -386,7 +386,8 @@ Computing resources will be required to perform development work and to
  intends to freeze and clone the workspace on the MCS.
  The group will endeavour to investigate closer to the handover time how
  best to transfer both code and documentation, which may consist of a single
- git clone into the group project space on the MCS.
+ git clone into the group project space on the MCS, or arrange for some other
+ method of handover.
 \end_layout
 
 \begin_layout Standard
@@ -396,7 +397,8 @@ In addition to this, the services of a central virtual private server (VPS)
  - a task which must be confined to individual machines - it will act as
  a central repository for data which has been aggregated and anonymised.
  This permits group collaboration and enforces a single instance of a database
- among all members of the group.
+ among all members of the group, without exposing any of the raw data beyond the
+ group's personal machines and the University's data network.
 \end_layout
 
 \begin_layout Section
