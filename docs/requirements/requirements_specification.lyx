@@ -397,7 +397,7 @@ The main technology used to handle the large amounts of data provided will
  and thus a list of data that needs to be extracted from the initially provided
  mass of raw data must be located.
  For the purpose of identifying threats, a rule-based detection system will
- be implemented, since most algorithmic models are liable to provide much
+ be implemented, since most statistical models are liable to provide much
  higher rates of false positives.
  It has been agreed that the system needs to be careful in how eager it
  is to report issues so as not to cause operators `the boy who cried wolf'
