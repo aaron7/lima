@@ -206,8 +206,8 @@ http://nfdump.sourceforge.net, BSD 3-clause License
 
  converting the data into a more usable comma separated values format.
  A script will run to process this data into a file system more capable
- of handling such large amounts of data, namely the Hadoop High Performance
- File System (HDFS
+ of handling such large amounts of data, namely the Hadoop Distributed File
+ System (HDFS
 \begin_inset Foot
 status open
 
