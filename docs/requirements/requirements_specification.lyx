@@ -1647,8 +1647,108 @@ The date and time the event were made.
 Python-based Web Server
 \end_layout
 
+\begin_layout Subsubsection
+Web data flow
+\end_layout
+
 \begin_layout Standard
-#TODO
+The user interface provided by the system will be web-based.
+ It will be powered by a Python backend which will poll from the PostgreSQL
+ database at regular intervals, checking each time if new data has been
+ processed by the Java backend.
+ The database connection to PostgreSQL will be established using the PsycoPG
+ Python library.
+ Once new data is found, it can be converted into a Javascript Object Notation
+ (JSON) format to be pushed to all web browsers that currently have the
+ interface loaded.
+ The use of a push will ensure that the system works to larger scales, since
+ the amount of web traffic is not so dependent on the client's polling frequency.
+ In addition to this, a connection may be made to HBase via the HappyBase
+ Python library where graph information can also be included within the
+ JSON data push.
+\end_layout
+
+\begin_layout Standard
+A stream will be used to keep a connection active between the Python backend
+ and the Javascript client.
+ Redis will be used to handle the event stream data structure in Python
+ and the system will use Server Side Events, a feature provided by HTML5,
+ to push the JSON data to the clients.
+ Although all browsers are expected to be standards compliant enough to
+ support this, Microsoft Internet Explorer does not have a functional implementa
+tion, leading to the inclusion of a `PolyFill' mimicing that functionality
+ in incompatible browsers.
+\end_layout
+
+\begin_layout Standard
+On the front-end, Javascript will be handling the connection to the event
+ stream.
+ On a new event, the data will be collected and parsed using the JSON Javascript
+ class.
+ The parsed data would then be sorted and sent to update the frontend.
+ Any alerts, messages or extra information which is affected by the new
+ event would also be updated at the same time.
+ Most visualisation functionality will be provided by several Javascript
+ libraries including Rickshaw JS and Flotcharts for graph visualisation
+ and jQuery for information visualisation.
+ The Javascript frontend will also be able to request further information,
+ such as specific date ranges of data, in real time.
+\end_layout
+
+\begin_layout Subsubsection
+Flask and Web Serving
+\end_layout
+
+\begin_layout Standard
+Flask is a Python library which allows rapid development of web based applicatio
+ns using its web framework.
+ Flask starts a basic HTTP server on its own port and allows full control
+ over what is sent when data is requested.
+ The Flask web framework will be run behind gunicorn to allow functionality
+ such as server side event pushes.
+ Nginx would then be used to run a reverse proxy for the HTTP server running
+ on port 8000.
+ Static files such as CSS and JS are also served through Flask.
+\end_layout
+
+\begin_layout Standard
+The user interface will use other development tools that are known for their
+ ability to speed up development and provide simple Javascript and CSS framework
+s.
+ These include Twitter Bootstrap, Rickshaw JS, and Flotcharts.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Justification to use Python’s Flask web framework
+\end_layout
+
+\begin_layout Standard
+The user interface is the most critical part of a system in regards to the
+ ease with which a user can ascertain the information they have connected
+ to the system to access.
+ A Java Swing implementation was initially considered, but a number of issues
+ were raised that led to the choice being dropped.
+ It was considered that the interface would be difficult to create, aestheticall
+y displeasing, inflexible and difficult to integrate into BT's existing
+ systems, which currently use a web-based framework called Splunk.
+ To consider the needs of the client, it was decided that the current system
+ should be relatively `plug-and-play' with regards to this knowledge, leading
+ to an HTML-based system.
+ Furthermore, the Java client model would require an installation of the
+ client on every machine, whereas the web-based idea would simply require
+ a URL being accessed within the browser.
+\end_layout
+
+\begin_layout Standard
+A known method of connecting HBase to the web interface was via HappyBase
+ and Python, and thus this was the method that was researched.
+ Since the enterprise market is constantly migrating in the direction of
+ consolidating data in a web portal, the general consensus amongst the developer
+s was that the most important property the web interface could have would
+ be to have long-term usefulness, something that was not envisaged under
+ Swing.
+ 
 \begin_inset Newpage clearpage
 \end_inset
 
