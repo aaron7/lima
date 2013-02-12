@@ -1,0 +1,436 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage[all]{xy}
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}
+%\usepackage{pgfplots}
+%\usepackage{etex}
+%\usepackage{tikz}
+%\usepackage{tikz-qtree}
+\usepackage{datetime}
+\usepackage{bussproofs}
+\def\fCenter{\ \implies\ }
+\usepackage{siunitx}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Terabyte Threat Analysis
+\begin_inset Newline newline
+\end_inset
+
+Project Plan
+\end_layout
+
+\begin_layout Author
+Team Lima
+\begin_inset Newline newline
+\end_inset
+
+For Paul Reid on behalf of BT
+\end_layout
+
+\begin_layout Date
+12th February, 2013
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Scope
+\end_layout
+
+\begin_layout Standard
+This document is intended to provide a high-level plan of the key milestones,
+ assumptions and decisions made in a software project to implement a high-perfor
+mance, scalable network threat analysis system.
+ The detailed specifics of the project, including its design and implementation,
+ are the subject of another document, the 
+\emph on
+Requirements Specification
+\emph default
+, which is published alongside this document.
+\end_layout
+
+\begin_layout Section
+Project Details
+\end_layout
+
+\begin_layout Standard
+This project is a 6 week collaboration between six Computer Science students
+ at the University of Cambridge Computer Laboratory, hereinafter referred
+ to as 
+\emph on
+Team Lima
+\emph default
+ or simply 
+\emph on
+the group
+\emph default
+, and an external client, Paul Reid, from BT.
+ Due to the scale of the project and the nature of the design decisions
+ involved, it has taken some time to capture the requirements, complete
+ a design to a suitable standard and, subsequently, to prepare this document
+ for publication.
+\end_layout
+
+\begin_layout Subsection
+Responsibilities
+\end_layout
+
+\begin_layout Subsubsection
+Client
+\end_layout
+
+\begin_layout Standard
+The client’s responsibilities include the provision of the original project
+ brief, which defines the background to the project, and supplying any resources
+ which will be necessary to make progress possible.
+ In particular, the client is responsible for providing the group with sample
+ data in an appropriate format to allow in-house testing and demonstration
+ that the system works correctly.
+ The client also oversees Team Lima and their progress by means of three
+ client meetings, to be held at the Computer Laboratory periodically during
+ the course of the project.
+ It is intended for the group to operate, for the most part, on an autonomous
+ basis between such meetings.
+\end_layout
+
+\begin_layout Subsubsection
+Team Lima
+\end_layout
+
+\begin_layout Standard
+Using the requirements captured from the client’s brief, the initial meeting
+ and any subsequent communications which may be exchanged, the group is
+ responsible for the definition and management of the project, its design
+ and arranging for its implementation.
+ 
+\end_layout
+
+\begin_layout Section
+Project Phases
+\end_layout
+
+\begin_layout Subsection
+System Design (
+\begin_inset Formula $\sim$
+\end_inset
+
+2 weeks)
+\end_layout
+
+\begin_layout Standard
+The design of the system has been the subject of much deliberation, discussion
+ and planning on the part of the group.
+ As of the time of this writing, the overall design of the project, including
+ the structure of the modules and their interactions, has been completed.
+ The design requirements represent the overall structure of the system and
+ its services to which the group will commit itself to developing with the
+ client.
+ As such, it is likely that any modifications to the design requirements
+ at a later date without good reason will be seen unfavourably by all parties.
+\end_layout
+
+\begin_layout Subsection
+Implementation (2 weeks)
+\end_layout
+
+\begin_layout Standard
+A correct design and project plan will lead naturally into an implementation
+ phase, in which the group writes the programming code to implement the
+ behaviour of each module.
+ This code will be written in accordance to the design document.
+ Particular attention must be paid to the public interfaces for each module.
+ Correctly adhering to such interfaces will streamline the integration of
+ each module at a later date.
+\end_layout
+
+\begin_layout Standard
+It should be noted that less time has been predicted for the implementation
+ than has been allocated to the design.
+ While this may seem counter-intuitive, the complexity of the system has
+ necessitated an extended design phase.
+ During this period, the group located research papers to understand the
+ algorithmic analysis of the data, and experimented with the various technologie
+s to be used.
+ This has contributed useful information to the design, which the group
+ is confident is exhaustive in every regard.
+ In addition, the modular structure divides the project cleanly into modules
+ which, when stood alone, are relatively trivial to implement.
+ Finally, it is not expected for the group to make further design decisions
+ during the implementation, which is typically a contributing factor to
+ slow progress in any ad-hoc development project.
+\end_layout
+
+\begin_layout Subsection
+Testing (3--4 days)
+\end_layout
+
+\begin_layout Standard
+A critical phase of the project will be its testing.
+ This confirms that the individual modules conform to their respective requireme
+nts and, in turn, the entire system implements the overall behaviour expected
+ and conforms to its design requirements.
+ This phase of the project may take place alongside the implementation such
+ that particular modules are tested in parts as they are developed.
+ If this is the case, an overall period of testing, during which all modules
+ are integrated and expected to communicate successfully with each other,
+ will still be required to prove system functionality, and to test those
+ components which cannot be easily tested on a standalone basis.
+\end_layout
+
+\begin_layout Subsection
+Integration and Handover (3--4 days)
+\end_layout
+
+\begin_layout Standard
+The final stage in the project, this completes the system through the collation
+ of documentation suitable for further development work or system integration
+ on the client’s network.
+ The codebase, along with such documentation, is passed to the client for
+ future use.
+ The client reports on their satisfaction with the work completed, and officiall
+y signs off on the project if it is appropriate to do so.
+\end_layout
+
+\begin_layout Section
+Milestones
+\end_layout
+
+\begin_layout Standard
+In order to track project progress and to be accountable to the client,
+ it will be necessary to identify several key points throughout the project.
+ These milestones are derived from reasonable estimates as to the time required
+ to design, implement and test certain modules, including the ancillary
+ work required for a project of this scale, such as documentation.
+\end_layout
+
+\begin_layout Itemize
+12th February, 2013: The group are expected to have completed their discussions
+ around how best to implement the project, and be preparing to move forwards
+ towards an implementation.
+ Deliverables: Requirements Specification, Project Plan.
+\end_layout
+
+\begin_layout Itemize
+14th February, 2013: Completion of the system scoping and design will move
+ the group forwards into beginning to think about project implementation.
+ A forthcoming client meeting requires the group to report on its implementation
+ progress to the client.
+ Deliverables: Implementation Progress Report, Integration Progress Report.
+\end_layout
+
+\begin_layout Itemize
+15th February, 2013, 2PM: Client Meeting.
+ Deliverables: Prototype code suitable for private demonstration, demonstrating
+ the functional components of the system thus far.
+\end_layout
+
+\begin_layout Itemize
+28th February, 2013: Project completion.
+ All systems implemented to a suitable standard and in accordance with the
+ agreed design documentation.
+ Deliverables: Group Report, Personal Reports.
+\end_layout
+
+\begin_layout Itemize
+4th March, 2013: Completion of the codebase for submission to the Computer
+ Laboratory.
+ Deliverables: Final codebase, Full documentation.
+\end_layout
+
+\begin_layout Section
+Resources
+\end_layout
+
+\begin_layout Standard
+A significant number of resources will be produced during the course of
+ this project.
+ It will be necessary to store those resources in locations suitable for
+ access by the entire group.
+ The appropriate location will be dictated by the nature of the resource
+ and the number of changes which must be accommodated.
+\end_layout
+
+\begin_layout Standard
+Code will be subject to version control using the 
+\emph on
+git
+\emph default
+ version control system.
+ This is a distributed version control system, so a copy is stored on the
+ machines of every group member who initiates a checkout of the repository.
+ This provides a primitive level of backup since every group member holds
+ a complete copy of the data (including the entire history of the codebase).
+ It is unlikely that the machines of multiple group members will be damaged,
+ lost or rendered otherwise inaccessible during the course of the project.
+ To allow for central sharing of repositories, a private repository on the
+ 
+\emph on
+github
+\emph default
+ website will provide the authoritative central store for the code repository,
+ another level of backup and additional functionality, such as a wiki, for
+ central collaboration.
+\end_layout
+
+\begin_layout Standard
+Documentation will be stored in two locations.
+ Draft documentation and internal meeting documentation, such as design
+ documents and meeting minutes, will be stored in a central folder on 
+\emph on
+Google Drive
+\emph default
+.
+ This facility provides convenient tools for multiple group members to collabora
+te simultaneously on documents and spreadsheets.
+ The team is relying on Google’s knowledge of distributed and clustered
+ computing to protect the data, and that the company is of a sufficient
+ size and level of technical knowhow to fend off attacks or attempts to
+ harm or remove our data from its infrastructure.
+ Nevertheless, the data stored on Google Drive will be purely incidental
+ data, particularly for formal reports, which will eventually be typeset
+ and shared with all group members for safekeeping.
+\end_layout
+
+\begin_layout Standard
+Computing resources will be required to perform development work and to
+ execute the code on the system.
+ The use of the Hadoop framework and other system services eliminates the
+ use of the University’s Managed Cluster Service (MCS) for this purpose,
+ as none of the group members are permitted to install or start system services
+ on privileged ports on those machines.
+ It is for this reason that group members must use their personal machines
+ to run the Cloudera CDH4 virtual image, which contains the correct version
+ of Hadoop upon which the project will be built.
+ In addition, the size of the datasets (in excess of several gigabytes)
+ will preclude the group’s use of the 100 MB of provided storage on the
+ MCS.
+ The group noted that on the code handover day, the Computer Laboratory
+ intends to freeze and clone the workspace on the MCS.
+ The group will endeavour to investigate closer to the handover time how
+ best to transfer both code and documentation, which may consist of a single
+ git clone into the group project space on the MCS.
+\end_layout
+
+\begin_layout Standard
+In addition to this, the services of a central virtual private server (VPS)
+ have been made available to the group.
+ Although this will not be capable of performing heavy-lifting of any data
+ - a task which must be confined to individual machines - it will act as
+ a central repository for data which has been aggregated and anonymised.
+ This permits group collaboration and enforces a single instance of a database
+ among all members of the group.
+\end_layout
+
+\begin_layout Section
+Risk
+\end_layout
+
+\begin_layout Standard
+The group are required to keep confidential any sample data provided to
+ them by the client, and preparations have been made to ensure it is stored
+ securely, in an encrypted form where appropriate.
+ The risk of such data being acquired has been minimised.
+\end_layout
+
+\begin_layout Standard
+A considerable period of time has been spent researching and developing
+ the designs for the project.
+ This is largely due to the very open brief which the group was presented
+ with.
+ This was much appreciated, as it allowed the scope of the work to be defined
+ by the group, but it has taken a considerable period of time to narrow
+ that scope to a level appropriate to the project and the intentions of
+ the client.
+ The group is aware that good planning is never a bad idea, and that past
+ experience means time spent in planning and design will often lead to fewer
+ issues during implementation and the subsequent phases.
+ However, the group is also cognisant of the delay which its design has
+ had on the progression of the project.
+ It should be noted that a milestone relating to implementation progress
+ at the next client meeting is a matter of days from the date of this report,
+ and that as such there is a risk the implementation may not have progressed
+ as far as the client would have hoped by that time.
+ However, the internal management of the project, completion of the designs,
+ and good skills with many of the third-party systems leads the group to
+ believe this is not a significant cause for concern.
+\end_layout
+
+\end_body
+\end_document
