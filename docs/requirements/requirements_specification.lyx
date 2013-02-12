@@ -1657,6 +1657,15 @@ The user interface provided by the system will be web-based.
  database at regular intervals, checking each time if new data has been
  processed by the Java backend.
  The database connection to PostgreSQL will be established using the PsycoPG
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://initd.org/psycopg/, Lesser GNU Public License
+\end_layout
+
+\end_inset
+
  Python library.
  Once new data is found, it can be converted into a Javascript Object Notation
  (JSON) format to be pushed to all web browsers that currently have the
@@ -1671,13 +1680,32 @@ The user interface provided by the system will be web-based.
 \begin_layout Standard
 A stream will be used to keep a connection active between the Python backend
  and the Javascript client.
- Redis will be used to handle the event stream data structure in Python
- and the system will use Server Side Events, a feature provided by HTML5,
- to push the JSON data to the clients.
+ Redis
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://redis.io/, BSD 3-clause License
+\end_layout
+
+\end_inset
+
+ will be used to handle the event stream data structure in Python and the
+ system will use Server Side Events, a feature provided by HTML5, to push
+ the JSON data to the clients.
  Although all browsers are expected to be standards compliant enough to
  support this, Microsoft Internet Explorer does not have a functional implementa
-tion, leading to the inclusion of a `PolyFill' mimicing that functionality
- in incompatible browsers.
+tion, leading to the inclusion of a jQuery
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://jquery.com/, MIT License
+\end_layout
+
+\end_inset
+
+ `PolyFill' mimicing that functionality in incompatible browsers.
 \end_layout
 
 \begin_layout Standard
@@ -1689,8 +1717,27 @@ On the front-end, Javascript will be handling the connection to the event
  Any alerts, messages or extra information which is affected by the new
  event would also be updated at the same time.
  Most visualisation functionality will be provided by several Javascript
- libraries including Rickshaw JS and Flotcharts for graph visualisation
- and jQuery for information visualisation.
+ libraries including Rickshaw JS
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://code.shutterstock.com/rickshaw/, MIT License
+\end_layout
+
+\end_inset
+
+ and Flotcharts
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://www.flotcharts.org/, MIT License
+\end_layout
+
+\end_inset
+
+ for graph visualisation.
  The Javascript frontend will also be able to request further information,
  such as specific date ranges of data, in real time.
 \end_layout
@@ -1700,23 +1747,55 @@ Flask and Web Serving
 \end_layout
 
 \begin_layout Standard
-Flask is a Python library which allows rapid development of web based applicatio
-ns using its web framework.
- Flask starts a basic HTTP server on its own port and allows full control
- over what is sent when data is requested.
- The Flask web framework will be run behind gunicorn to allow functionality
- such as server side event pushes.
- Nginx would then be used to run a reverse proxy for the HTTP server running
- on port 8000.
- Static files such as CSS and JS are also served through Flask.
+Flask
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://flask.pocoo.org/, BSD 3-clause License
 \end_layout
 
-\begin_layout Standard
-The user interface will use other development tools that are known for their
- ability to speed up development and provide simple Javascript and CSS framework
-s.
- These include Twitter Bootstrap, Rickshaw JS, and Flotcharts.
- 
+\end_inset
+
+ is a Python library which allows rapid development of web based applications
+ using its web framework.
+ Flask starts a basic HTTP server on its own port and allows full control
+ over what is sent when data is requested.
+ The Flask web framework will be run behind gunicorn
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://gunicorn.org/, MIT License
+\end_layout
+
+\end_inset
+
+ to allow functionality such as server side event pushes.
+ Nginx
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://nginx.org/, 2-clause BSD-like License
+\end_layout
+
+\end_inset
+
+ would then be used to run a reverse proxy for the HTTP server running on
+ port 8000.
+ Static files such as CSS and JS are also served through Flask, the CSS
+ provided using Twitter Bootstrap
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://twitter.github.com/bootstrap/, Apache v2 License
+\end_layout
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1958,7 +2037,70 @@ Testing Methodology and Acceptance Criteria
 \end_layout
 
 \begin_layout Standard
-#TODO
+Since this system is a venture into unknown waters, the methodology behind
+ the testing and the criteria for acceptance are set realistically, knowing
+ that there is a likelihood that the data provided may be unable to provide
+ much useful output in this six-week iteration.
+ Therefore, while each module will be tested thoroughly, it can only be
+ tested to confirm functionality and extensibility, not overall correctness.
+\end_layout
+
+\begin_layout Itemize
+The importer tool must be able to take .nfcapd files, convert them into CSV
+ and place them into the HDFS.
+ If a malformed file is created, it is not expected to do anything other
+ than throw an error - no error correction attempt will be made.
+\end_layout
+
+\begin_layout Itemize
+The Hadoop MapReduce jobs are not expected to produce 100% correct results
+ at identifying threats.
+ The system is unable to be tweaked to such degrees without all of BT's
+ data, something that must be honed during real operation.
+ Provided the CSV is read in and statistics and metrics pertaining to possible
+ threats are logged reasonably, this section is functional.
+\end_layout
+
+\begin_layout Itemize
+An investigation to ensure that the HBase cleaner only deletes required
+ rows will be made.
+\end_layout
+
+\begin_layout Itemize
+Confirmation that the monitor passes through the correct inputs to the PGSQL
+ database will be checked and tested.
+\end_layout
+
+\begin_layout Itemize
+The frontend will be checked for updating bugs, framework errors and syntax/layo
+ut mistakes to ensure it complies with web standards correctly.
+\end_layout
+
+\begin_layout Standard
+All of this will use tools such as MRUnit
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+https://mrunit.apache.org/, Apache v2 License
+\end_layout
+
+\end_inset
+
+ and TestNG
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+http://testng.org/, Apache v2 License
+\end_layout
+
+\end_inset
+
+ to create testcases for these issues.
+ While developers are expected to write their testcases in parallel with
+ their code, it is to be expected that other developers may wish to contribute
+ edge-case test cases as well.
 \end_layout
 
 \begin_layout Standard
