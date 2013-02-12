@@ -215,7 +215,8 @@ A correct design and project plan will lead naturally into an implementation
  phase, in which the group writes the programming code to implement the
  behaviour of each module.
  This code will be written in accordance to the design document.
- Particular attention must be paid to the public interfaces for each module.
+ Particular attention must be paid to the dataflow diagrams, interface design and database schemas 
+ for each module.
  Correctly adhering to such interfaces will streamline the integration of
  each module at a later date.
 \end_layout
