@@ -342,7 +342,7 @@ git
  To allow for central sharing of repositories, a private repository on the
  
 \emph on
-github
+GitHub
 \emph default
  website will provide the authoritative central store for the code repository,
  another level of backup and additional functionality, such as a wiki, for
