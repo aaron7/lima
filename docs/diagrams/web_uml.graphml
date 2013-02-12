@@ -16,7 +16,6 @@
     <data key="d7"/>
     <node id="n0">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="88.16" width="100.0" x="-523.9050781250005" y="-106.32523437500004"/>
@@ -39,7 +38,6 @@ getRow(s)</y:MethodLabel>
     </node>
     <node id="n1">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="157.28" width="114.71999999999991" x="-250.09078125000076" y="-140.88523437500004"/>
@@ -65,7 +63,6 @@ event_stream
     </node>
     <node id="n2">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="28.0" width="100.0" x="-599.1857031250004" y="-194.30710937499992"/>
@@ -87,7 +84,6 @@ event_stream
     </node>
     <node id="n3">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="28.0" width="100.0" x="-450.84000000000003" y="-194.30710937499992"/>
@@ -109,7 +105,6 @@ event_stream
     </node>
     <node id="n4">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="28.0" width="100.0" x="-320.84000000000003" y="-194.30710937499992"/>
@@ -131,7 +126,6 @@ event_stream
     </node>
     <node id="n5">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="28.0" width="100.0" x="-179.53078125000087" y="-194.30710937499992"/>
@@ -153,7 +147,6 @@ event_stream
     </node>
     <node id="n6">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="28.0" width="171.3599999999999" x="86.04382812499881" y="-76.24523437500004"/>
@@ -175,7 +168,6 @@ event_stream
     </node>
     <node id="n7">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="28.0" width="104.79999999999995" x="119.32382812499878" y="-127.9304687500001"/>
@@ -197,7 +189,6 @@ event_stream
     </node>
     <node id="n8">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="44.639999999999986" width="123.99999999999977" x="-105.37078125000085" y="-84.56523437500003"/>
@@ -220,7 +211,6 @@ Engine (Flask)<y:LabelModel>
     </node>
     <node id="n9">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="44.639999999999986" width="143.83999999999992" x="99.8038281249988" y="3.3790624999998045"/>
@@ -243,7 +233,6 @@ Engine (Flask)<y:LabelModel>
     </node>
     <node id="n10">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="39.51999999999998" width="131.99999999999977" x="-31.636484375001032" y="-194.30710937499992"/>
@@ -266,7 +255,6 @@ Engine (Flask)<y:LabelModel>
     </node>
     <node id="n11">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="39.51999999999998" width="104.79999999999995" x="119.32382812499878" y="-194.30710937499992"/>
@@ -289,7 +277,6 @@ Engine (Flask)<y:LabelModel>
     </node>
     <node id="n12">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="39.51999999999998" width="123.99999999999977" x="243.08414062499878" y="-194.30710937499992"/>
@@ -332,7 +319,6 @@ and parse data<y:LabelModel>
       </data>
     </node>
     <edge id="e0" source="n2" target="n0">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -343,7 +329,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e1" source="n3" target="n0">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -354,7 +339,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e2" source="n0" target="n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -365,7 +349,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e3" source="n4" target="n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -376,7 +359,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e4" source="n5" target="n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -387,7 +369,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e5" source="n1" target="n8">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -398,7 +379,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e6" source="n8" target="n6">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -417,7 +397,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e7" source="n7" target="n6">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -428,7 +407,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e8" source="n9" target="n6">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -439,7 +417,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e9" source="n10" target="n7">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -450,7 +427,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e10" source="n11" target="n7">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -461,7 +437,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e11" source="n12" target="n7">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -472,7 +447,6 @@ and parse data<y:LabelModel>
       </data>
     </edge>
     <edge id="e12" source="n1" target="n12">
-      <data key="d9"/>
       <data key="d10">
         <y:SplineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -481,7 +455,7 @@ and parse data<y:LabelModel>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="139.1640625" x="139.48394401538513" y="97.6975214879131">via Server Side Events
-with PollyFill for IE<y:LabelModel>
+with PolyFill for IE<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -493,7 +467,6 @@ with PollyFill for IE<y:LabelModel>
       </data>
     </edge>
     <edge id="e13" source="n0" target="n13">
-      <data key="d9"/>
       <data key="d10">
         <y:SplineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -504,7 +477,6 @@ with PollyFill for IE<y:LabelModel>
     </edge>
     <edge id="e14" source="n13" target="n1">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:SplineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
