@@ -57,7 +57,7 @@ public class FlowRecord extends AutoWritable{
 		super(); //private constructor for deserializing
 	}
 
-	static long valueOfDate(String string) throws ParseException
+	public static long valueOfDate(String string) throws ParseException
 	{
 		Date date = dateFormat.parse(string);
 		return date.getTime();

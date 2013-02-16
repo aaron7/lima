@@ -1,6 +1,11 @@
 package uk.ac.cam.cl.groupproject12.lima.hbase;
 
 
+import java.io.IOException;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -11,8 +16,11 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 public class Statistic extends AutoWritable
 {
+	private static final HBaseConnection connection = new HBaseConnection();
+	
 	private static final byte[] QUANTIFIER = "data".getBytes();
 	private static final byte[] FAMILY = "family".getBytes(); 
+	private static final byte[] STATISTICS_TABLE = "statistics".getBytes(); 
 	
 	public static class Key extends AutoWritable
 	{
@@ -31,12 +39,12 @@ public class Statistic extends AutoWritable
 	}
 	
 	Key key;
-	IntWritable flowCount;
-	IntWritable packetCount;
-	LongWritable totalDataSize;
-	IntWritable TCPCount;
-	IntWritable UDPCount;
-	IntWritable ICMPCount;
+	IntWritable flowCount = new IntWritable(0);
+	IntWritable packetCount = new IntWritable(0);
+	LongWritable totalDataSize = new LongWritable(0L);
+	IntWritable TCPCount = new IntWritable(0);
+	IntWritable UDPCount = new IntWritable(0);
+	IntWritable ICMPCount = new IntWritable(0);
 	
 	public Statistic(IP routerId, Long timeframe) 
 	{
@@ -67,11 +75,14 @@ public class Statistic extends AutoWritable
 		}
 	}
 	
-	public void putToHbase()
+	public void putToHbase() throws IOException
 	{
+		HTable statTable = new HTable(connection.getConfig(),STATISTICS_TABLE);
+		
 		Put put = new Put(this.key.getByteValue());
 		put.add(FAMILY, QUANTIFIER, this.getByteValue());
-		//HTable statistics = TODO
-		// statistics.put(put);
+		statTable.put(put);
+		
+		statTable.close();
 	}
 }
