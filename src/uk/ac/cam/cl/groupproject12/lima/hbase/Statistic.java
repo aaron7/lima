@@ -1,18 +1,15 @@
 package uk.ac.cam.cl.groupproject12.lima.hbase;
 
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
 import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.io.DataOutputBuffer;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 
+import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.FlowRecord;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
-public class Statistic implements Writable
+public class Statistic extends AutoWritable
 {
 	private static final byte[] QUANTIFIER = "data".getBytes();
 	private static final byte[] FAMILY = "family".getBytes(); 
@@ -20,12 +17,12 @@ public class Statistic implements Writable
 	public static class Key extends AutoWritable
 	{
 		IP routerId;
-		long timeFrame;
+		LongWritable timeFrame;
 		
 		public Key(IP routerId, long timeFrame) {
 			super();
 			this.routerId = routerId;
-			this.timeFrame = timeFrame;
+			this.timeFrame = new LongWritable(timeFrame);
 		}
 		
 		public Key() {
@@ -34,12 +31,12 @@ public class Statistic implements Writable
 	}
 	
 	Key key;
-	int flowCount;
-	int packetCount;
-	long totalDataSize;
-	int TCPCount;
-	int UDPCount;
-	int ICMPCount;
+	IntWritable flowCount;
+	IntWritable packetCount;
+	LongWritable totalDataSize;
+	IntWritable TCPCount;
+	IntWritable UDPCount;
+	IntWritable ICMPCount;
 	
 	public Statistic(IP routerId, Long timeframe) 
 	{
@@ -48,36 +45,25 @@ public class Statistic implements Writable
 	
 	public void addFlowRecord(FlowRecord record)
 	{
-		this.flowCount ++;
-		this.packetCount += record.packets;
-		this.totalDataSize += record.bytes;
+		this.flowCount.set(this.flowCount.get() + 1);
+		this.packetCount.set(this.packetCount.get() + record.packets.get());
+		this.totalDataSize.set(this.totalDataSize.get() + record.bytes.get());
 		
 		if ("TCP".equals(record.protocol))
 		{
-			this.TCPCount ++;
+			this.TCPCount.set(this.TCPCount.get() + 1);
 		}
 		else if ("UDP".equals(record.protocol))
 		{
-			this.UDPCount ++;
+			this.UDPCount.set(this.UDPCount.get() + 1);
 		}
 		else if ("ICMP".equals(record.protocol))
 		{
-			this.ICMPCount ++;
+			this.ICMPCount.set(this.ICMPCount.get() + 1);
 		}
 		else
 		{
 			//TODO log error?
-		}
-	}
-	private byte[] getByteValue()
-	{
-		try {
-			DataOutputBuffer out = new DataOutputBuffer();
-			this.write(out);
-			return out.getData();
-		} catch (IOException e) 
-		{
-			throw new RuntimeException("Unexpected IO Exception",e);
 		}
 	}
 	
@@ -87,35 +73,5 @@ public class Statistic implements Writable
 		put.add(FAMILY, QUANTIFIER, this.getByteValue());
 		//HTable statistics = TODO
 		// statistics.put(put);
-	}
-	
-	private static Key readKey(DataInput in) throws IOException
-	{
-		Key key = new Key();
-		key.readFields(in);
-		return key;
-	}
-	
-	@Override
-	public void readFields(DataInput in) throws IOException {
-		this.key = readKey(in);
-		this.flowCount = in.readInt();
-		this.packetCount = in.readInt();
-		this.totalDataSize = in.readLong();
-		this.TCPCount = in.readInt();
-		this.UDPCount = in.readInt();
-		this.ICMPCount = in.readInt();
-	}
-	
-
-	@Override
-	public void write(DataOutput out) throws IOException {
-		this.key.write(out);
-		out.writeInt(flowCount);
-		out.writeInt(packetCount);
-		out.writeLong(totalDataSize);
-		out.writeInt(TCPCount);
-		out.writeInt(UDPCount);
-		out.writeInt(ICMPCount);
 	}
 }

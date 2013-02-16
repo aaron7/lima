@@ -32,7 +32,7 @@ import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
          try 
          {
         	 record = FlowRecord.valueOf(line);
-        	 LongWritable minute = new LongWritable(record.startTime / 60000*60000);
+        	 LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
              output.collect(minute, record);
          }
          catch (ParseException e) 
