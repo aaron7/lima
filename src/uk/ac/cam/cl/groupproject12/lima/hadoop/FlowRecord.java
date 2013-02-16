@@ -3,21 +3,22 @@ package uk.ac.cam.cl.groupproject12.lima.hadoop;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
-
-
 /**
- * 
  * @author ernest
  *
  *	A class which acts as a container for information about a flow.
- *
- *	
  */
 public class FlowRecord implements Writable{
+	
+	private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	public long routerId;
 	public long startTime;  	//in ms
@@ -52,13 +53,19 @@ public class FlowRecord implements Writable{
 		this.typeOfService = typeOfService;
 	}
 
-	public static FlowRecord valueOf(String str)
+	private static long valueOfDate(String string) throws ParseException
+	{
+		Date date = dateFormat.parse(string);
+		return date.getTime();
+	}
+	
+	public static FlowRecord valueOf(String str) throws ParseException
 	{
 		String[] tokens = str.split(",");
 		return new FlowRecord(
 				Long.valueOf(tokens[0]),
-				Long.valueOf(tokens[1]),
-				Long.valueOf(tokens[2]),
+				valueOfDate(tokens[1]),
+				valueOfDate(tokens[2]),
 				tokens[3],
 				IP.valueOf(tokens[4]),
 				IP.valueOf(tokens[5]),
