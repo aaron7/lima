@@ -106,7 +106,7 @@ public class DosJob {
             DoSAttack res = new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount), new IntWritable(srcIPCount));
             if(isSignificant(res))
                 output.collect(key,res);
-            //TODO write to HBase here
+            //TODO output to HBase here
         }
 
     }
@@ -121,6 +121,7 @@ public class DosJob {
         public IntWritable srcIPCount;
 
         public DoSAttack(){
+            //Used by serialization
         }
 
         public DoSAttack(IP routerId, LongWritable startTime, LongWritable endTime, IP destAddress, IntWritable packets, LongWritable bytes, IntWritable flowCount, IntWritable srcIPCount) {

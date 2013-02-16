@@ -41,10 +41,6 @@ public class DosJobTest {
 
     @Test
     public void testReduce1SingleValue(){
-        DosJob.Reduce1 reducer1 = new DosJob.Reduce1();
-        reduceDriver1 = ReduceDriver.newReduceDriver(reducer1);
-
-
         List<FlowRecord> values = new ArrayList<FlowRecord>();
         FlowRecord rec = new FlowRecord(new IP("1.1.1.1"),0L,1L,"TCP",new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,4,5,"a","a");
         values.add(rec);
@@ -60,13 +56,9 @@ public class DosJobTest {
 
     @Test
     public void testReduce1MultipleValuesAggregation(){
-
 //        FlowRecord(IP routerId, long startTime, long endTime, String protocol,
 //                IP srcAddress, IP destAddress, int srcPort, int destPort,
 //        int packets, long bytes, String tcpFlags, String typeOfService)
-
-        DosJob.Reduce1 reducer1 = new DosJob.Reduce1();
-        reduceDriver1 = ReduceDriver.newReduceDriver(reducer1);
 
         List<FlowRecord> values = new ArrayList<FlowRecord>();
         values.add(new FlowRecord(new IP("1.1.1.1"),40L,1L,"TCP",new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,5,6,"",""));
