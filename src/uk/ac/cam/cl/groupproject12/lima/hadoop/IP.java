@@ -24,7 +24,7 @@ public class IP implements Writable{
 	public boolean isValid()
 	{
 		
-		String[] tokens = this.value.split(".");
+		String[] tokens = this.value.split("\\.");
 		if (tokens.length != 4)
 		{
 			return false;
