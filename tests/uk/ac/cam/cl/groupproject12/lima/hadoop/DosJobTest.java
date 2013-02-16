@@ -1,10 +1,13 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mrunit.MapDriver;
 import org.apache.hadoop.mrunit.MapReduceDriver;
 import org.apache.hadoop.mrunit.ReduceDriver;
 import org.testng.annotations.BeforeClass;
-import org.apache.hadoop.mrunit.MapDriver;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -38,15 +41,20 @@ public class DosJobTest {
 
     @Test
     public void testReduce1SingleValue(){
+        DosJob.Reduce1 reducer1 = new DosJob.Reduce1();
+        reduceDriver1 = ReduceDriver.newReduceDriver(reducer1);
+
+
         List<FlowRecord> values = new ArrayList<FlowRecord>();
         FlowRecord rec = new FlowRecord(new IP("1.1.1.1"),0L,1L,"TCP",new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,4,5,"a","a");
         values.add(rec);
-        reduceDriver1.withInput(SerializationUtils.asBytes(new IP("0.0.0.0"),new LongWritable(0),new IP("2.2.2.2")),values);
-        reduceDriver1.withOutput(SerializationUtils.asBytes(new IP("0.0.0.0"),new IntWritable(0),new IP("2.2.2.2")),new DosJob.DoSAttack(new IP("1.1.1.1"),new LongWritable(0), new LongWritable(1),new IP("0.0.0.0"),new IntWritable(4), new LongWritable(5),new IntWritable(1),new IntWritable(1)));
+        BytesWritable key = SerializationUtils.asBytes(new IP("0.0.0.0"),new LongWritable(0),new IP("2.2.2.2"));
+        reduceDriver1.withInput(key,values);
+        reduceDriver1.withOutput(key,new DosJob.DoSAttack(new IP("1.1.1.1"),new LongWritable(0), new LongWritable(1),new IP("0.0.0.0"),new IntWritable(4), new LongWritable(5),new IntWritable(1),new IntWritable(1)));
         try {
             reduceDriver1.run();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 
@@ -56,6 +64,9 @@ public class DosJobTest {
 //        FlowRecord(IP routerId, long startTime, long endTime, String protocol,
 //                IP srcAddress, IP destAddress, int srcPort, int destPort,
 //        int packets, long bytes, String tcpFlags, String typeOfService)
+
+        DosJob.Reduce1 reducer1 = new DosJob.Reduce1();
+        reduceDriver1 = ReduceDriver.newReduceDriver(reducer1);
 
         List<FlowRecord> values = new ArrayList<FlowRecord>();
         values.add(new FlowRecord(new IP("1.1.1.1"),40L,1L,"TCP",new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,5,6,"",""));
@@ -67,7 +78,7 @@ public class DosJobTest {
         try {
             reduceDriver1.run();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 

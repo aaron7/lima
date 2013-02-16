@@ -1,6 +1,9 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
 
 import java.io.IOException;
@@ -49,17 +52,17 @@ public class DosJob {
                     endTime = record.endTime.get();
                     bytes = record.bytes.get();
                     packets = record.packets.get();
-                    flowCount = 1;
                     first = false;
                 } else {
-                    startTime = Math.min(startTime,record.startTime.get());
-                    endTime = Math.max(endTime,record.endTime.get());
+                    startTime = Math.min(startTime, record.startTime.get());
+                    endTime = Math.max(endTime, record.endTime.get());
                     bytes += record.bytes.get();
                     packets += record.packets.get();
-                    flowCount++;
                 }
+                flowCount++;
             }
-            output.collect(key,new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount),new IntWritable(1)));
+            if(!first)
+                output.collect(key,new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount),new IntWritable(1)));
         }
     }
 
@@ -101,7 +104,7 @@ public class DosJob {
                 srcIPCount++;
             }
             DoSAttack res = new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount), new IntWritable(srcIPCount));
-            if(isSignifficant(res))
+            if(isSignificant(res))
                 output.collect(key,res);
             //TODO write to HBase here
         }
@@ -132,7 +135,7 @@ public class DosJob {
         }
     }
 
-    private static boolean isSignifficant(DoSAttack res) {
+    private static boolean isSignificant(DoSAttack res) {
         //TODO determine whether the result is significant enough to be determined as a DoS attack.
         return false;  //To change body of created methods use File | Settings | File Templates.
     }
