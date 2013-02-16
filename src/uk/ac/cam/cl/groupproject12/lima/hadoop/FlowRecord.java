@@ -10,6 +10,7 @@ import java.util.Date;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableUtils;
 
 /**
  * @author ernest
@@ -106,15 +107,15 @@ public class FlowRecord implements Writable{
 		this.routerId = IP.read(input);
 		this.startTime = input.readLong();
 		this.endTime = input.readLong();
-		this.protocol = Text.readString(input);
-		this.srcAddress.readFields(input);
-		this.destAddress.readFields(input);
+		this.protocol = WritableUtils.readString(input);
+		this.srcAddress = IP.read(input);
+		this.destAddress = IP.read(input);
 		this.srcPort = input.readInt();
 		this.destPort = input.readInt();
 		this.packets = input.readInt();
 		this.bytes = input.readLong();
-		this.tcpFlags = Text.readString(input);
-		this.typeOfService = Text.readString(input);
+		this.tcpFlags = WritableUtils.readString(input);
+		this.typeOfService = WritableUtils.readString(input);
 		
 	}
 
@@ -123,15 +124,15 @@ public class FlowRecord implements Writable{
 		routerId.write(output);
 		output.writeLong(startTime);  	
 		output.writeLong(endTime);				
-		Text.writeString(output, protocol);
+		WritableUtils.writeString(output, protocol);
 		srcAddress.write(output);
 		destAddress.write(output);		
 		output.writeInt(srcPort);
 		output.writeInt(destPort);
 		output.writeInt(packets);
 		output.writeLong(bytes);
-		Text.writeString(output, this.tcpFlags);
-		Text.writeString(output, typeOfService);
+		WritableUtils.writeString(output, this.tcpFlags);
+		WritableUtils.writeString(output, typeOfService);
 	}
 
 	@Override

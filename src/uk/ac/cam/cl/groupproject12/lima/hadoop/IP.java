@@ -4,8 +4,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableUtils;
 
 public class IP implements Writable{
 
@@ -62,12 +62,12 @@ public class IP implements Writable{
 	@Override
 	public void readFields(DataInput input) throws IOException 
 	{
-		this.value = Text.readString(input);
+		this.value = WritableUtils.readString(input);
 	}
 
 	@Override
 	public void write(DataOutput output) throws IOException {
-		Text.writeString(output, this.value);
+		WritableUtils.writeString(output, value);
 	}
 
 	@Override

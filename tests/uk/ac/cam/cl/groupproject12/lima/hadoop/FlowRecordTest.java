@@ -49,14 +49,12 @@ public class FlowRecordTest {
 	public void testReadWrite() throws Exception
 	{
 		FlowRecord expected = getSampleRecord();
-		
 		DataOutputBuffer out = new DataOutputBuffer();
 		expected.write(out);
 		DataInputBuffer in = new DataInputBuffer();
 		in.reset(out.getData(), out.getData().length);
 		FlowRecord actual = FlowRecord.read(in);
 		Assert.assertEquals(expected, actual);
-
 	}
 	
 }
