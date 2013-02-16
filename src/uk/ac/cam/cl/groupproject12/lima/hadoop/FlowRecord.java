@@ -62,7 +62,7 @@ public class FlowRecord implements Writable{
 	
 	static long valueOfBytes(String string)
 	{
-		if (string.matches("\\d\\+ M"))
+		if (string.matches("\\d+(.\\d*) M"))
 		{
 			String[] tokens = string.split(" ");
 			Double prefix = Double.valueOf(tokens[0]);
@@ -121,5 +121,84 @@ public class FlowRecord implements Writable{
 		output.writeLong(bytes);
 		Text.writeString(output, this.tcpFlags);
 		Text.writeString(output, typeOfService);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (bytes ^ (bytes >>> 32));
+		result = prime * result
+				+ ((destAddress == null) ? 0 : destAddress.hashCode());
+		result = prime * result + destPort;
+		result = prime * result + (int) (endTime ^ (endTime >>> 32));
+		result = prime * result + packets;
+		result = prime * result
+				+ ((protocol == null) ? 0 : protocol.hashCode());
+		result = prime * result
+				+ ((routerId == null) ? 0 : routerId.hashCode());
+		result = prime * result
+				+ ((srcAddress == null) ? 0 : srcAddress.hashCode());
+		result = prime * result + srcPort;
+		result = prime * result + (int) (startTime ^ (startTime >>> 32));
+		result = prime * result
+				+ ((tcpFlags == null) ? 0 : tcpFlags.hashCode());
+		result = prime * result
+				+ ((typeOfService == null) ? 0 : typeOfService.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FlowRecord other = (FlowRecord) obj;
+		if (bytes != other.bytes)
+			return false;
+		if (destAddress == null) {
+			if (other.destAddress != null)
+				return false;
+		} else if (!destAddress.equals(other.destAddress))
+			return false;
+		if (destPort != other.destPort)
+			return false;
+		if (endTime != other.endTime)
+			return false;
+		if (packets != other.packets)
+			return false;
+		if (protocol == null) {
+			if (other.protocol != null)
+				return false;
+		} else if (!protocol.equals(other.protocol))
+			return false;
+		if (routerId == null) {
+			if (other.routerId != null)
+				return false;
+		} else if (!routerId.equals(other.routerId))
+			return false;
+		if (srcAddress == null) {
+			if (other.srcAddress != null)
+				return false;
+		} else if (!srcAddress.equals(other.srcAddress))
+			return false;
+		if (srcPort != other.srcPort)
+			return false;
+		if (startTime != other.startTime)
+			return false;
+		if (tcpFlags == null) {
+			if (other.tcpFlags != null)
+				return false;
+		} else if (!tcpFlags.equals(other.tcpFlags))
+			return false;
+		if (typeOfService == null) {
+			if (other.typeOfService != null)
+				return false;
+		} else if (!typeOfService.equals(other.typeOfService))
+			return false;
+		return true;
 	}
 }
