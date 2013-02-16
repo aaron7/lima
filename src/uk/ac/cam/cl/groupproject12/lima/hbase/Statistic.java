@@ -59,7 +59,7 @@ public class Statistic implements Writable
 	Key key;
 	int flowCount;
 	int packetCount;
-	int totalDataSize;
+	long totalDataSize;
 	int TCPCount;
 	int UDPCount;
 	int ICMPCount;
@@ -124,7 +124,7 @@ public class Statistic implements Writable
 		this.key = readKey(in);
 		this.flowCount = in.readInt();
 		this.packetCount = in.readInt();
-		this.totalDataSize = in.readInt();
+		this.totalDataSize = in.readLong();
 		this.TCPCount = in.readInt();
 		this.UDPCount = in.readInt();
 		this.ICMPCount = in.readInt();
@@ -136,7 +136,7 @@ public class Statistic implements Writable
 		this.key.write(out);
 		out.writeInt(flowCount);
 		out.writeInt(packetCount);
-		out.writeInt(totalDataSize);
+		out.writeLong(totalDataSize);
 		out.writeInt(TCPCount);
 		out.writeInt(UDPCount);
 		out.writeInt(ICMPCount);

@@ -29,7 +29,7 @@ public class FlowRecord implements Writable{
 	public int srcPort;
 	public int destPort;
 	public int packets;
-	public int bytes;
+	public long bytes;
 	public String tcpFlags;
 	public String typeOfService;
 	
@@ -37,7 +37,7 @@ public class FlowRecord implements Writable{
 	
 	public FlowRecord(IP routerId, long startTime, long endTime, String protocol,
 			IP srcAddress, IP destAddress, int srcPort, int destPort,
-			int packets, int bytes, String tcpFlags, String typeOfService) {
+			int packets, long bytes, String tcpFlags, String typeOfService) {
 		super();
 		this.routerId = routerId;
 		this.startTime = startTime;
@@ -59,9 +59,21 @@ public class FlowRecord implements Writable{
 		return date.getTime();
 	}
 	
+	
+	static long valueOfBytes(String string)
+	{
+		if (string.matches("\\d\\+ M"))
+		{
+			String[] tokens = string.split(" ");
+			Double prefix = Double.valueOf(tokens[0]);
+			return (long)(prefix*1000000);
+		}
+		return Integer.valueOf(string);
+	}
+	
 	public static FlowRecord valueOf(String str) throws ParseException
 	{
-		String[] tokens = str.split(",");
+		String[] tokens = str.split(" *, *");
 		return new FlowRecord(
 				IP.valueOf(tokens[0]),
 				valueOfDate(tokens[1]),
@@ -72,7 +84,7 @@ public class FlowRecord implements Writable{
 				Integer.valueOf(tokens[6]),
 				Integer.valueOf(tokens[7]),
 				Integer.valueOf(tokens[8]),
-				Integer.valueOf(tokens[9]),
+				valueOfBytes(tokens[9]),
 				tokens[10],
 				tokens[11]);
 	}
@@ -89,7 +101,7 @@ public class FlowRecord implements Writable{
 		this.srcPort = input.readInt();
 		this.destPort = input.readInt();
 		this.packets = input.readInt();
-		this.bytes = input.readInt();
+		this.bytes = input.readLong();
 		this.tcpFlags = Text.readString(input);
 		this.typeOfService = Text.readString(input);
 		
@@ -106,7 +118,7 @@ public class FlowRecord implements Writable{
 		output.writeInt(srcPort);
 		output.writeInt(destPort);
 		output.writeInt(packets);
-		output.writeInt(bytes);
+		output.writeLong(bytes);
 		Text.writeString(output, this.tcpFlags);
 		Text.writeString(output, typeOfService);
 	}
