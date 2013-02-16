@@ -17,7 +17,7 @@ public class Statistic implements Writable
 	private static final byte[] QUANTIFIER = "data".getBytes();
 	private static final byte[] FAMILY = "family".getBytes(); 
 	
-	public static class Key implements Writable
+	public static class Key extends AutoWritable
 	{
 		IP routerId;
 		long timeFrame;
@@ -28,31 +28,8 @@ public class Statistic implements Writable
 			this.timeFrame = timeFrame;
 		}
 		
-		private Key() {
-			super(); // private constructor for deserialization
-		}
-
-		@Override
-		public void readFields(DataInput in) throws IOException {
-			this.routerId = IP.read(in);
-			this.timeFrame = in.readLong();
-		}
-		@Override
-		public void write(DataOutput out) throws IOException {
-			this.routerId.write(out);
-			out.writeLong(this.timeFrame);
-		}
-	
-		public byte[] getByteValue()
-		{
-			try {
-				DataOutputBuffer out = new DataOutputBuffer();
-				this.write(out);
-				return out.getData();
-			} catch (IOException e) 
-			{
-				throw new RuntimeException("Unexpected IO Exception",e);
-			}
+		public Key() {
+			super(); // constructor for deserialization
 		}
 	}
 	

@@ -1,38 +1,37 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableUtils;
 
 /**
  * @author ernest
  *
  *	A class which acts as a container for information about a flow.
  */
-public class FlowRecord implements Writable{
+public class FlowRecord extends AutoWritable{
 	
 	private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	public IP routerId;
-	public long startTime;  	//in ms
-	public long endTime;		//in ms
-	public String protocol;
+	public LongWritable startTime;  	//in ms
+	public LongWritable endTime;		//in ms
+	public Text protocol;
 	public IP srcAddress;
 	public IP destAddress;
-	public int srcPort;
-	public int destPort;
-	public int packets;
-	public long bytes;
-	public String tcpFlags;
-	public String typeOfService;
+	public IntWritable srcPort;
+	public IntWritable destPort;
+	public IntWritable packets;
+	public LongWritable bytes;
+	public Text tcpFlags;
+	public Text typeOfService;
 	
 	
 	
@@ -41,17 +40,17 @@ public class FlowRecord implements Writable{
 			int packets, long bytes, String tcpFlags, String typeOfService) {
 		super();
 		this.routerId = routerId;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.protocol = protocol;
+		this.startTime = new LongWritable(startTime);
+		this.endTime =   new LongWritable(endTime);
+		this.protocol = new Text(protocol);
 		this.srcAddress = srcAddress;
 		this.destAddress = destAddress;
-		this.srcPort = srcPort;
-		this.destPort = destPort;
-		this.packets = packets;
-		this.bytes = bytes;
-		this.tcpFlags = tcpFlags;
-		this.typeOfService = typeOfService;
+		this.srcPort = new IntWritable(srcPort);
+		this.destPort = new IntWritable(destPort);
+		this.packets = new IntWritable(packets);
+		this.bytes = new LongWritable(bytes);
+		this.tcpFlags = new Text(tcpFlags);
+		this.typeOfService = new Text(typeOfService);
 	}
 
 	private FlowRecord() {
@@ -102,57 +101,25 @@ public class FlowRecord implements Writable{
 	}
 
 	@Override
-	public void readFields(DataInput input) throws IOException 
-	{
-		this.routerId = IP.read(input);
-		this.startTime = input.readLong();
-		this.endTime = input.readLong();
-		this.protocol = WritableUtils.readString(input);
-		this.srcAddress = IP.read(input);
-		this.destAddress = IP.read(input);
-		this.srcPort = input.readInt();
-		this.destPort = input.readInt();
-		this.packets = input.readInt();
-		this.bytes = input.readLong();
-		this.tcpFlags = WritableUtils.readString(input);
-		this.typeOfService = WritableUtils.readString(input);
-		
-	}
-
-	@Override
-	public void write(DataOutput output) throws IOException {
-		routerId.write(output);
-		output.writeLong(startTime);  	
-		output.writeLong(endTime);				
-		WritableUtils.writeString(output, protocol);
-		srcAddress.write(output);
-		destAddress.write(output);		
-		output.writeInt(srcPort);
-		output.writeInt(destPort);
-		output.writeInt(packets);
-		output.writeLong(bytes);
-		WritableUtils.writeString(output, this.tcpFlags);
-		WritableUtils.writeString(output, typeOfService);
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (bytes ^ (bytes >>> 32));
+		int result = super.hashCode();
+		result = prime * result + ((bytes == null) ? 0 : bytes.hashCode());
 		result = prime * result
 				+ ((destAddress == null) ? 0 : destAddress.hashCode());
-		result = prime * result + destPort;
-		result = prime * result + (int) (endTime ^ (endTime >>> 32));
-		result = prime * result + packets;
+		result = prime * result
+				+ ((destPort == null) ? 0 : destPort.hashCode());
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+		result = prime * result + ((packets == null) ? 0 : packets.hashCode());
 		result = prime * result
 				+ ((protocol == null) ? 0 : protocol.hashCode());
 		result = prime * result
 				+ ((routerId == null) ? 0 : routerId.hashCode());
 		result = prime * result
 				+ ((srcAddress == null) ? 0 : srcAddress.hashCode());
-		result = prime * result + srcPort;
-		result = prime * result + (int) (startTime ^ (startTime >>> 32));
+		result = prime * result + ((srcPort == null) ? 0 : srcPort.hashCode());
+		result = prime * result
+				+ ((startTime == null) ? 0 : startTime.hashCode());
 		result = prime * result
 				+ ((tcpFlags == null) ? 0 : tcpFlags.hashCode());
 		result = prime * result
@@ -164,23 +131,35 @@ public class FlowRecord implements Writable{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		FlowRecord other = (FlowRecord) obj;
-		if (bytes != other.bytes)
+		if (bytes == null) {
+			if (other.bytes != null)
+				return false;
+		} else if (!bytes.equals(other.bytes))
 			return false;
 		if (destAddress == null) {
 			if (other.destAddress != null)
 				return false;
 		} else if (!destAddress.equals(other.destAddress))
 			return false;
-		if (destPort != other.destPort)
+		if (destPort == null) {
+			if (other.destPort != null)
+				return false;
+		} else if (!destPort.equals(other.destPort))
 			return false;
-		if (endTime != other.endTime)
+		if (endTime == null) {
+			if (other.endTime != null)
+				return false;
+		} else if (!endTime.equals(other.endTime))
 			return false;
-		if (packets != other.packets)
+		if (packets == null) {
+			if (other.packets != null)
+				return false;
+		} else if (!packets.equals(other.packets))
 			return false;
 		if (protocol == null) {
 			if (other.protocol != null)
@@ -197,9 +176,15 @@ public class FlowRecord implements Writable{
 				return false;
 		} else if (!srcAddress.equals(other.srcAddress))
 			return false;
-		if (srcPort != other.srcPort)
+		if (srcPort == null) {
+			if (other.srcPort != null)
+				return false;
+		} else if (!srcPort.equals(other.srcPort))
 			return false;
-		if (startTime != other.startTime)
+		if (startTime == null) {
+			if (other.startTime != null)
+				return false;
+		} else if (!startTime.equals(other.startTime))
 			return false;
 		if (tcpFlags == null) {
 			if (other.tcpFlags != null)

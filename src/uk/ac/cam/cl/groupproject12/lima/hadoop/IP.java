@@ -1,30 +1,28 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
 import java.io.DataInput;
-import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableUtils;
+import org.apache.hadoop.io.Text;
 
-public class IP implements Writable{
+public class IP extends AutoWritable {
 
-	public String value;
+	public Text value;
 	
-	private IP() 
+	public IP() 
 	{
-		//private constructor for deserializing
+		// constructor for deserializing
 	}
 	
 	public IP(String value) 
 	{
-		this.value = value;
+		this.value = new Text(value);
 	}
 	
 	public boolean isValid()
 	{
 		
-		String[] tokens = this.value.split("\\.");
+		String[] tokens = this.value.toString().split("\\.");
 		if (tokens.length != 4)
 		{
 			return false;
@@ -56,42 +54,5 @@ public class IP implements Writable{
 		IP ip = new IP();
 		ip.readFields(input);
 		return ip;
-	}
-	
-	
-	@Override
-	public void readFields(DataInput input) throws IOException 
-	{
-		this.value = WritableUtils.readString(input);
-	}
-
-	@Override
-	public void write(DataOutput output) throws IOException {
-		WritableUtils.writeString(output, value);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		IP other = (IP) obj;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
 	}
 }
