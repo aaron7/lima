@@ -53,6 +53,10 @@ public class FlowRecord implements Writable{
 		this.typeOfService = typeOfService;
 	}
 
+	private FlowRecord() {
+		super(); //private constructor for deserializing
+	}
+
 	static long valueOfDate(String string) throws ParseException
 	{
 		Date date = dateFormat.parse(string);
@@ -87,6 +91,13 @@ public class FlowRecord implements Writable{
 				valueOfBytes(tokens[9]),
 				tokens[10],
 				tokens[11]);
+	}
+	
+	public static FlowRecord read(DataInput input) throws IOException
+	{
+		FlowRecord record = new FlowRecord();
+		record.readFields(input);
+		return record;
 	}
 
 	@Override
