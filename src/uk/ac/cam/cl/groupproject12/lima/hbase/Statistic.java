@@ -10,6 +10,7 @@ import org.apache.hadoop.io.DataOutputBuffer;
 import org.apache.hadoop.io.Writable;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.FlowRecord;
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 public class Statistic implements Writable
 {
@@ -18,27 +19,27 @@ public class Statistic implements Writable
 	
 	public static class Key implements Writable
 	{
-		long routerId;
+		IP routerId;
 		long timeFrame;
 		
-		public Key(long routerId, long timeFrame) {
+		public Key(IP routerId, long timeFrame) {
 			super();
 			this.routerId = routerId;
 			this.timeFrame = timeFrame;
 		}
 		
 		private Key() {
-			// private constructor for deserialization
+			super(); // private constructor for deserialization
 		}
 
 		@Override
 		public void readFields(DataInput in) throws IOException {
-			this.routerId = in.readLong();
+			this.routerId = IP.read(in);
 			this.timeFrame = in.readLong();
 		}
 		@Override
 		public void write(DataOutput out) throws IOException {
-			out.writeLong(this.routerId);
+			this.routerId.write(out);
 			out.writeLong(this.timeFrame);
 		}
 	
@@ -63,7 +64,7 @@ public class Statistic implements Writable
 	int UDPCount;
 	int ICMPCount;
 	
-	public Statistic(long routerId, Long timeframe) 
+	public Statistic(IP routerId, Long timeframe) 
 	{
 		this.key = new Key(routerId, timeframe);
 	}

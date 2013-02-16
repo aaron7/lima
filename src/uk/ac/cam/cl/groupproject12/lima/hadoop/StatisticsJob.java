@@ -1,6 +1,7 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
   
   import java.io.IOException;
+import java.text.ParseException;
 import java.util.Iterator;
 
 import org.apache.hadoop.fs.FileSystem.Statistics;
@@ -27,10 +28,17 @@ import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
  
        public void map(LongWritable key, Text value, OutputCollector<LongWritable, FlowRecord> output, Reporter reporter) throws IOException {
          String line = value.toString();
-         FlowRecord record = FlowRecord.valueOf(line);
-         LongWritable minute = new LongWritable(record.startTime / 60000*60000);
-         output.collect(minute, record);
-         
+         FlowRecord record;
+         try 
+         {
+        	 record = FlowRecord.valueOf(line);
+        	 LongWritable minute = new LongWritable(record.startTime / 60000*60000);
+             output.collect(minute, record);
+         }
+         catch (ParseException e) 
+         {
+        	 throw new RuntimeException("Parse Error",e);
+         }
        }
      }
  

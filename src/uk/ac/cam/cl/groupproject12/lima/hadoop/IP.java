@@ -69,10 +69,4 @@ public class IP implements Writable{
 	public void write(DataOutput output) throws IOException {
 		Text.writeString(output, this.value);
 	}
-
-	
-	
-	
-	
-	
 }

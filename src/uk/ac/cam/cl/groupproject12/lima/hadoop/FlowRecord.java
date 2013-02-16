@@ -20,7 +20,7 @@ public class FlowRecord implements Writable{
 	
 	private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
-	public long routerId;
+	public IP routerId;
 	public long startTime;  	//in ms
 	public long endTime;		//in ms
 	public String protocol;
@@ -35,7 +35,7 @@ public class FlowRecord implements Writable{
 	
 	
 	
-	public FlowRecord(long routerId, long startTime, long endTime, String protocol,
+	public FlowRecord(IP routerId, long startTime, long endTime, String protocol,
 			IP srcAddress, IP destAddress, int srcPort, int destPort,
 			int packets, int bytes, String tcpFlags, String typeOfService) {
 		super();
@@ -53,7 +53,7 @@ public class FlowRecord implements Writable{
 		this.typeOfService = typeOfService;
 	}
 
-	private static long valueOfDate(String string) throws ParseException
+	static long valueOfDate(String string) throws ParseException
 	{
 		Date date = dateFormat.parse(string);
 		return date.getTime();
@@ -63,7 +63,7 @@ public class FlowRecord implements Writable{
 	{
 		String[] tokens = str.split(",");
 		return new FlowRecord(
-				Long.valueOf(tokens[0]),
+				IP.valueOf(tokens[0]),
 				valueOfDate(tokens[1]),
 				valueOfDate(tokens[2]),
 				tokens[3],
@@ -80,7 +80,7 @@ public class FlowRecord implements Writable{
 	@Override
 	public void readFields(DataInput input) throws IOException 
 	{
-		this.routerId = input.readLong();
+		this.routerId = IP.read(input);
 		this.startTime = input.readLong();
 		this.endTime = input.readLong();
 		this.protocol = Text.readString(input);
@@ -97,7 +97,7 @@ public class FlowRecord implements Writable{
 
 	@Override
 	public void write(DataOutput output) throws IOException {
-		output.writeLong(routerId);
+		routerId.write(output);
 		output.writeLong(startTime);  	
 		output.writeLong(endTime);				
 		Text.writeString(output, protocol);
