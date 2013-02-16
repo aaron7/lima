@@ -4,7 +4,6 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.io.DataOutputBuffer;
@@ -17,11 +16,46 @@ public class Statistic implements Writable
 	private static final byte[] QUANTIFIER = "data".getBytes();
 	private static final byte[] FAMILY = "family".getBytes(); 
 	
-	//key = (routerId, timeframe)
-	long routerId;
-	long timeFrame;
+	public static class Key implements Writable
+	{
+		long routerId;
+		long timeFrame;
+		
+		public Key(long routerId, long timeFrame) {
+			super();
+			this.routerId = routerId;
+			this.timeFrame = timeFrame;
+		}
+		
+		private Key() {
+			// private constructor for deserialization
+		}
+
+		@Override
+		public void readFields(DataInput in) throws IOException {
+			this.routerId = in.readLong();
+			this.timeFrame = in.readLong();
+		}
+		@Override
+		public void write(DataOutput out) throws IOException {
+			out.writeLong(this.routerId);
+			out.writeLong(this.timeFrame);
+		}
 	
-	//values
+		public byte[] getByteValue()
+		{
+			try {
+				DataOutputBuffer out = new DataOutputBuffer();
+				this.write(out);
+				return out.getData();
+			} catch (IOException e) 
+			{
+				throw new RuntimeException("Unexpected IO Exception",e);
+			}
+		}
+	}
+	
+	Key key;
 	int flowCount;
 	int packetCount;
 	int totalDataSize;
@@ -31,14 +65,7 @@ public class Statistic implements Writable
 	
 	public Statistic(long routerId, Long timeframe) 
 	{
-		this.routerId = routerId;
-		this.timeFrame = timeframe;
-	}
-
-	public void setKey(long routerId, long timeframe)
-	{
-		this.routerId = routerId;
-		this.timeFrame = timeframe;
+		this.key = new Key(routerId, timeframe);
 	}
 	
 	public void addFlowRecord(FlowRecord record)
@@ -64,15 +91,6 @@ public class Statistic implements Writable
 			//TODO log error?
 		}
 	}
-	
-	private static byte[] getByteKey(long routerId, long timeFrame)
-	{
-		ByteBuffer bb = ByteBuffer.allocate(16);
-		bb.putLong(routerId);
-		bb.putLong(timeFrame);
-		return bb.array();
-	}
-	
 	private byte[] getByteValue()
 	{
 		try {
@@ -87,16 +105,22 @@ public class Statistic implements Writable
 	
 	public void putToHbase()
 	{
-		Put put = new Put(getByteKey(this.routerId, this.timeFrame));
+		Put put = new Put(this.key.getByteValue());
 		put.add(FAMILY, QUANTIFIER, this.getByteValue());
 		//HTable statistics = TODO
 		// statistics.put(put);
 	}
 	
+	private static Key readKey(DataInput in) throws IOException
+	{
+		Key key = new Key();
+		key.readFields(in);
+		return key;
+	}
+	
 	@Override
 	public void readFields(DataInput in) throws IOException {
-		this.routerId = in.readLong();
-		this.timeFrame = in.readLong();
+		this.key = readKey(in);
 		this.flowCount = in.readInt();
 		this.packetCount = in.readInt();
 		this.totalDataSize = in.readInt();
@@ -108,8 +132,7 @@ public class Statistic implements Writable
 
 	@Override
 	public void write(DataOutput out) throws IOException {
-		out.writeLong(routerId);
-		out.writeLong(timeFrame);
+		this.key.write(out);
 		out.writeInt(flowCount);
 		out.writeInt(packetCount);
 		out.writeInt(totalDataSize);
