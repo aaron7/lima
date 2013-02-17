@@ -3,7 +3,7 @@ Created on 1 Feb 2013
 
 @author: aaron
 
-IMPORTANT: Do not run using normal the normal python interface.
+IMPORTANT: Do not run using the normal python interface.
 #1: Use the python virtual enviroment by running: python-env/bin/activate
 #2: Run using gunicorn by running: gunicorn --debug --worker-class=gevent -t 99999 web:app
 '''
