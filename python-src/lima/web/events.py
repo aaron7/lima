@@ -23,7 +23,7 @@ class EventsHandler():
     
     """returns the events list in JSON
     """
-    def getEventsJSON(self):
+    def getEventsList(self):
         return self.eventsList
     
     """get new events, publish the new events, update last event ID and append to the Events List
@@ -35,3 +35,11 @@ class EventsHandler():
             self.red.publish("events",json.dumps(newEvents)) #send the updates to the stream
             self.lastEventID = newEvents[len(newEvents)-1][0] #update last event ID
             self.eventsList.extend(newEvents)
+            
+            
+    #TODO: PRUNE OLD EVENTS FROM THE TABLE
+    
+    
+    
+    
+    

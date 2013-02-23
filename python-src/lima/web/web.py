@@ -15,6 +15,7 @@ import json
 
 from database import PostgresDB, HBaseDB
 from events import EventsHandler
+from router import RouterHandler
 from flask import request
 
 #start up flask and redis
@@ -25,6 +26,7 @@ red = redis.StrictRedis()
 postgresDB = PostgresDB()
 hbaseDB = HBaseDB()
 eventsHandler = EventsHandler(postgresDB,red)
+routerHandler = RouterHandler(postgresDB,red)
 
 '''
 Other
@@ -81,6 +83,11 @@ def updateEvents():
     # red.publish('events', json.dumps(data)) #push into the events channel through a json dump
     return ("Done")
 
+@app.route("/updateRouters")
+def updateRouters():
+    routerHandler.checkRouterUpdates()
+    return ("Done")
+
 """make a stream to a list of channels /stream?channels=ch1,ch2,ch4
 """
 @app.route('/stream')
@@ -93,7 +100,9 @@ def stream():
 @app.route('/get')
 def get():
     if request.args['id'] == 'events':
-        return json.dumps(eventsHandler.getEventsJSON());
+        return json.dumps(eventsHandler.getEventsList());
+    elif request.args['id'] == 'routers':
+        return json.dumps(routerHandler.getRoutersList());
     else:
         return "Error: did not understand arguments"
 

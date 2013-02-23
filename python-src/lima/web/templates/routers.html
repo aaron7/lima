@@ -7,7 +7,9 @@
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <link rel="stylesheet" href="static/css/bootstrap.css">
     <link rel="stylesheet" href="static/css/bootstrap-responsive.css">
-    <link rel="stylesheet" href="static/css/main.css"> 
+    <link rel="stylesheet" href="static/css/main.css">
+    <link rel="stylesheet" href="static/css/jquery.dataTables.css"> 
+    <link rel="stylesheet" href="static/css/jquery.dataTables_themeroller.css"> 
   </head>
   
   <body>
@@ -18,10 +20,10 @@
           <div class="navbar-content">
             <ul class="nav">
               <li class="active">
-                <a href="/">Dashboard</a> 
+                <a href="#">Dashboard</a> 
               </li>
               <li>
-                <a href="#">Routers</a> 
+                <a href="/routers">Routers</a> 
               </li>
               <li>
                 <a href="#">Server information</a> 
@@ -50,24 +52,114 @@
           </ul>
         </div>
         <div class="span9">
-            <div class="span9">
+
               <div class="alert alert-error">
                 <button type="button" class="close">×</button>
-                <b>Alert! </b>Default alert message here...</div>
+                <b>Alert! </b><span class="alertmessage"></span></div>
+
+          <div class="row-fluid">
+            <div class="span9">
+              <div class="well">
+                <table id="routers">
+                  <thead>
+                  <tr>
+                    <th>Router IP</th>
+                    <th>Last Seen</th>
+                    <th>Flows Per Hour</th>
+                    <th>Packets Per Hour</th>
+                    <th>Bytes Per Hour</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                  <td>Loading...</td>
+                  </tr>
+                </tbody>
+                </table>
+              </div>
             </div>
-            
-          <div
-          class="row"></div>
-        <div class="container">
-          <h1 id="router-table">
-            <br> 
-          </h1>
+          </div>
         </div>
       </div>
     </div>
-    </div>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-  </body>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="static/js/jquery.dataTables.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script>
 
+      function initial(){
+      $.getJSON("/get?id=routers", function(data){
+        globaldata = data;
+
+        console.debug("INITAL GET", data);
+
+
+        $('#routers').dataTable( {
+          "aaData": data,
+          "aoColumns": [
+            { "sTitle": "Router IP" },
+            { "sTitle": "Last Seen" },
+            { "sTitle": "Flows Per Hour" },
+            { "sTitle": "Packets Per Hour"},
+            { "sTitle": "Bytes Per Hour"}
+          ]
+        } );
+
+      });
+      }initial();
+
+      $(document).ready(function() {
+        //consider putting sse and other load stuff here
+      } );
+
+      //SSE (server side events - push) - CURRENTLY ONLY WORKS ON ALL BROWSERS EXCEPT IE - will use polyfill later
+      function sse() {
+        var source = new EventSource('/stream?channels=routerUpdates');
+        source.onmessage = function(e) {
+          console.log("NEW MESSAGE: ", JSON.parse(e.data))
+          var jsondata = JSON.parse(e.data)
+          
+          if(typeof jsondata === 'object'){
+            console.log("ROUTER UDPATES");
+            var nextRowToUpdate = jsondata.shift();
+            for (var i = 0; i < globaldata.length; i++) {
+              if (globaldata[i][0] == nextRowToUpdate[0]) {
+                //found a row to update
+                $('#routers').dataTable().fnDeleteRow(i);
+                $('#routers').dataTable().fnAddData(nextRowToUpdate);
+                if (jsondata.length == 0){
+                  nextRowToUpdate = null; //set to null as we have just updated this one
+                  break; //we have just updated the last router
+                } else {
+                  nextRowToUpdate = jsondata.shift(); //pop off next update
+                }
+              }
+            }
+            //if we still have routers left they are NEW :O
+            if (typeof nextRowToUpdate !== null){
+              $('#routers').dataTable().fnAddData(nextRowToUpdate);
+              $('#routers').dataTable().fnAddData(jsondata);
+            }
+
+
+
+          }
+
+          //$('#packet-count').text(data.count); //update the packet count from json info
+          //$('.tablelist').text(data.tables); //update the table list from json info
+        };
+      } sse();
+
+      //show alert when called
+      function show_alert(msg) {
+        $('.alert .alertmessage').text(msg);
+        $('.alert').show();
+      }
+
+      //hide alert when the close button is clicked
+      $('.close').click(function(){
+        $('.alert').hide();
+      })
+    </script>
+  </body>
 </html>

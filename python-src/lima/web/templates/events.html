@@ -127,8 +127,6 @@
           if(typeof JSON.parse(e.data) === 'object'){
             console.log("ADDED NEW ROW");
             $('#events').dataTable().fnAddData(JSON.parse(e.data));
-          }else{
-
           }
 
           //$('#packet-count').text(data.count); //update the packet count from json info
