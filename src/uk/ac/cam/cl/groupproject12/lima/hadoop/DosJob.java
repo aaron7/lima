@@ -103,10 +103,12 @@ public class DosJob {
                 }
                 srcIPCount++;
             }
-            DoSAttack res = new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount), new IntWritable(srcIPCount));
-            if(isSignificant(res))
-                output.collect(key,res);
-            //TODO output to HBase here
+            if(!first){
+                DoSAttack res = new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount), new IntWritable(srcIPCount));
+                if(isSignificant(res))
+                    output.collect(key,res);
+                //TODO output to HBase here
+            }
         }
 
     }
