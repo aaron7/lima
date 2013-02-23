@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>{% block title %}{% endblock %} - Lima</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <link rel="stylesheet" href="static/css/bootstrap.css">
+  <link rel="stylesheet" href="static/css/bootstrap-responsive.css">
+  <link rel="stylesheet" href="static/css/main.css">
+  <link rel="stylesheet" href="static/css/jquery.dataTables.css"> 
+  <link rel="stylesheet" href="static/css/jquery.dataTables_themeroller.css"> 
+
+  {% block head %}
+  {% endblock %}
+
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="/">Lima Web UI</a>
+        <div class="navbar-content">
+          <ul class="nav">
+            <li {% if pagename == "Dashboard" %}{% endif%}>
+              <a href="/">Dashboard</a> 
+            </li>
+            <li{% if pagename == "Routers" %}{% endif%}>
+              <a href="/routers">Routers</a> 
+            </li>
+            <li{% if pagename == "Events" %}{% endif%}>
+              <a href="/events">Events</a> 
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div class="span2">
+        <ul class="nav  nav-pills nav-stacked">
+          <li class="active">
+            <a href="#">Might use sidebar instead of top bar</a> 
+          </li>
+          <li>
+            <a href="#">Dashboard</a> 
+          </li>
+          <li>
+            <a href="#">Routers</a> 
+          </li>
+          <li>
+            <a href="#">Events</a> 
+          </li>
+        </ul>
+      </div>
+      <div class="span9">
+
+        <div class="alert alert-error">
+          <button type="button" class="close">×</button>
+          <b>Alert! </b><span class="alertmessage"></span>
+        </div>
+
+        {% block content %}
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="well">
+              Default content template
+            </div>
+          </div>
+        </div>
+        {% endblock %}
+
+      </div>
+    </div>
+  </div>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src="static/js/jquery.dataTables.min.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
+  {% block scripts%}
+
+  {% endblock %}
+
+  <script>
+    $(document).ready(function() {
+        //consider putting sse and other load stuff here
+      } );
+
+      //show alert when called
+      function show_alert(msg) {
+        $('.alert .alertmessage').text(msg);
+        $('.alert').show();
+      }
+
+      //hide alert when the close button is clicked
+      $('.close').click(function(){
+        $('.alert').hide();
+      })
+  </script>
+</body>
+</html>
