@@ -175,9 +175,9 @@ public class DosJob {
      * Make a new configuration for a DOS Job
      * @return JobConf for the new job
      */
-    public static JobConf getConf(String inputPath, String outputPath) {
+    public static JobConf getConf(String inputPath, String outputPath, int chain) {
         JobConf conf = new JobConf();
-        conf.setJobName("DOS Job: "+inputPath);
+        conf.setJobName("DOS Job part "+chain+": "+inputPath);
 
         //I am not sure about this line, but that seems to be what the examples are doing
         //conf.setJarByClass(RunDosJob.class);
@@ -188,9 +188,16 @@ public class DosJob {
         conf.setOutputKeyClass(BytesWritable.class);
         conf.setOutputKeyClass(DosJob.DoSAttack.class);
 
-        conf.setMapperClass(DosJob.Map1.class);
-        conf.setReducerClass(DosJob.Reduce1.class);
-
+        //set which mappers and reducers to use
+        switch (chain) {
+            case 1: conf.setMapperClass(DosJob.Map1.class);
+                    conf.setReducerClass(DosJob.Reduce1.class);
+                    break;
+            case 2: conf.setMapperClass(DosJob.Map2.class);
+                    conf.setReducerClass(DosJob.Reduce2.class);
+                    break;
+        }
+        
         //Should parse lines, key is byteOffset from the beginning of the file, but not used anyway
         conf.setInputFormat(TextInputFormat.class);
         //Should produce a binary format. I think this should be used for intermediate representation in
