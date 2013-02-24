@@ -10,10 +10,17 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Iterator;
 
+/**
+ * Encapsulates the Map and Reduce jobs for the DoS attack threat analysis.
+ */
 public class DosJob {
+    /**
+     * The firs map job takes text and produces a FlowRecord if the particular flow is suspicious.
+     * The keys are based on a minute-based timestamp, destination address and source address.
+     */
     public static class Map1 extends MapReduceBase implements Mapper<LongWritable, Text, BytesWritable, FlowRecord> {
         //TODO determine a sensible threshold.
-        public static final int bytesPacketsThreshold = 40;
+        public static final int bytesPacketsThreshold = 30;
 
         public void map(LongWritable key, Text value, OutputCollector<BytesWritable, FlowRecord> output, Reporter reporter) throws IOException {
             String line = value.toString();
@@ -33,6 +40,10 @@ public class DosJob {
         }
     }
 
+    /**
+     * The first reduce jobs just combines the different flows with the same key and aggregates the appropriate fields.
+     * It outputs an instance of DoSAttack class, with the same key.
+     */
     public static class Reduce1 extends MapReduceBase implements Reducer<BytesWritable, FlowRecord, BytesWritable, DoSAttack> {
         public void reduce(BytesWritable key, Iterator<FlowRecord> values, OutputCollector<BytesWritable, DoSAttack> output, Reporter reporter) throws IOException {
 
@@ -66,12 +77,19 @@ public class DosJob {
         }
     }
 
+    /**
+     * The second map job only creates a key that represents the minute timestamp and the destination address of the attack.
+     */
     public static class Map2 extends MapReduceBase implements Mapper<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
         public void map(BytesWritable key, DoSAttack value, OutputCollector<BytesWritable, DoSAttack> output, Reporter reporter) throws IOException {
             output.collect(SerializationUtils.asBytes(value.destAddress,new LongWritable(value.startTime.get() / 60000*60000)),value);
         }
     }
 
+    /**
+     * The second reduce job collects the data for the same key.
+     * It only outputs if the whole DosAttack is determined to be significant, i.e. that the data is not noise.
+     */
     public static class Reduce2 extends MapReduceBase implements Reducer<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
         public void reduce(BytesWritable key, Iterator<DoSAttack> values, OutputCollector<BytesWritable, DoSAttack> output, Reporter reporter) throws IOException {
 
@@ -138,8 +156,17 @@ public class DosJob {
         }
     }
 
+    /**
+     * This method takes in a DoSAttack and determines whether it is significant, i.e. whether it is just noise
+     * data, or whether it is an actual attack, based on the size of the flow, the packets transmitted, etc.
+     * @param res
+     * @return true if res is not noise data.
+     */
     private static boolean isSignificant(DoSAttack res) {
         //TODO determine whether the result is significant enough to be determined as a DoS attack.
-        return false;  //To change body of created methods use File | Settings | File Templates.
+        //This is basically just guessing with our knowledge of networking, the network topology, and without the
+        //ability to test on large-scale real-world data, so I suggest just guessing something and not worrying
+        //about the actual numbers we put in, which would be determined by whoever actually wants to use this.
+        return false;
     }
 }
