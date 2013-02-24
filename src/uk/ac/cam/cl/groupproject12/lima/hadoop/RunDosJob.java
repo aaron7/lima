@@ -4,13 +4,15 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.mapred.*;
 
+import java.io.IOException;
+
 
 /**
  * A test class to run the DosJob map reduce (as of now only the first stage
  * that produces binary file to be run by another stage.
  */
 public class RunDosJob {
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException {
         //TODO find a way of linking multiple stage jobs.
         //I don't think it's necessary to use other external tools.
         //As the pipelines are static, we could instead just have describe the pipeline
@@ -47,5 +49,12 @@ public class RunDosJob {
         //Replace with some arguments passed, this was only for my internal testing.
         FileInputFormat.setInputPaths(conf, new Path("input/netflow_anonymous.csv"));
         FileOutputFormat.setOutputPath(conf, new Path("out/Dos.bin1"));
+
+        //Submit this job (jobconfiguration).
+        RunningJob job = JobClient.runJob(conf);
+
+        //I want to block for completion in here. We wouldn't want to block for completion in our production code.
+        job.waitForCompletion();
+
     }
 }

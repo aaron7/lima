@@ -167,6 +167,6 @@ public class DosJob {
         //This is basically just guessing with our knowledge of networking, the network topology, and without the
         //ability to test on large-scale real-world data, so I suggest just guessing something and not worrying
         //about the actual numbers we put in, which would be determined by whoever actually wants to use this.
-        return false;
+        return res.packets.get()>10000;
     }
 }
