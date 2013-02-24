@@ -12,7 +12,7 @@ import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
  *
  */
 public class RunJobs {
-    public void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException{
         //create a job control object
         JobControl jbcntrl = new JobControl("batchOfJobsGroup1");
 
