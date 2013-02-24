@@ -23,9 +23,12 @@ lockfile-create -l -r 0 "$LOCKFILE" || exit 1
 trap "[ -f $SCRIPT_DIR/$LOCKFILE ] && /bin/rm -f $SCRIPT_DIR/$LOCKFILE" 0 1 2 3 13 15 
 
 if [ ! -p "$FIFO_FILE" ]; then
+    # Check where the FIFO will be.  Is it a pipe?  No?  Well, it's either nothing, or a non-pipe.
     if [ -a "$FIFO_FILE" ]; then
+        # Non-pipes should be deleted.
         rm "$FIFO_FILE"
     fi
+    # Put the FIFO where it should be.
     mkfifo "$FIFO_FILE"
 fi
 
@@ -40,5 +43,6 @@ if [ "$(ls -A $IMPORT_DIR)" ]; then
     done
 fi
 
+# Now go back to where the lockfile was and 'unlock' the process by just deleting the file.
 cd "$SCRIPT_DIR"
 rm -f "$LOCKFILE"
