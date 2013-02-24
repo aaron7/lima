@@ -11,7 +11,13 @@ import java.io.IOException;
  * A test class to run the DosJob map reduce (as of now only the first stage
  * that produces binary file to be run by another stage.
  */
+/**
+ * We could push all of the conf generation into each job itself and use RunJobs and the main
+ * java class which is called by the importer to run all the jobs for a router.
+ */
+@Deprecated
 public class RunDosJob {
+    @Deprecated
     public static void main(String[] args) throws IOException {
         //TODO find a way of linking multiple stage jobs.
         //I don't think it's necessary to use other external tools.

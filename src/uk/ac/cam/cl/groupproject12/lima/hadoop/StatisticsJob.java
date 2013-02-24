@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import org.apache.hadoop.fs.FileSystem.Statistics;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
@@ -17,6 +18,7 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapred.SequenceFileAsBinaryOutputFormat;
 import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
 
@@ -59,8 +61,40 @@ public class StatisticsJob {
             output.collect(key, stat);
         }
     }
+    
+    /**
+     * Make a new configuration for a Statistics Job
+     * @return JobConf for the new job
+     */
+    public static JobConf getConf(String inputPath, String outputPath) {
+        JobConf conf = new JobConf();
+        conf.setJobName("Statistics Job: "+inputPath);
 
-    public static void main(String[] args) throws Exception {
+        //I am not sure about this line, but that seems to be what the examples are doing
+        //conf.setJarByClass(RunDosJob.class);
+
+        conf.setOutputKeyClass(LongWritable.class);
+        conf.setOutputValueClass(Statistic.class);
+        
+        conf.setMapperClass(Map.class);
+        //no combiner for now, simpler that way.
+        conf.setReducerClass(Reduce.class);
+        
+        //TODO I'm a little unsure about these two:
+        conf.setInputFormat(TextInputFormat.class);
+        conf.setOutputFormat(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(conf, new Path(inputPath));
+        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
+        
+        return conf;
+    }
+
+    /*
+     * Old main method to test job creation. Instead we have a method to create conf to pass onto
+     * the main RunJobs class.
+     * 
+     * public static void main(String[] args) throws Exception {
         JobConf conf = new JobConf(Statistics.class);
         conf.setJobName("statistics");
 
@@ -78,6 +112,6 @@ public class StatisticsJob {
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
 
         JobClient.runJob(conf);
-    }
+    }*/
 }
 

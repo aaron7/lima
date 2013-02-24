@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -168,5 +169,39 @@ public class DosJob {
         //ability to test on large-scale real-world data, so I suggest just guessing something and not worrying
         //about the actual numbers we put in, which would be determined by whoever actually wants to use this.
         return res.packets.get()>10000;
+    }
+    
+    /**
+     * Make a new configuration for a DOS Job
+     * @return JobConf for the new job
+     */
+    public static JobConf getConf(String inputPath, String outputPath) {
+        JobConf conf = new JobConf();
+        conf.setJobName("DOS Job: "+inputPath);
+
+        //I am not sure about this line, but that seems to be what the examples are doing
+        //conf.setJarByClass(RunDosJob.class);
+
+        conf.setMapOutputKeyClass(BytesWritable.class);
+        conf.setMapOutputValueClass(FlowRecord.class);
+
+        conf.setOutputKeyClass(BytesWritable.class);
+        conf.setOutputKeyClass(DosJob.DoSAttack.class);
+
+        conf.setMapperClass(DosJob.Map1.class);
+        conf.setReducerClass(DosJob.Reduce1.class);
+
+        //Should parse lines, key is byteOffset from the beginning of the file, but not used anyway
+        conf.setInputFormat(TextInputFormat.class);
+        //Should produce a binary format. I think this should be used for intermediate representation in
+        //multi-stage MapReduce jobs. For the final output, we might want to use a text format, but as of now,
+        //we are not using the files anyway.
+        conf.setOutputFormat(SequenceFileAsBinaryOutputFormat.class);
+
+        //Replace with some arguments passed, this was only for my internal testing.
+        FileInputFormat.setInputPaths(conf, new Path(inputPath));
+        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
+        
+        return conf;
     }
 }
