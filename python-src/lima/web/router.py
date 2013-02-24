@@ -41,4 +41,11 @@ class RouterHandler():
             self.red.publish("routerUpdates",json.dumps(sorted(list(updatesSet))))
             self.routersList = tempList #update our local copy
             
+    #def getEventsOverview(self):
+        
+        
+        
+        
+        
+        
         

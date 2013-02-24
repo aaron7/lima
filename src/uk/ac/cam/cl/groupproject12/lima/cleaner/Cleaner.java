@@ -27,7 +27,6 @@ public abstract class Cleaner {
 		cleanTable(conf, "statistics");
 		cleanTable(conf, "events");
 	}
-
 	private static void cleanTable(Configuration conf, String tableName) {
 		try {
 			HTable table = new HTable(conf, tableName);

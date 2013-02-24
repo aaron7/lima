@@ -1,6 +1,6 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
-  
-  import java.io.IOException;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Iterator;
 
@@ -21,64 +21,63 @@ import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
 
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
- 
- public class StatisticsJob {
- 
-     public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, LongWritable, FlowRecord> {
- 
-       public void map(LongWritable key, Text value, OutputCollector<LongWritable, FlowRecord> output, Reporter reporter) throws IOException {
-         String line = value.toString();
-         FlowRecord record;
-         try 
-         {
-        	 record = FlowRecord.valueOf(line);
-        	 LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
-             output.collect(minute, record);
-         }
-         catch (ParseException e) 
-         {
-        	 throw new RuntimeException("Parse Error",e);
-         }
-       }
-     }
- 
-     public static class Reduce extends MapReduceBase implements Reducer<LongWritable, FlowRecord, LongWritable, Statistic> {
-       public void reduce(LongWritable key, Iterator<FlowRecord> values, OutputCollector<LongWritable, Statistic> output, Reporter reporter) throws IOException {
-    	   
-    	   Statistic stat = null;
-    	   Long timeframe = key.get();
-    	   
-    	   for(FlowRecord record = values.next(); values.hasNext(); record = values.next())
-    	   {
-    		   if (stat == null)
-    		   {
-    			   stat = new Statistic(record.routerId, timeframe);
-    		   }
-    		   stat.addFlowRecord(record);
-    	   }
-    	   stat.putToHbase();
-    	   output.collect(key, stat);
-       }
-     }
- 
-     public static void main(String[] args) throws Exception {
-       JobConf conf = new JobConf(Statistics.class);
-       conf.setJobName("statistics");
- 
-       conf.setOutputKeyClass(LongWritable.class);
-       conf.setOutputValueClass(Statistic.class);
- 
-       conf.setMapperClass(Map.class);
-       //no combiner for now, simpler that way.
-       conf.setReducerClass(Reduce.class);
- 
-       //TODO im a little unsure about these four:
-       conf.setInputFormat(TextInputFormat.class);
-       conf.setOutputFormat(TextOutputFormat.class);
-       FileInputFormat.setInputPaths(conf, new Path(args[0]));
-       FileOutputFormat.setOutputPath(conf, new Path(args[1]));
- 
-       JobClient.runJob(conf);
-     }
- }
- 
+
+public class StatisticsJob {
+
+    public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, LongWritable, FlowRecord> {
+        public void map(LongWritable key, Text value, OutputCollector<LongWritable, FlowRecord> output, Reporter reporter) throws IOException {
+            String line = value.toString();
+            FlowRecord record;
+            try
+            {
+                record = FlowRecord.valueOf(line);
+                LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
+                output.collect(minute, record);
+            }
+            catch (ParseException e) 
+            {
+                throw new RuntimeException("Parse Error",e);
+            }
+        }
+    }
+
+    public static class Reduce extends MapReduceBase implements Reducer<LongWritable, FlowRecord, LongWritable, Statistic> {
+        public void reduce(LongWritable key, Iterator<FlowRecord> values, OutputCollector<LongWritable, Statistic> output, Reporter reporter) throws IOException {
+
+            Statistic stat = null;
+            Long timeframe = key.get();
+
+            for(FlowRecord record = values.next(); values.hasNext(); record = values.next())
+            {
+                if (stat == null)
+                {
+                    stat = new Statistic(record.routerId, timeframe);
+                }
+                stat.addFlowRecord(record);
+            }
+            stat.putToHbase();
+            output.collect(key, stat);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        JobConf conf = new JobConf(Statistics.class);
+        conf.setJobName("statistics");
+
+        conf.setOutputKeyClass(LongWritable.class);
+        conf.setOutputValueClass(Statistic.class);
+
+        conf.setMapperClass(Map.class);
+        //no combiner for now, simpler that way.
+        conf.setReducerClass(Reduce.class);
+
+        //TODO im a little unsure about these four:
+        conf.setInputFormat(TextInputFormat.class);
+        conf.setOutputFormat(TextOutputFormat.class);
+        FileInputFormat.setInputPaths(conf, new Path(args[0]));
+        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+
+        JobClient.runJob(conf);
+    }
+}
+
