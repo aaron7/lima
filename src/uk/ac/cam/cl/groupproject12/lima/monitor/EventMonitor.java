@@ -31,7 +31,7 @@ public class EventMonitor {
 	Connection jdbcPGSQL = null;
 
 	public EventMonitor(HBaseConnectionDetails hbaseConf,
-			IDataSynchroniser synchroniser) {
+			IDataSynchroniser synchroniser) throws PGSQLConfigurationException {
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				hbaseConf.getHost());
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
@@ -46,6 +46,8 @@ public class EventMonitor {
 		}
 
 		try {
+			PostgreSQLConnectionDetails pgsqlConn = getPostgresConnection();
+
 			this.jdbcPGSQL = DriverManager.getConnection(
 					String.format(Constants.PGSQL_CONNECTION_STRING,
 							hbaseConf.getHost(), hbaseConf.getPort(),
@@ -82,14 +84,19 @@ public class EventMonitor {
 				throw new PGSQLConfigurationException(
 						Constants.ERROR_POSTGRESQL_CONFIG_TOO_MANY);
 			}
-			
+
 			Node node = PGSQLConnectionInfo.item(0);
-			
-			if (node.getNodeType() == Node.ELEMENT_NODE)
-			{
+
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element nodeElement = (Element) node;
-				
+
+				// TODO - how to retrieve the attributes? <pgsql host="..."
+				// port=... user="..." etc... >
+
 			}
+
+			return new PostgreSQLConnectionDetails(hostname, port, username,
+					password, dbName);
 
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
