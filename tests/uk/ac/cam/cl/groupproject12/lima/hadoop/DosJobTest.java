@@ -10,7 +10,6 @@ import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,12 +45,8 @@ public class DosJobTest {
         values.add(rec);
         BytesWritable key = SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2"));
         reduceDriver1.withInput(key,values);
-        reduceDriver1.withOutput(key,new DosJob.DoSAttack(new IP("1.1.1.1"),new LongWritable(0), new LongWritable(1),new IP("0.0.0.0"),new IntWritable(4), new LongWritable(5),new IntWritable(1),new IntWritable(1)));
-        try {
-            reduceDriver1.run();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        reduceDriver1.withOutput(key, new DosJob.DoSAttack(new IP("1.1.1.1"), new LongWritable(0), new LongWritable(1), new IP("0.0.0.0"), new IntWritable(4), new LongWritable(5), new IntWritable(1), new IntWritable(1)));
+        reduceDriver1.runTest();
     }
 
     @Test
@@ -66,11 +61,7 @@ public class DosJobTest {
         values.add(new FlowRecord(new IP("1.1.1.1"),30L,3L,6,new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,1,1,"",""));
         values.add(new FlowRecord(new IP("1.1.1.1"),20L,86L,6,new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,1,1,"",""));
         reduceDriver1.withInput(SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2")),values);
-        reduceDriver1.withOutput(SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2")),new DosJob.DoSAttack(new IP("1.1.1.1"),new LongWritable(20), new LongWritable(100),new IP("0.0.0.0"),new IntWritable(11), new LongWritable(15),new IntWritable(4),new IntWritable(1)));
-        try {
-            reduceDriver1.run();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        reduceDriver1.withOutput(SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2")), new DosJob.DoSAttack(new IP("1.1.1.1"), new LongWritable(20), new LongWritable(100), new IP("0.0.0.0"), new IntWritable(11), new LongWritable(15), new IntWritable(4), new IntWritable(1)));
+        reduceDriver1.runTest();
     }
 }
