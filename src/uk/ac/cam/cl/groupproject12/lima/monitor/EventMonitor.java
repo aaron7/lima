@@ -75,7 +75,6 @@ public class EventMonitor {
                 throw new SingleInstanceException(location);
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -86,7 +85,6 @@ public class EventMonitor {
         try {
             this.filelock.release();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
