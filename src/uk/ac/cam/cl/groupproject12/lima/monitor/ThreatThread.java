@@ -9,7 +9,7 @@ import org.apache.hadoop.conf.Configuration;
  * @author Team Lima
  */
 public class ThreatThread implements Runnable {
-    // HBase connection configuration
+    // Handle to the monitor in which common state is stored.
     private EventMonitor monitor;
 
     ThreatThread(EventMonitor monitor)
