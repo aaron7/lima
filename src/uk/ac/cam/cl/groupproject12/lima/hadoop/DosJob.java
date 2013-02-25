@@ -186,7 +186,7 @@ public class DosJob {
      * @return JobConf for the new job
      */
     public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
-        String phase1Output = inputPath+".phase1";
+        String phase1Output = outputPath+".phase1";
 
         //Set up job1 to perform Map1 and Reduce1
         Job job1 = Job.getInstance(new Configuration(), "DosJobPhase1:"+inputPath);
@@ -202,6 +202,8 @@ public class DosJob {
 
         job1.setInputFormatClass(TextInputFormat.class);
         job1.setOutputFormatClass(TextOutputFormat.class);
+
+        job1.setJarByClass(DosJob.class);
 
         FileInputFormat.setInputPaths(job1,new Path(inputPath));
         FileOutputFormat.setOutputPath(job1,new Path(phase1Output));
@@ -224,6 +226,8 @@ public class DosJob {
 
         job2.setInputFormatClass(TextInputFormat.class);
         job2.setOutputFormatClass(TextOutputFormat.class);
+
+        job2.setJarByClass(DosJob.class);
 
         FileInputFormat.setInputPaths(job2,new Path(phase1Output));
         FileOutputFormat.setOutputPath(job2,new Path(outputPath));
