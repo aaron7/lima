@@ -14,9 +14,9 @@ public interface IDataSynchroniser {
 	 * for a particular implementation (one implementation per table / dataset
 	 * to replicate).
 	 * 
-	 * @param EventMonitor
-	 *            An instance of the EventMonitor which contains the state
-	 *            required to interact with the various databases.
+	 * @param monitor
+	 *            instance of the EventMonitor which contains the state required
+	 *            to interact with the various databases.
 	 * 
 	 * @return true on success, false on failure
 	 */
