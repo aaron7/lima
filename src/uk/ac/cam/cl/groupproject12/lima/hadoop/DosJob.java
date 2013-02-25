@@ -41,7 +41,7 @@ public class DosJob {
                 record = FlowRecord.valueOf(line);
                 if(record.bytes.get()/record.packets.get()<bytesPacketsThreshold){
                     LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
-                    context.write(SerializationUtils.asBytes(record.destAddress,minute,record.srcAddress), record);
+                    context.write(SerializationUtils.asBytesWritable(record.destAddress,minute,record.srcAddress), record);
                 }
             }
             catch (ParseException e)
@@ -95,7 +95,7 @@ public class DosJob {
     public static class Map2 extends Mapper<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
         @Override
         public void map(BytesWritable key, DoSAttack value, Context context) throws IOException, InterruptedException {
-            context.write(SerializationUtils.asBytes(value.destAddress, new LongWritable(value.startTime.get() / 60000 * 60000)), value);
+            context.write(SerializationUtils.asBytesWritable(value.destAddress, new LongWritable(value.startTime.get() / 60000 * 60000)), value);
         }
     }
 
