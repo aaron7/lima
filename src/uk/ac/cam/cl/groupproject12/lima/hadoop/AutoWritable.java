@@ -23,10 +23,10 @@ import org.apache.hadoop.io.Writable;
 public abstract class AutoWritable implements Writable 
 {
 	
-	public static List<Field> getAllFields(Writable object)
+	public final List<Field> getAllFields()
 	{
 		List<Field> list = new ArrayList<Field>();
-		Class<?> clss = object.getClass();
+		Class<? extends Object> clss = this.getClass(); 
 		while (! clss.equals(Object.class))
 		{
 			list.addAll(Arrays.asList(clss.getDeclaredFields()));
@@ -35,9 +35,23 @@ public abstract class AutoWritable implements Writable
 		return list;
 	}
 	
+	public List<Field> getAllInstanceFields()
+	{
+		List<Field> instanceFields = new ArrayList<Field>();
+		for (Field field : getAllFields())
+		{
+			if (! Modifier.isStatic(field.getModifiers()))
+			{
+				instanceFields.add(field);
+			}
+		}
+		return instanceFields;
+	}
+	
+	
 	public final void readFields(DataInput input) throws IOException {
 		
-		List<Field> fields = getAllFields(this);
+		List<Field> fields = getAllInstanceFields();
 		for (Field field : fields)
 		{
 			if (Modifier.isStatic(field.getModifiers()))
@@ -68,7 +82,7 @@ public abstract class AutoWritable implements Writable
 	
 	public final void write(DataOutput output) throws IOException {
 		
-		List<Field> fields = getAllFields(this);
+		List<Field> fields = getAllInstanceFields();
 		for (Field field : fields)
 		{
 			if (Modifier.isStatic(field.getModifiers()))
