@@ -26,7 +26,7 @@ public abstract class AutoWritable implements Writable
 	public static List<Field> getAllFields(Writable object)
 	{
 		List<Field> list = new ArrayList<Field>();
-		Class<? extends Object> clss = object.getClass(); 
+		Class<?> clss = object.getClass();
 		while (! clss.equals(Object.class))
 		{
 			list.addAll(Arrays.asList(clss.getDeclaredFields()));
