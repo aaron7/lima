@@ -92,7 +92,7 @@ public class Statistic extends AutoWritable
 		//statTable.put(put);
 		
 		
-		Put put = new Put(keyText.getBytes()); //routerId + tiemstamp
+		Put put = new Put(keyText.getBytes()); //routerId + timestamp
 		put.add(FAMILY, "flowCount".getBytes(), getBytesInt(flowCount));
 
 		
