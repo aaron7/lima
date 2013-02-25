@@ -36,6 +36,10 @@ local.properties
 .buildpath
 ################
 
+### Monitor ###
+# Monitor's lockfile for enforcing a single instance of the daemon
+.monitorLockfile
+
 ### IntelliJ ###
 *.iml
 *.ipr
