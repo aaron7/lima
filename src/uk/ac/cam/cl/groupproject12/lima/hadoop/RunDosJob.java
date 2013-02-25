@@ -50,7 +50,7 @@ public class RunDosJob {
         //Should produce a binary format. I think this should be used for intermediate representation in
         //multi-stage MapReduce jobs. For the final output, we might want to use a text format, but as of now,
         //we are not using the files anyway.
-        conf.setOutputFormat(SequenceFileAsBinaryOutputFormat.class);
+        conf.setOutputFormat(TextOutputFormat.class);
 
         //Replace with some arguments passed, this was only for my internal testing.
         FileInputFormat.setInputPaths(conf, new Path("input/netflow_anonymous.csv")); //netflow_anonymous.csv
