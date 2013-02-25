@@ -15,7 +15,6 @@ public class EventMonitor {
 	Configuration hbaseConfig = HBaseConfiguration.create();
 
 	public EventMonitor() {
-		
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				"localhost");
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
