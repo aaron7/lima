@@ -42,6 +42,14 @@ public class EventMonitor {
         Configuration conf = HBaseConfiguration.create();
         conf.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM, "localhost");
         conf.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT, 2182);
+
+        // Initialise the threads to process data.
+        StatisticThread stats = new StatisticThread();
+        ThreatThread threats = new ThreatThread();
+        Thread statsThread = new Thread(stats);
+        Thread threatsThread = new Thread(threats);
+        statsThread.start();
+        threatsThread.start();
     }
 
     /**
