@@ -19,12 +19,12 @@ public class EventMonitor {
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
 
-	public EventMonitor(PostgreSQLConnectionDetails pgsqlConf,
+	public EventMonitor(HBaseConnectionDetails hbaseConf,
 			IDataSynchroniser synchroniser) {
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
-				"localhost");
+				hbaseConf.getHost());
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
-				2182);
+				hbaseConf.getPort());
 
 		// Set up PGSQL connection
 		try {
@@ -37,9 +37,9 @@ public class EventMonitor {
 		try {
 			this.jdbcPGSQL = DriverManager.getConnection(
 					String.format(Constants.PGSQL_CONNECTION_STRING,
-							pgsqlConf.getHost(), pgsqlConf.getPort(),
-							pgsqlConf.getDbname()), pgsqlConf.getUsername(),
-					pgsqlConf.getPassword());
+							hbaseConf.getHost(), hbaseConf.getPort(),
+							hbaseConf.getDbname()), hbaseConf.getUsername(),
+					hbaseConf.getPassword());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
