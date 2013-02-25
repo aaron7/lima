@@ -76,8 +76,7 @@ public class EventMonitor {
 			doc.getDocumentElement().normalize();
 
 			// Get the PGSQL connection details
-			NodeList PGSQLConnectionInfo = doc
-					.getElementsByTagName("pgsqlConn");
+			NodeList PGSQLConnectionInfo = doc.getElementsByTagName("pgsql");
 
 			// Too many configuration entries! Cannot decide on one particular
 			// one deterministically... which PGSQL are we to use? Abort and
