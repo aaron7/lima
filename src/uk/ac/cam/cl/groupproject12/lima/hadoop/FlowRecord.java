@@ -23,7 +23,7 @@ public class FlowRecord extends AutoWritable{
 	public IP routerId;
 	public LongWritable startTime;  	//in ms
 	public LongWritable endTime;		//in ms
-	public Text protocol;
+	public IntWritable protocol;
 	public IP srcAddress;
 	public IP destAddress;
 	public IntWritable srcPort;
@@ -35,14 +35,14 @@ public class FlowRecord extends AutoWritable{
 	
 	
 	
-	public FlowRecord(IP routerId, long startTime, long endTime, String protocol,
+	public FlowRecord(IP routerId, long startTime, long endTime, int protocol,
 			IP srcAddress, IP destAddress, int srcPort, int destPort,
 			int packets, long bytes, String tcpFlags, String typeOfService) {
 		super();
 		this.routerId = routerId;
 		this.startTime = new LongWritable(startTime);
 		this.endTime =   new LongWritable(endTime);
-		this.protocol = new Text(protocol);
+		this.protocol = new IntWritable(protocol);
 		this.srcAddress = srcAddress;
 		this.destAddress = destAddress;
 		this.srcPort = new IntWritable(srcPort);
@@ -78,11 +78,18 @@ public class FlowRecord extends AutoWritable{
 	public static FlowRecord valueOf(String str) throws ParseException
 	{
 		String[] tokens = str.split(" *, *");
+		if (Integer.valueOf(tokens[3]).intValue() == 1) {
+		    //System.out.println("test" + tokens[3] + "->" + tokens[7]);
+		    //if ICMP then set the destPort to 0 since this may contain
+		    //extra information which is in decimal format
+		    //http://osdir.com/ml/network.netflow.nfdump.general/2007-10/msg00004.html
+		    tokens[7] = "0";
+		}
 		return new FlowRecord(
 				IP.valueOf(tokens[0]),
 				valueOfDate(tokens[1]),
 				valueOfDate(tokens[2]),
-				tokens[3],
+				Integer.valueOf(tokens[3]),
 				IP.valueOf(tokens[4]),
 				IP.valueOf(tokens[5]),
 				Integer.valueOf(tokens[6]),

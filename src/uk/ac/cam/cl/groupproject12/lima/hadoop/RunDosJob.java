@@ -53,8 +53,8 @@ public class RunDosJob {
         conf.setOutputFormat(SequenceFileAsBinaryOutputFormat.class);
 
         //Replace with some arguments passed, this was only for my internal testing.
-        FileInputFormat.setInputPaths(conf, new Path("input/netflow_anonymous.csv"));
-        FileOutputFormat.setOutputPath(conf, new Path("out/Dos.bin1"));
+        FileInputFormat.setInputPaths(conf, new Path("input/netflow_anonymous.csv")); //netflow_anonymous.csv
+        FileOutputFormat.setOutputPath(conf, new Path("out")); //Dos.bin1
 
         //Submit this job (jobconfiguration).
         RunningJob job = JobClient.runJob(conf);
