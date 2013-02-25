@@ -1,10 +1,6 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
-import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
 
 /**
  * This is the main java class which is run for each router when we receive netflow data.
@@ -13,24 +9,53 @@ import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
  */
 public class RunJobs {
     public static void main(String[] args) throws IOException{
-        //create a job control object
-        JobControl jbcntrl = new JobControl("batchOfJobsGroup1");
+        //Set up and run the statistics thread
+        Thread statisticsThread = new Thread(){
+            public void run(){
+                try {
+                    StatisticsJob.runJob("input/netflow_anonymous.csv", "out/Statistics.out");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        statisticsThread.run();
 
-        //create a list of jobs and add all of the jobs we want to the list
-        ArrayList<ControlledJob> jobs = new ArrayList<ControlledJob>();
-        jobs.addAll(StatisticsJob.getConf("input/netflow_anonymous.csv", "out/Statistics.bin1"));
-       // jobs.addAll(DosJob.getConf("input/netflow_anonymous.csv", "out/Dos.bin1"));
-        
-        //add all the jobs to the job control
-        for (ControlledJob job: jobs){
-            jbcntrl.addJob(job);
-        }
-        
-        //now run everything - this starts a thread which handles everything until complete (I think)
-        jbcntrl.run();
-        
+        //Set up and run the DoS thread.
+        Thread dosThread = new Thread(){
+            public void run(){
+                try {
+                    DosJob.runJob("input/netflow_anonymous.csv", "out/Dos.out");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        dosThread.run();
+
         System.out.println("running...");
-        
+        try {
+            statisticsThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+        try {
+            dosThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("All jobs finished.");
     }
 }
 

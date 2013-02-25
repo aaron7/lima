@@ -1,10 +1,5 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -14,12 +9,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
-
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 public class StatisticsJob {
 
@@ -65,32 +61,28 @@ public class StatisticsJob {
      * Make a new Statistics Controlled job
      * @return List<ControlledJob> for the new job(s) - only one in this case
      */
-    public static List<ControlledJob> getConf(String inputPath, String outputPath) throws IOException {
-        //Set up job1 to perform Map1 and Reduce1
-        
-        ControlledJob test = new ControlledJob(new Configuration());
-        
-        Job job1 = Job.getInstance(new Configuration(), "StatistcsJobPhase1:"+inputPath);
+    public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+        //Set up job1 to perform Map and Reduce
+        Job job = Job.getInstance(new Configuration(), "StatistcsJobPhase1:"+inputPath);
 
-        job1.setMapOutputKeyClass(LongWritable.class);
-        job1.setMapOutputValueClass(FlowRecord.class);
+        job.setMapOutputKeyClass(LongWritable.class);
+        job.setMapOutputValueClass(FlowRecord.class);
 
-        job1.setOutputKeyClass(LongWritable.class);
-        job1.setOutputValueClass(Statistic.class);
+        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputValueClass(Statistic.class);
 
-        job1.setMapperClass(Map.class);
-        job1.setReducerClass(Reduce.class);
+        job.setMapperClass(Map.class);
+        job.setReducerClass(Reduce.class);
 
-        job1.setInputFormatClass(TextInputFormat.class);
-        job1.setOutputFormatClass(SequenceFileOutputFormat.class);
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(SequenceFileOutputFormat.class);
 
-        FileInputFormat.setInputPaths(job1, new Path(inputPath));
-        FileOutputFormat.setOutputPath(job1, new Path(outputPath));
+        FileInputFormat.setInputPaths(job, new Path(inputPath));
+        FileOutputFormat.setOutputPath(job, new Path(outputPath));
 
-        List<ControlledJob> res = new ArrayList<ControlledJob>();
-        res.add(new ControlledJob(job1,new ArrayList<ControlledJob>()));
-
-        return res;
+        //Run job and wait for completion
+        //Verbose=true for debugging purposes
+        job.waitForCompletion(true);
     }
 }
 

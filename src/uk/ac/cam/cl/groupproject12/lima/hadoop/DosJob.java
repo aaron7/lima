@@ -11,14 +11,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Encapsulates the Map and Reduce jobs for the DoS attack threat analysis.
@@ -41,7 +38,7 @@ public class DosJob {
                 record = FlowRecord.valueOf(line);
                 if(record.bytes.get()/record.packets.get()<bytesPacketsThreshold){
                     LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
-                    context.write(SerializationUtils.asBytesWritable(record.destAddress,minute,record.srcAddress), record);
+                    context.write(SerializationUtils.asBytesWritable(record.destAddress, minute, record.srcAddress), record);
                 }
             }
             catch (ParseException e)
@@ -188,9 +185,8 @@ public class DosJob {
      * Make a new configuration for a DOS Job
      * @return JobConf for the new job
      */
-    public static List<ControlledJob> getConf(String inputPath, String outputPath) throws IOException {
+    public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
         String phase1Output = inputPath+".phase1";
-        List<ControlledJob> res = new ArrayList<ControlledJob>();
 
         //Set up job1 to perform Map1 and Reduce1
         Job job1 = Job.getInstance(new Configuration(), "DosJobPhase1:"+inputPath);
@@ -210,6 +206,10 @@ public class DosJob {
         FileInputFormat.setInputPaths(job1,new Path(inputPath));
         FileOutputFormat.setOutputPath(job1,new Path(phase1Output));
 
+        //Run job 1:
+        //Verbose for debugging purposes.
+        job1.waitForCompletion(true);
+
         //Set up job2 to perform Map2 and Reduce2
         Job job2 = Job.getInstance(new Configuration(),"DosJobPhase2:"+inputPath);
 
@@ -228,15 +228,8 @@ public class DosJob {
         FileInputFormat.setInputPaths(job2,new Path(phase1Output));
         FileOutputFormat.setOutputPath(job2,new Path(outputPath));
 
-        //Create control jobs and set up dependencies
-        ControlledJob controlledJob1 = new ControlledJob(job1,new ArrayList<ControlledJob>());
-        ArrayList<ControlledJob> job2Dependencies = new ArrayList<ControlledJob>();
-        job2Dependencies.add(controlledJob1);
-        ControlledJob controlledJob2 = new ControlledJob(job2,job2Dependencies);
-
-        //add controlledJobs to result
-        res.add(controlledJob1);
-        res.add(controlledJob2);
-        return res;
+        //Run job2:
+        //Verbose for debugging purposes
+        job2.waitForCompletion(true);
     }
 }
