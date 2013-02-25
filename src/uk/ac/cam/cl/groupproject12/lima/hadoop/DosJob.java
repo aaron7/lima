@@ -1,15 +1,24 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Encapsulates the Map and Reduce jobs for the DoS attack threat analysis.
@@ -19,11 +28,12 @@ public class DosJob {
      * The firs map job takes text and produces a FlowRecord if the particular flow is suspicious.
      * The keys are based on a minute-based timestamp, destination address and source address.
      */
-    public static class Map1 extends MapReduceBase implements Mapper<LongWritable, Text, BytesWritable, FlowRecord> {
+    public static class Map1 extends Mapper<LongWritable, Text, BytesWritable, FlowRecord> {
         //TODO determine a sensible threshold.
         public static final int bytesPacketsThreshold = 30;
 
-        public void map(LongWritable key, Text value, OutputCollector<BytesWritable, FlowRecord> output, Reporter reporter) throws IOException {
+        @Override
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String line = value.toString();
             FlowRecord record;
             try
@@ -31,7 +41,7 @@ public class DosJob {
                 record = FlowRecord.valueOf(line);
                 if(record.bytes.get()/record.packets.get()<bytesPacketsThreshold){
                     LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
-                    output.collect(SerializationUtils.asBytes(record.destAddress,minute,record.srcAddress), record);
+                    context.write(SerializationUtils.asBytes(record.destAddress,minute,record.srcAddress), record);
                 }
             }
             catch (ParseException e)
@@ -45,8 +55,9 @@ public class DosJob {
      * The first reduce jobs just combines the different flows with the same key and aggregates the appropriate fields.
      * It outputs an instance of DoSAttack class, with the same key.
      */
-    public static class Reduce1 extends MapReduceBase implements Reducer<BytesWritable, FlowRecord, BytesWritable, DoSAttack> {
-        public void reduce(BytesWritable key, Iterator<FlowRecord> values, OutputCollector<BytesWritable, DoSAttack> output, Reporter reporter) throws IOException {
+    public static class Reduce1 extends Reducer<BytesWritable, FlowRecord, BytesWritable, DoSAttack> {
+        @Override
+        public void reduce(BytesWritable key, Iterable<FlowRecord> values, Context context) throws IOException, InterruptedException {
 
             boolean first = true;
             IP routerID = null,destAddr = null;
@@ -54,7 +65,7 @@ public class DosJob {
             long startTime = 0, endTime = 0, bytes = 0;
             int packets = 0, flowCount = 0;
 
-            for(FlowRecord record = values.next(); values.hasNext(); record = values.next())
+            for(FlowRecord record: values)
             {
                 if (first)
                 {
@@ -74,16 +85,17 @@ public class DosJob {
                 flowCount++;
             }
             if(!first)
-                output.collect(key,new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount),new IntWritable(1)));
+                context.write(key,new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount),new IntWritable(1)));
         }
     }
 
     /**
      * The second map job only creates a key that represents the minute timestamp and the destination address of the attack.
      */
-    public static class Map2 extends MapReduceBase implements Mapper<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
-        public void map(BytesWritable key, DoSAttack value, OutputCollector<BytesWritable, DoSAttack> output, Reporter reporter) throws IOException {
-            output.collect(SerializationUtils.asBytes(value.destAddress,new LongWritable(value.startTime.get() / 60000*60000)),value);
+    public static class Map2 extends Mapper<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
+        @Override
+        public void map(BytesWritable key, DoSAttack value, Context context) throws IOException, InterruptedException {
+            context.write(SerializationUtils.asBytes(value.destAddress, new LongWritable(value.startTime.get() / 60000 * 60000)), value);
         }
     }
 
@@ -91,8 +103,9 @@ public class DosJob {
      * The second reduce job collects the data for the same key.
      * It only outputs if the whole DosAttack is determined to be significant, i.e. that the data is not noise.
      */
-    public static class Reduce2 extends MapReduceBase implements Reducer<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
-        public void reduce(BytesWritable key, Iterator<DoSAttack> values, OutputCollector<BytesWritable, DoSAttack> output, Reporter reporter) throws IOException {
+    public static class Reduce2 extends Reducer<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
+        @Override
+        public void reduce(BytesWritable key, Iterable<DoSAttack> values, Context context) throws IOException, InterruptedException {
 
             boolean first = true;
             IP routerID = null, destAddr = null;
@@ -101,7 +114,7 @@ public class DosJob {
             int packets = 0, flowCount = 0, srcIPCount = 0;
 
 
-            for(DoSAttack dos = values.next(); values.hasNext(); dos = values.next())
+            for(DoSAttack dos:values)
             {
                 if (first)
                 {
@@ -125,7 +138,7 @@ public class DosJob {
             if(!first){
                 DoSAttack res = new DoSAttack(routerID,new LongWritable(startTime),new LongWritable(endTime),destAddr,new IntWritable(packets),new LongWritable(bytes),new IntWritable(flowCount), new IntWritable(srcIPCount));
                 if(isSignificant(res))
-                    output.collect(key,res);
+                    context.write(key, res);
                 //TODO output to HBase here
             }
         }
@@ -175,40 +188,55 @@ public class DosJob {
      * Make a new configuration for a DOS Job
      * @return JobConf for the new job
      */
-    public static JobConf getConf(String inputPath, String outputPath, int chain) {
-        JobConf conf = new JobConf();
-        conf.setJobName("DOS Job part "+chain+": "+inputPath);
+    public static List<ControlledJob> getConf(String inputPath, String outputPath) throws IOException {
+        String phase1Output = inputPath+".phase1";
+        List<ControlledJob> res = new ArrayList<ControlledJob>();
 
-        //I am not sure about this line, but that seems to be what the examples are doing
-        //conf.setJarByClass(RunDosJob.class);
+        //Set up job1 to perform Map1 and Reduce1
+        Job job1 = Job.getInstance(new Configuration(), "DosJobPhase1:"+inputPath);
 
-        conf.setMapOutputKeyClass(BytesWritable.class);
-        conf.setMapOutputValueClass(FlowRecord.class);
+        job1.setMapOutputKeyClass(BytesWritable.class);
+        job1.setMapOutputValueClass(FlowRecord.class);
 
-        conf.setOutputKeyClass(BytesWritable.class);
-        conf.setOutputKeyClass(DosJob.DoSAttack.class);
+        job1.setOutputKeyClass(BytesWritable.class);
+        job1.setOutputValueClass(DosJob.DoSAttack.class);
 
-        //set which mappers and reducers to use
-        switch (chain) {
-            case 1: conf.setMapperClass(DosJob.Map1.class);
-                    conf.setReducerClass(DosJob.Reduce1.class);
-                    break;
-            case 2: conf.setMapperClass(DosJob.Map2.class);
-                    conf.setReducerClass(DosJob.Reduce2.class);
-                    break;
-        }
-        
-        //Should parse lines, key is byteOffset from the beginning of the file, but not used anyway
-        conf.setInputFormat(TextInputFormat.class);
-        //Should produce a binary format. I think this should be used for intermediate representation in
-        //multi-stage MapReduce jobs. For the final output, we might want to use a text format, but as of now,
-        //we are not using the files anyway.
-        conf.setOutputFormat(SequenceFileAsBinaryOutputFormat.class);
+        job1.setMapperClass(DosJob.Map1.class);
+        job1.setReducerClass(DosJob.Reduce1.class);
 
-        //Replace with some arguments passed, this was only for my internal testing.
-        FileInputFormat.setInputPaths(conf, new Path(inputPath));
-        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
-        
-        return conf;
+        job1.setInputFormatClass(TextInputFormat.class);
+        job1.setOutputFormatClass(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(job1,new Path(inputPath));
+        FileOutputFormat.setOutputPath(job1,new Path(phase1Output));
+
+        //Set up job2 to perform Map2 and Reduce2
+        Job job2 = Job.getInstance(new Configuration(),"DosJobPhase2:"+inputPath);
+
+        job2.setMapOutputKeyClass(BytesWritable.class);
+        job2.setMapOutputValueClass(DosJob.DoSAttack.class);
+
+        job2.setOutputKeyClass(BytesWritable.class);
+        job2.setOutputValueClass(DoSAttack.class);
+
+        job2.setMapperClass(DosJob.Map2.class);
+        job2.setReducerClass(DosJob.Reduce2.class);
+
+        job2.setInputFormatClass(TextInputFormat.class);
+        job2.setOutputFormatClass(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(job2,new Path(phase1Output));
+        FileOutputFormat.setOutputPath(job2,new Path(outputPath));
+
+        //Create control jobs and set up dependencies
+        ControlledJob controlledJob1 = new ControlledJob(job1,new ArrayList<ControlledJob>());
+        ArrayList<ControlledJob> job2Dependencies = new ArrayList<ControlledJob>();
+        job2Dependencies.add(controlledJob1);
+        ControlledJob controlledJob2 = new ControlledJob(job2,job2Dependencies);
+
+        //add controlledJobs to result
+        res.add(controlledJob1);
+        res.add(controlledJob2);
+        return res;
     }
 }
