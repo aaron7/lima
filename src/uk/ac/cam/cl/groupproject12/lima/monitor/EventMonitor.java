@@ -1,5 +1,8 @@
 package uk.ac.cam.cl.groupproject12.lima.monitor;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +38,10 @@ public class EventMonitor {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        Configuration conf = HBaseConfiguration.create();
+        conf.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM, "localhost");
+        conf.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT, 2182);
     }
 
     /**
