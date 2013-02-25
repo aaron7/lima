@@ -32,7 +32,7 @@ public abstract class HBaseAutoWriter
 			List<Writable> values = new ArrayList<Writable>();
 			for (Field field : w.getAllInstanceFields())
 			{
-				if (field.isAnnotationPresent(HbaseKey.class))
+				if (field.isAnnotationPresent(HBaseKey.class))
 				{
 					field.setAccessible(true);
 					values.add((Writable)field.get(w));
