@@ -7,5 +7,9 @@ package uk.ac.cam.cl.groupproject12.lima.monitor;
  *
  * @author Team Lima
  */
-public class StatisticThread {
+public class StatisticThread implements Runnable {
+    @Override
+    public void run() {
+        //TODO
+    }
 }

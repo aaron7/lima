@@ -6,5 +6,9 @@ package uk.ac.cam.cl.groupproject12.lima.monitor;
  *
  * @author Team Lima
  */
-public class ThreatThread {
+public class ThreatThread implements Runnable {
+    @Override
+    public void run() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
