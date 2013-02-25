@@ -35,11 +35,11 @@ public abstract class HBaseReaderThread implements Runnable {
 	/**
 	 * Updates the timestamp used to track the last data read out for a
 	 * particular table (on disk so that it persists between program launches)
-	 * to a particular value.
+	 * to a particular value of the last data point processed.
 	 * 
 	 * @param filepath
 	 */
-	protected static void updateTimestamp(String filepath) {
+	protected static void updateTimestamp(String filepath, (type?) timestamp) {
 		// TODO
 	}
 }
