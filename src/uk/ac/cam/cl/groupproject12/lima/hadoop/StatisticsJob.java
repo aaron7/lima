@@ -1,5 +1,10 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -11,15 +16,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StatisticsJob {
 
@@ -56,7 +56,6 @@ public class StatisticsJob {
                 }
                 stat.addFlowRecord(record);
             }
-            
             HBaseAutoWriter.put(stat);
             context.write(key, stat);
         }
@@ -68,7 +67,10 @@ public class StatisticsJob {
      */
     public static List<ControlledJob> getConf(String inputPath, String outputPath) throws IOException {
         //Set up job1 to perform Map1 and Reduce1
-        Job job1 = Job.getInstance(new Configuration(), "DosJobPhase1:"+inputPath);
+        
+        ControlledJob test = new ControlledJob(new Configuration());
+        
+        Job job1 = Job.getInstance(new Configuration(), "StatistcsJobPhase1:"+inputPath);
 
         job1.setMapOutputKeyClass(LongWritable.class);
         job1.setMapOutputValueClass(FlowRecord.class);
@@ -80,7 +82,7 @@ public class StatisticsJob {
         job1.setReducerClass(Reduce.class);
 
         job1.setInputFormatClass(TextInputFormat.class);
-        job1.setOutputFormatClass(TextOutputFormat.class);
+        job1.setOutputFormatClass(SequenceFileOutputFormat.class);
 
         FileInputFormat.setInputPaths(job1, new Path(inputPath));
         FileOutputFormat.setOutputPath(job1, new Path(outputPath));
