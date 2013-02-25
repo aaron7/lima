@@ -19,7 +19,8 @@ public class EventMonitor {
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
 
-	public EventMonitor(PostgreSQLConnectionDetails pgsqlConf) {
+	public EventMonitor(PostgreSQLConnectionDetails pgsqlConf,
+			IDataSynchroniser synchroniser) {
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				"localhost");
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
