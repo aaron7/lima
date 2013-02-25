@@ -183,7 +183,6 @@ public class DosJob {
     
     /**
      * Make a new configuration for a DOS Job
-     * @return JobConf for the new job
      */
     public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
         String phase1Output = outputPath+".phase1";

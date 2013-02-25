@@ -59,7 +59,6 @@ public class StatisticsJob {
     
     /**
      * Make a new Statistics Controlled job
-     * @return List<ControlledJob> for the new job(s) - only one in this case
      */
     public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
         //Set up job1 to perform Map and Reduce
