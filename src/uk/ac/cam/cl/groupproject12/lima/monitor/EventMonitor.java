@@ -60,7 +60,6 @@ public class EventMonitor {
      * any time on the system.
      *
      * @throws SingleInstanceException
-     * @throws IOException
      */
     private void singletonInstance() throws SingleInstanceException {
         String location = Constants.DAEMON_LOCKFILE_NAME_DEFAULT;
@@ -106,7 +105,7 @@ public class EventMonitor {
     /**
      * Entry point for launching an instance of the EventMonitor daemon.
      *
-     * @param args
+     * @param args  Arguments passed at the command line to the daemon.
      * @throws SingleInstanceException
      */
     public static void main(String[] args) throws SingleInstanceException {
