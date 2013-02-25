@@ -1,40 +1,36 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Iterator;
-
-import org.apache.hadoop.fs.FileSystem.Statistics;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
-import org.apache.hadoop.mapred.SequenceFileAsBinaryOutputFormat;
-import org.apache.hadoop.mapred.TextInputFormat;
-import org.apache.hadoop.mapred.TextOutputFormat;
-
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatisticsJob {
 
-    public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, LongWritable, FlowRecord> {
-        public void map(LongWritable key, Text value, OutputCollector<LongWritable, FlowRecord> output, Reporter reporter) throws IOException {
+    public static class Map extends Mapper<LongWritable, Text, LongWritable, FlowRecord> {
+        @Override
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String line = value.toString();
             FlowRecord record;
             try
             {
                 record = FlowRecord.valueOf(line);
                 LongWritable minute = new LongWritable(record.startTime.get() / 60000*60000);
-                output.collect(minute, record);
+                context.write(minute, record);
             }
             catch (ParseException e) 
             {
@@ -43,13 +39,14 @@ public class StatisticsJob {
         }
     }
 
-    public static class Reduce extends MapReduceBase implements Reducer<LongWritable, FlowRecord, LongWritable, Statistic> {
-        public void reduce(LongWritable key, Iterator<FlowRecord> values, OutputCollector<LongWritable, Statistic> output, Reporter reporter) throws IOException {
+    public static class Reduce extends Reducer<LongWritable, FlowRecord, LongWritable, Statistic> {
+        @Override
+        public void reduce(LongWritable key, Iterable<FlowRecord> values, Context context) throws IOException, InterruptedException {
 
             Statistic stat = null;
             Long timeframe = key.get();
 
-            for(FlowRecord record = values.next(); values.hasNext(); record = values.next())
+            for(FlowRecord record:values)
             {
                 if (stat == null)
                 {
@@ -58,60 +55,37 @@ public class StatisticsJob {
                 stat.addFlowRecord(record);
             }
             stat.putToHbase();
-            output.collect(key, stat);
+            context.write(key, stat);
         }
     }
     
     /**
-     * Make a new configuration for a Statistics Job
-     * @return JobConf for the new job
+     * Make a new Statistics Controlled job
+     * @return List<ControlledJob> for the new job(s) - only one in this case
      */
-    public static JobConf getConf(String inputPath, String outputPath) {
-        JobConf conf = new JobConf();
-        conf.setJobName("Statistics Job: "+inputPath);
+    public static List<ControlledJob> getConf(String inputPath, String outputPath) throws IOException {
+        //Set up job1 to perform Map1 and Reduce1
+        Job job1 = Job.getInstance(new Configuration(), "DosJobPhase1:"+inputPath);
 
-        //I am not sure about this line, but that seems to be what the examples are doing
-        //conf.setJarByClass(RunDosJob.class);
+        job1.setMapOutputKeyClass(LongWritable.class);
+        job1.setMapOutputValueClass(FlowRecord.class);
 
-        conf.setOutputKeyClass(LongWritable.class);
-        conf.setOutputValueClass(Statistic.class);
-        
-        conf.setMapperClass(Map.class);
-        //no combiner for now, simpler that way.
-        conf.setReducerClass(Reduce.class);
-        
-        //TODO I'm a little unsure about these two:
-        conf.setInputFormat(TextInputFormat.class);
-        conf.setOutputFormat(TextOutputFormat.class);
+        job1.setOutputKeyClass(LongWritable.class);
+        job1.setOutputValueClass(Statistic.class);
 
-        FileInputFormat.setInputPaths(conf, new Path(inputPath));
-        FileOutputFormat.setOutputPath(conf, new Path(outputPath));
-        
-        return conf;
+        job1.setMapperClass(Map.class);
+        job1.setReducerClass(Reduce.class);
+
+        job1.setInputFormatClass(TextInputFormat.class);
+        job1.setOutputFormatClass(TextOutputFormat.class);
+
+        FileInputFormat.setInputPaths(job1, new Path(inputPath));
+        FileOutputFormat.setOutputPath(job1, new Path(outputPath));
+
+        List<ControlledJob> res = new ArrayList<ControlledJob>();
+        res.add(new ControlledJob(job1,new ArrayList<ControlledJob>()));
+
+        return res;
     }
-
-    /*
-     * Old main method to test job creation. Instead we have a method to create conf to pass onto
-     * the main RunJobs class.
-     * 
-     * public static void main(String[] args) throws Exception {
-        JobConf conf = new JobConf(Statistics.class);
-        conf.setJobName("statistics");
-
-        conf.setOutputKeyClass(LongWritable.class);
-        conf.setOutputValueClass(Statistic.class);
-
-        conf.setMapperClass(Map.class);
-        //no combiner for now, simpler that way.
-        conf.setReducerClass(Reduce.class);
-
-        //TODO im a little unsure about these four:
-        conf.setInputFormat(TextInputFormat.class);
-        conf.setOutputFormat(TextOutputFormat.class);
-        FileInputFormat.setInputPaths(conf, new Path(args[0]));
-        FileOutputFormat.setOutputPath(conf, new Path(args[1]));
-
-        JobClient.runJob(conf);
-    }*/
 }
 
