@@ -18,6 +18,9 @@ import java.nio.channels.FileLock;
 public class EventMonitor {
     private FileLock filelock;
 
+    // HBase connection configuration
+    private final Configuration conf = HBaseConfiguration.create();
+
     /**
      * Constructor for an instance of an EventMonitor.
      */
@@ -39,13 +42,13 @@ public class EventMonitor {
             e.printStackTrace();
         }
 
-        Configuration conf = HBaseConfiguration.create();
+        // Configure the HBase connection
         conf.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM, "localhost");
         conf.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT, 2182);
 
         // Initialise the threads to process data.
-        StatisticThread stats = new StatisticThread();
-        ThreatThread threats = new ThreatThread();
+        StatisticThread stats = new StatisticThread(this);
+        ThreatThread threats = new ThreatThread(this);
         Thread statsThread = new Thread(stats);
         Thread threatsThread = new Thread(threats);
         statsThread.start();
@@ -87,6 +90,15 @@ public class EventMonitor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Provides a package-based method for passing the HBase configuration between threads.
+     *
+     * @return  An instance of an HBase configuration, with suitable parameters set.
+     */
+    Configuration getHBaseConnection() {
+        return this.conf;
     }
 
     /**
