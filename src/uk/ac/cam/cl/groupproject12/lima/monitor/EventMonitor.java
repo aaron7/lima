@@ -46,13 +46,13 @@ public class EventMonitor {
 		}
 
 		try {
-			PostgreSQLConnectionDetails pgsqlConn = getPostgresConnection();
+			PostgreSQLConnectionDetails hbaseConn = getPostgresConnection();
 
 			this.jdbcPGSQL = DriverManager.getConnection(
 					String.format(Constants.PGSQL_CONNECTION_STRING,
-							hbaseConf.getHost(), hbaseConf.getPort(),
-							hbaseConf.getDbname()), hbaseConf.getUsername(),
-					hbaseConf.getPassword());
+							hbaseConn.getHost(), hbaseConn.getPort(),
+							hbaseConn.getDbname()), hbaseConn.getUsername(),
+					hbaseConn.getPassword());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,7 +60,8 @@ public class EventMonitor {
 	}
 
 	// Parses the XML file in a well-defined location to obtain PGSQL connection
-	// information.
+	// information. Returns a PostgreSQLConnectionDetails object containing such
+	// details.
 	private static PostgreSQLConnectionDetails getPostgresConnection()
 			throws PGSQLConfigurationException {
 		File fXmlFile = new File(String.format(
@@ -79,7 +80,8 @@ public class EventMonitor {
 					.getElementsByTagName("pgsqlConn");
 
 			// Too many configuration entries! Cannot decide on one particular
-			// one deterministically.
+			// one deterministically... which PGSQL are we to use? Abort and
+			// report this error.
 			if (PGSQLConnectionInfo.getLength() != 1) {
 				throw new PGSQLConfigurationException(
 						Constants.ERROR_POSTGRESQL_CONFIG_TOO_MANY);
