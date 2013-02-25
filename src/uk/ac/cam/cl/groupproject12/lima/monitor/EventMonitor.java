@@ -2,6 +2,7 @@ package uk.ac.cam.cl.groupproject12.lima.monitor;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -18,12 +19,12 @@ public class EventMonitor {
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
 
-	public EventMonitor() {
+	public EventMonitor(PostgreSQLConnectionDetails pgsqlConf) {
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				"localhost");
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
 				2182);
-		
+
 		// Set up PGSQL connection
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -31,8 +32,17 @@ public class EventMonitor {
 			System.err.println(Constants.ERROR_POSTGRESQL_DRIVER_MISSING);
 			System.exit(1);
 		}
-		
-		Connection this.jdbcPGSQL = DriverManager.getConnection("jdbc:postgresql://hostname:port/dbname", username, password);)
+
+		try {
+			this.jdbcPGSQL = DriverManager.getConnection(
+					String.format(Constants.PGSQL_CONNECTION_STRING,
+							pgsqlConf.getHost(), pgsqlConf.getPort(),
+							pgsqlConf.getDbname()), pgsqlConf.getUsername(),
+					pgsqlConf.getPassword());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

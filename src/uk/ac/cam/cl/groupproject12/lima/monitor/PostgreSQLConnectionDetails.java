@@ -9,6 +9,7 @@ public class PostgreSQLConnectionDetails {
 
 	private String host;
 	private int port;
+	private String dbname;
 	private String username;
 	private String password;
 
@@ -21,11 +22,12 @@ public class PostgreSQLConnectionDetails {
 	 * @param username
 	 * @param password
 	 */
-	public PostgreSQLConnectionDetails(String host, int port, String username,
-			String password) {
+	public PostgreSQLConnectionDetails(String host, int port, String dbname,
+			String username, String password) {
 		super();
 		this.host = host;
 		this.port = port;
+		this.dbname = dbname;
 		this.username = username;
 		this.password = password;
 	}
@@ -56,5 +58,12 @@ public class PostgreSQLConnectionDetails {
 	 */
 	String getPassword() {
 		return password;
+	}
+
+	/**
+	 * @return the dbname
+	 */
+	String getDbname() {
+		return dbname;
 	}
 }
