@@ -17,7 +17,7 @@ public class StatisticTest {
 				IP.valueOf("0.0.0.0"), 
 				FlowRecord.valueOfDate("2012-08-02 00:03:45.350"),
 				FlowRecord.valueOfDate("2012-08-02 00:03:45.350"),
-				"TCP",
+				Constants.TCP,
 				IP.valueOf("4.6.229.242"),
 				IP.valueOf("83.111.58.191"),
 				80,

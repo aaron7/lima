@@ -6,6 +6,7 @@ import org.apache.hadoop.io.DataInputBuffer;
 import org.apache.hadoop.io.DataOutputBuffer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Constants;
 
 public class FlowRecordTest {
 
@@ -20,7 +21,7 @@ public class FlowRecordTest {
 					IP.valueOf("0.0.0.0"), 
 					FlowRecord.valueOfDate("2012-08-02 00:03:45.350"),
 					FlowRecord.valueOfDate("2012-08-02 00:03:45.350"),
-					"TCP",
+					Constants.TCP,
 					IP.valueOf("4.6.229.242"),
 					IP.valueOf("83.111.58.191"),
 					80,

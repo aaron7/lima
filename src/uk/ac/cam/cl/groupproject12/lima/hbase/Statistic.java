@@ -65,15 +65,15 @@ public class Statistic extends AutoWritable
 		this.packetCount.set(this.packetCount.get() + record.packets.get());
 		this.totalDataSize.set(this.totalDataSize.get() + record.bytes.get());
 		
-		if ("TCP".equals(record.protocol.toString()))
+		if (Integer.parseInt(record.protocol.toString()) == Constants.TCP)
 		{
 			this.TCPCount.set(this.TCPCount.get() + 1);
 		}
-		else if ("UDP".equals(record.protocol.toString()))
+		else if (Integer.parseInt(record.protocol.toString()) == Constants.UDP)
 		{
 			this.UDPCount.set(this.UDPCount.get() + 1);
 		}
-		else if ("ICMP".equals(record.protocol.toString()))
+		else if (Integer.parseInt(record.protocol.toString()) == Constants.ICMP)
 		{
 			this.ICMPCount.set(this.ICMPCount.get() + 1);
 		}
