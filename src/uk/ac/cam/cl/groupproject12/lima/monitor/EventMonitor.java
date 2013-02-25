@@ -83,7 +83,9 @@ public class EventMonitor {
     }
 
     @Override
-    public void finalize() {
+    public void finalize() throws Throwable {
+        super.finalize();
+
         // Release the file lock
         try {
             this.filelock.release();
