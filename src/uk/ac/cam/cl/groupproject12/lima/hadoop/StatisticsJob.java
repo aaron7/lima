@@ -12,6 +12,8 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
 
 import java.io.IOException;
@@ -54,7 +56,8 @@ public class StatisticsJob {
                 }
                 stat.addFlowRecord(record);
             }
-            stat.putToHbase();
+            
+            HBaseAutoWriter.put(stat);
             context.write(key, stat);
         }
     }

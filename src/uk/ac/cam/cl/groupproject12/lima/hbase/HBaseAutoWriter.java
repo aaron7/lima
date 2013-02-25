@@ -66,9 +66,9 @@ public abstract class HBaseAutoWriter
 				byte[] bytes = SerializationUtils.asBytes(value);
 				put.add(FAMILY, columnName.getBytes(), bytes);
 			}
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IllegalAccessException e) 
+		{
+			throw new RuntimeException("Unexpected exception -- we just set it to accessible");
 		}
 		table.put(put);
 		table.close();
