@@ -78,7 +78,7 @@ public class FlowRecord extends AutoWritable{
 	public static FlowRecord valueOf(String str) throws ParseException
 	{
 		String[] tokens = str.split(" *, *");
-		if (Integer.valueOf(tokens[3]).intValue() == 1) {
+		if (Integer.valueOf(tokens[3]) == 1) {
 		    //System.out.println("test" + tokens[3] + "->" + tokens[7]);
 		    //if ICMP then set the destPort to 0 since this may contain
 		    //extra information which is in decimal format

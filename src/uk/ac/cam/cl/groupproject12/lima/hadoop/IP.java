@@ -27,16 +27,16 @@ public class IP extends AutoWritable {
 		{
 			return false;
 		}
-		for(int i =0;i<tokens.length;i++)
+        for(String token : tokens)
 		{
 			try {
-				int a = Integer.valueOf(tokens[i]);
-				
+				int a = Integer.valueOf(token);
+
 				if (a < 0 || a > 255)
 				{
 					return false;
 				}
-			} catch (NumberFormatException e) 
+			} catch (NumberFormatException e)
 			{
 				return false;
 			}
