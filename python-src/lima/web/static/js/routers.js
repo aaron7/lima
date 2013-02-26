@@ -2,7 +2,26 @@ function initial(){
   $.getJSON("/get?id=routers", function(data){
     globaldata = data;
 
-    console.debug("INITAL GET", data);
+    console.debug("INITAL GET ROUTERS", data);
+
+
+    $('#routers').dataTable( {
+      "aaData": data,
+      "aoColumns": [
+      { "sTitle": "Router IP" },
+      { "sTitle": "Last Seen" },
+      { "sTitle": "Flows Per Hour" },
+      { "sTitle": "Packets Per Hour"},
+      { "sTitle": "Bytes Per Hour"},
+      { "mData": null }
+      ]
+    } );
+  });
+/*
+    $.getJSON("/get?id=jobs", function(data){
+    globaldata = data;
+
+    console.debug("INITAL GET JOBS", data);
 
 
     $('#routers').dataTable( {
@@ -16,7 +35,7 @@ function initial(){
       ]
     } );
 
-  });
+  */
 }initial();
 
 $(document).ready(function() {
@@ -25,12 +44,15 @@ $(document).ready(function() {
 
 //SSE (server side events - push) - CURRENTLY ONLY WORKS ON ALL BROWSERS EXCEPT IE - will use polyfill later
 function sse() {
-  var source = new EventSource('/stream?channels=routerUpdates');
+  var source = new EventSource('/stream?channels=routerUpdates,jobUpdates');
   source.onmessage = function(e) {
-    console.log("NEW MESSAGE: ", JSON.parse(e.data));
-    var jsondata = JSON.parse(e.data);
-
-    if(typeof jsondata === 'object'){
+    console.log("NEW MESSAGE: ", e);
+    var jsondata = JSON.parse(e.data)[0]; //data
+    var channel = JSON.parse(e.data)[1]; //channel
+    console.log("0: ", jsondata);
+    console.log("1: ", channel);
+    
+    if(typeof jsondata === 'object' && channel == 'routerUpdates'){
       console.log("ROUTER UDPATES");
       var nextRowToUpdate = jsondata.shift();
       for (var i = 0; i < globaldata.length; i++) {
@@ -51,6 +73,8 @@ function sse() {
         $('#routers').dataTable().fnAddData(nextRowToUpdate);
         $('#routers').dataTable().fnAddData(jsondata);
       }
+    }else if(channel == 'jobUpdates'){
+
     }
   };
 } sse();

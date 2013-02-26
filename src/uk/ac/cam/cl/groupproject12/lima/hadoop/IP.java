@@ -91,6 +91,13 @@ public class IP extends AutoWritable {
 		return ip;
 	}
 
+	/**
+	 * @return the value
+	 */
+	public Text getValue() {
+		return value;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -115,5 +122,4 @@ public class IP extends AutoWritable {
 			return false;
 		return true;
 	}
-	
 }

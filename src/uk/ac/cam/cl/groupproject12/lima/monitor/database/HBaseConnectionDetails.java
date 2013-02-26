@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.groupproject12.lima.monitor;
+package uk.ac.cam.cl.groupproject12.lima.monitor.database;
 
 /**
  * Stores information required to invoke a connection to HBase.
@@ -26,14 +26,14 @@ public class HBaseConnectionDetails {
 	/**
 	 * @return the host
 	 */
-	String getHost() {
+	public String getHost() {
 		return host;
 	}
 
 	/**
 	 * @return the port
 	 */
-	int getPort() {
+	public int getPort() {
 		return port;
 	}
 }

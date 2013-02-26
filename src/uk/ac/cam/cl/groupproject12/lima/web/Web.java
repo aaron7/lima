@@ -1,8 +1,6 @@
 package uk.ac.cam.cl.groupproject12.lima.web;
 
 import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -36,7 +34,7 @@ public class Web {
 	public static void updateJob(String ip, String timestamp,
 			boolean allComplete) {
 		Web.httpRequest("updateJob?ip=" + ip + "&timestamp=" + timestamp
-				+ "&inc=" + (allComplete ? 1 : 0));
+				+ "&complete=" + (allComplete ? 1 : 0));
 	}
 
 	/**
