@@ -147,15 +147,27 @@ public abstract class HBaseAutoWriter
 			}
 			Result result = table.get(get);
 			table.close();
+			if (result.isEmpty())
+			{
+				throw new IllegalArgumentException("No records match the given key");
+			}
+			
 			for (Field field : w.getAllInstanceFields())
 			{
-				String columnName = field.getName();
-				byte[] bytes = result.getValue(FAMILY, columnName.getBytes());
-				Class<?> fieldClass = field.getType();
-				Writable value = (Writable)fieldClass.newInstance();
-				value.readFields(SerializationUtils.asDataInput(bytes));
-				field.setAccessible(true);
-				field.set(w, value);
+				byte[] columnName = field.getName().getBytes();
+				if (result.containsColumn(FAMILY, columnName))
+				{
+					byte[] bytes = result.getValue(FAMILY, columnName);
+					Class<?> fieldClass = field.getType();
+					Writable value = (Writable)fieldClass.newInstance();
+					value.readFields(SerializationUtils.asDataInput(bytes));
+					field.setAccessible(true);
+					field.set(w, value);
+				}
+				else
+				{
+					throw new IllegalArgumentException("The given AutoWritable has fields which are not in the HBase table");
+				}
 			}
 		}
 		catch (IllegalAccessException e) 
