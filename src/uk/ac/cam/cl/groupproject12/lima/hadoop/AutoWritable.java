@@ -23,6 +23,9 @@ import org.apache.hadoop.io.Writable;
 public abstract class AutoWritable implements Writable 
 {
 	
+	/**
+	 * @return all the fields of this object, and all its super types up to but not including Object.
+	 */
 	public final List<Field> getAllFields()
 	{
 		List<Field> list = new ArrayList<Field>();
@@ -35,6 +38,10 @@ public abstract class AutoWritable implements Writable
 		return list;
 	}
 	
+	/**
+	 * 
+	 * @return all the non-static fields of this object and of all its super types except Object.
+	 */
 	public List<Field> getAllInstanceFields()
 	{
 		List<Field> instanceFields = new ArrayList<Field>();
@@ -48,7 +55,9 @@ public abstract class AutoWritable implements Writable
 		return instanceFields;
 	}
 	
-	
+	/**
+	 * de-serialize this object from a DataInput. 
+	 */
 	public final void readFields(DataInput input) throws IOException {
 		
 		List<Field> fields = getAllInstanceFields();
@@ -80,6 +89,9 @@ public abstract class AutoWritable implements Writable
 		}
 	}
 	
+	/**
+	 * Serialize this object to a DataOutput
+	 */
 	public final void write(DataOutput output) throws IOException {
 		
 		List<Field> fields = getAllInstanceFields();
@@ -104,6 +116,9 @@ public abstract class AutoWritable implements Writable
 		}
 	}
 
+	/**
+	 * @return the byte array that would be written to a DataOutput object during serialization.
+	 */
 	public byte[] getByteValue()
 	{
 		try {

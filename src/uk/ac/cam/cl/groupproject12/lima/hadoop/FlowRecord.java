@@ -15,6 +15,10 @@ import org.apache.hadoop.io.Text;
  * @author ernest
  *
  *	A class which acts as a container for information about a flow.
+ *
+ *	startTime, endTime are in unix epoch format
+ *	protocol is an integer with meanings in Constants.java
+ *	
  */
 public class FlowRecord extends AutoWritable{
 	
@@ -63,7 +67,11 @@ public class FlowRecord extends AutoWritable{
 		return date.getTime();
 	}
 	
-	
+	/**
+	 * Interprets the value of the bytes field. Which can either be a plain interger or
+	 * in the form "[integer] M" representing megabytes.
+	 * 
+	 */
 	static long valueOfBytes(String string)
 	{
 		if (string.matches("\\d+(.\\d*) M"))
@@ -75,6 +83,10 @@ public class FlowRecord extends AutoWritable{
 		return Integer.valueOf(string);
 	}
 	
+	/**
+	 * 	Factory method for generating a FlowRecord from a line of nfdump outputted with format
+	 * 		"fmt:%ra,%ts,%te,%pr,%sa,%da,%sp,%dp,%pkt,%byt,%flg,%tos"
+	 */
 	public static FlowRecord valueOf(String str) throws ParseException
 	{
 		String[] tokens = str.split(" *, *");
@@ -100,6 +112,9 @@ public class FlowRecord extends AutoWritable{
 				tokens[11]);
 	}
 	
+	/**
+	 * A factory method for reading a FlowRecord from a DataInput
+	 */
 	public static FlowRecord read(DataInput input) throws IOException
 	{
 		FlowRecord record = new FlowRecord();

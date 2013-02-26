@@ -9,6 +9,8 @@ HDFS_DIR="/user/nfdump"
 # File locations used during operations.  Don't put your own files in the locations chosen here, or they WILL be overwritten.
 LOCKFILE="./import_lock"
 FIFO_FILE="./import_fifo"
+# Nfdump output format:
+OUT_FMT="fmt:%ra,%ts,%te,%pr,%sa,%da,%sp,%dp,%pkt,%byt,%flg,%tos"
 #
 # ##### Don't edit below this line. #####
 
@@ -38,7 +40,7 @@ if [ "$(ls -A $IMPORT_DIR)" ]; then
     for f in *.nfcapd
     do
         hdfs fs -put "$FIFO_FILE" "$HDFS_DIR/$f.csv"& # Open the named pipe for reading.
-        nfdump -r "$f" -o csv -q -N > "$FIFO_FILE" # Then write to it, blocking.
+        nfdump -r "$f" -o "$OUT_FMT" -q -N > "$FIFO_FILE" # Then write to it, blocking.
         rm "$f" #Then we're safe to delete.
     done
 fi
