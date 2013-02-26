@@ -218,6 +218,19 @@ public class SingleFlowJob extends JobBase {
                 new Path(outputPath)
         );
 
+//        protected <KEY_IN,VAL_IN,KEY_MED,VAL_MED,KEY_OUT,VAL_OUT> Job getNewJob(
+//                String jobName,
+//                Class<KEY_MED> keyMedCls,
+//                Class<VAL_MED> valMedCls,
+//                Class<KEY_OUT> keyOutCls,
+//                Class<VAL_OUT> valOutCls,
+//                Class<? extends Mapper<KEY_IN,VAL_IN,KEY_MED,VAL_MED>> mapper,
+//                Class<? extends Reducer<KEY_MED,VAL_MED,KEY_OUT,VAL_OUT>> reducer,
+//                Class<? extends InputFormat<KEY_IN,VAL_IN>> inputFormatClass,
+//                Class<? extends OutputFormat<KEY_OUT,VAL_OUT>> outputFormatClass,
+//                Path inputPath,
+//                Path outputPath)
+
         //Run job and wait for completion
         //Verbose=true for debugging purposes
         job.waitForCompletion(true);

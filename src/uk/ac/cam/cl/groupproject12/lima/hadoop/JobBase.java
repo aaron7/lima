@@ -60,7 +60,7 @@ public abstract class JobBase {
             Class<? extends Mapper<KEY_IN,VAL_IN,KEY_MED,VAL_MED>> mapper,
             Class<? extends Reducer<KEY_MED,VAL_MED,KEY_OUT,VAL_OUT>> reducer,
             Class<? extends InputFormat<KEY_IN,VAL_IN>> inputFormatClass,
-            Class<? extends OutputFormat<KEY_OUT,VAL_OUT>> outputFormatClass,
+            Class<? extends OutputFormat> outputFormatClass,
             Path inputPath,
             Path outputPath) throws IOException {
 
