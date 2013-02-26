@@ -73,7 +73,7 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 					.format(Constants.HBASE_THREAT_KEY_PREFIX,
 							this.timeProcessed,
 							uk.ac.cam.cl.groupproject12.lima.hbase.Constants.HBASE_KEY_SEPARATOR,
-							this.routerIP.getValue().toString());
+							this.routerIP.toString());
 
 			// The filter routerIDFilter is intended to search for all rows in
 			// the database which contain the keyPrefix as their key prefix.
@@ -97,7 +97,7 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 				Threat t = HBaseAutoWriter.get(Threat.class, key);
 
 				// For DEBUG
-				System.out.println(t.getSrcIP().toString());
+				System.out.println(t);
 
 				// Prepared statement for inserting the threat into the PGSQL
 				// database

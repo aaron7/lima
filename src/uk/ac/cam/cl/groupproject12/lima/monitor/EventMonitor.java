@@ -12,12 +12,17 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
@@ -153,7 +158,23 @@ public class EventMonitor {
 
 	public static void main(String[] args) throws PGSQLConfigurationException,
 			SQLException {
+		long time = System.currentTimeMillis();
+		Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"), EventType.landAttack, new LongWritable(444L));
+		t.setDestIP(new IP("6.7.8.9"));
+		t.setEndTime(new LongWritable(667L));
+		t.setFlowCount(new IntWritable(678));
+		t.setFlowDataAvg(new IntWritable(11123));
+		t.setFlowDataTotal(new LongWritable(622L));
+		t.setSrcIP(new IP("66.22.11.55"));
+		
+		try {
+			HBaseAutoWriter.put(t);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
-				new ThreatSynchroniser("2.3.4.5", 1234567890L));
+				new ThreatSynchroniser("1.2.3.4", time));
 	}
 }
