@@ -13,7 +13,7 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
  * @author Team Lima
  *
  *	A class to represent a row in the Hbase Statistic table, 
- *	characterizing the traffic through a router in a timeframe.
+ *	characterising the traffic through a router in a timeframe.
  *
  *	Note: the totalDataSize is in bytes. Other fields are unit-less. 
  *
@@ -26,6 +26,22 @@ public class Statistic extends AutoWritable
 	LongWritable timeFrame;
 	
 	IntWritable flowCount = new IntWritable(0);
+	public LongWritable getTimeFrame() {
+		return timeFrame;
+	}
+
+	public IntWritable getFlowCount() {
+		return flowCount;
+	}
+
+	public IntWritable getPacketCount() {
+		return packetCount;
+	}
+
+	public LongWritable getTotalDataSize() {
+		return totalDataSize;
+	}
+
 	IntWritable packetCount = new IntWritable(0);
 	LongWritable totalDataSize = new LongWritable(0L);
 	IntWritable TCPCount = new IntWritable(0);

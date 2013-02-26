@@ -2,7 +2,10 @@ package uk.ac.cam.cl.groupproject12.lima.monitor;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
@@ -15,10 +18,14 @@ import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
 public class StatisticsSynchroniser implements IDataSynchroniser {
     private IP routerIP;
     private int averagingPeriod = 5; //Period to average over in minutes.
+    private EventMonitor monitor;
 
     /**
      * Constructs an instance of StatisticsSynchroniser
@@ -45,47 +52,113 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
+		this.monitor = monitor;
+		
 		// PostgreSQL connection from the monitor.
 		Connection c = monitor.jdbcPGSQL;
 		
-		HTable table = null;
+		// Filter the case based on the time processed and router ID,
+		// concatenated together in the key to form its prefix. Of course,
+		// the key will contain other values, so this must simply match in
+		// the prefix of the key in order to obtain all fields matching on
+		// these values.
+		String keyPrefix = this.routerIP.getValue().toString();
 		long currentTime = System.currentTimeMillis();
 		long minimumTimestamp = currentTime - (averagingPeriod * 60000); //Timestamp corresponding to the earliest data used for averages.
+				
+		HTable table = null;
+
+		List<Statistic> statistics = null;
+		try {
+			statistics = getStatisticsByKeyAndTimestamp(keyPrefix, minimumTimestamp, currentTime);
+		} catch (IOException e) {
+			e.printStackTrace(); //TODO
+		}
 		
-		try {			
+		long lastSeen = 0;
+		
+		
+		
+		int flowsPerPeriod = 0;
+		int packetsPerPeriod = 0;
+		int bytesPerPeriod = 0;
+		
+		long lastSeenTmp;
+		for (Statistic s : statistics) {
+			lastSeenTmp = s.getTimeFrame().get();
+			if (lastSeenTmp > lastSeen) {
+				lastSeen = lastSeenTmp;
+			}
+			
+			flowsPerPeriod += s.getFlowCount().get();
+			packetsPerPeriod += s.getPacketCount().get();
+			bytesPerPeriod += s.getTotalDataSize().get();
+		}
+		
+		int flowsPH = Math.round((float)flowsPerPeriod * 60f / (float)averagingPeriod);
+		int packetsPH = Math.round((float)packetsPerPeriod * 60f / (float)averagingPeriod);;
+		int bytesPH = Math.round((float)bytesPerPeriod * 60f / (float)averagingPeriod);;
+		
+		String stmt = "INSERT INTO ROUTER(routerIP, lastSeen, flowsPH, packetsPH, bytesPH) VALUES (?,?,?,?,?)";
+		PreparedStatement ps = c.prepareStatement(stmt);
+		
+		try {
+			ps.setString(1, routerIP.getValue().toString());
+			ps.setLong(2, lastSeen);
+			ps.setInt(3, flowsPH);
+			ps.setInt(4, packetsPH);
+			ps.setInt(5, bytesPH);
+			
+			ps.executeUpdate();
+		} finally {
+			ps.close();
+		}
+		
+		return false;
+	}
+	
+	// Get the results for the key prefix provided from HBase and construct Statistic
+	// objects to internally represent them.
+	private List<Statistic> getStatisticsByKeyAndTimestamp(String keyPrefix, long minimumTimestamp, long currentTime) throws IOException {
+		List<Statistic> statistics = new ArrayList<Statistic>();
+		
+		HTable table = null;
+		
+		try {
 			// Use the connection to HBase to obtain a handle on the "Threat"
 			// storage table, where threat events are stored awaiting the
 			// monitor's attention.
 			table = new HTable(monitor.getHBaseConfig(), "Statistic");
 			
-			// Filter the case based on the time processed and router ID,
-			// concatenated together in the key to form its prefix. Of course,
-			// the key will contain other values, so this must simply match in
-			// the prefix of the key in order to obtain all fields matching on
-			// these values.
-			String keyPrefix = this.routerIP.getValue().toString();
-			
 			// The filter routerIDFilter is intended to search for all rows in
 			// the database which contain the keyPrefix as their key prefix.
-			Filter routerIDFilter = new RowFilter(CompareOp.EQUAL,
+			Filter routerIPFilter = new RowFilter(CompareOp.EQUAL,
 					new BinaryPrefixComparator(Bytes.toBytes(keyPrefix)));
 			
 			// Scan the database using the above filter and the required.
 			Scan scan = new Scan();
-			scan.setFilter();
+			scan.setFilter(routerIPFilter);
+			scan.setTimeRange(minimumTimestamp, currentTime);
+			ResultScanner scanner = table.getScanner(scan);
 			
-		} catch (IOException e) {
-			e.printStackTrace();  //TODO
-		} finally {
-			try {
-				if (table != null)
-					table.close();
-			} catch (IOException e) {
-				e.printStackTrace(); //TODO
+			for (Result r : scanner) {
+				// From the byte array of the resulting key, use the AutoWriter
+				// to obtain an object of type Statistic with all the fields for
+				// this result properly instantiated with the values from HBase.
+				byte[] key = r.getRow();
+				
+				// Ask the AutoWriter to get the values for the provided key and
+				// populate them into the class "Threat".
+				Statistic s = HBaseAutoWriter.get(Statistic.class, key);
+				
+				statistics.add(s);
 			}
+		} finally {
+			if (table != null)
+				table.close();
 		}
 		
-		return false;
+		return statistics;
 	}
 
 }
