@@ -14,6 +14,8 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
+
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -184,7 +186,10 @@ public class DosJob {
     /**
      * Make a new configuration for a DOS Job
      */
-    public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+    public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
+        String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
+        String outputPath = "out/"+routerIp+"-"+timestamp+"-dos.out";
+        
         String phase1Output = outputPath+".phase1";
 
         //Set up job1 to perform Map1 and Reduce1
@@ -210,6 +215,8 @@ public class DosJob {
         //Run job 1:
         //Verbose for debugging purposes.
         job1.waitForCompletion(true);
+        //job done - send update to web
+        Web.updateJob(routerIp, timestamp, false);
 
         //Set up job2 to perform Map2 and Reduce2
         Job job2 = Job.getInstance(new Configuration(),"DosJobPhase2:"+inputPath);
@@ -234,5 +241,7 @@ public class DosJob {
         //Run job2:
         //Verbose for debugging purposes
         job2.waitForCompletion(true);
+        //job done - send update to web
+        Web.updateJob(routerIp, timestamp, false);
     }
 }
