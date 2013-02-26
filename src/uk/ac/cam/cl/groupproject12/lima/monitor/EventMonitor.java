@@ -83,7 +83,7 @@ public class EventMonitor {
 			// report this error.
 			if (PGSQLConnectionInfo.getLength() != 1) {
 				throw new PGSQLConfigurationException(
-						Constants.ERROR_POSTGRESQL_CONFIG_TOO_MANY);
+						Constants.ERROR_POSTGRESQL_CONFIG_NOT_ONE);
 			}
 
 			Node node = PGSQLConnectionInfo.item(0);
@@ -91,14 +91,20 @@ public class EventMonitor {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element nodeElement = (Element) node;
 
-				// TODO - how to retrieve the attributes? <pgsql host="..."
-				// port=... user="..." etc... >
+                String hostname = nodeElement.getElementsByTagName("host").item(0).getTextContent();
+                int port = Integer.parseInt(nodeElement.getElementsByTagName("port").item(0).getTextContent());
+                String username = nodeElement.getElementsByTagName("username").item(0).getTextContent();
+                String password = nodeElement.getElementsByTagName("password").item(0).getTextContent();
+                String dbName = nodeElement.getElementsByTagName("dbName").item(0).getTextContent();
 
+                if(hostname == null || port == 0 || username == null || password == null || dbName == null) {
+                    throw new PGSQLConfigurationException(Constants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
+                } else {
+                    return new PostgreSQLConnectionDetails(hostname, port, username, password, dbName);
+                }
 			}
 
-			return new PostgreSQLConnectionDetails(hostname, port, username,
-					password, dbName);
-
+            throw new PGSQLConfigurationException(Constants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,5 +115,8 @@ public class EventMonitor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+        // If it gets to this point without returning, something's horribly wrong.
+        return null;
 	}
 }
