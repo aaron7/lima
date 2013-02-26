@@ -1,34 +1,63 @@
 package uk.ac.cam.cl.groupproject12.lima.hbase;
 
-import org.testng.annotations.Test;
-import uk.ac.cam.cl.groupproject12.lima.hadoop.FlowRecord;
-import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
-
 import java.io.IOException;
 import java.text.ParseException;
 
-public class StatisticTest {
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import uk.ac.cam.cl.groupproject12.lima.hadoop.FlowRecord;
+import uk.ac.cam.cl.groupproject12.lima.hadoop.FlowRecordTest;
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+
+public class StatisticTest 
+{
+	
+	private static IP sampleIP = new IP("127.0.0.1");
+	private static long sampleTimeFrame = 123456789L;
+	
+	private static Statistic sampleStatistic()
+	{
+		return new Statistic(sampleIP, sampleTimeFrame);
+	}
+	
+	private static Statistic sampleStatisticFull()
+	{
+		return new Statistic(sampleIP, 
+				new LongWritable(sampleTimeFrame),
+				new IntWritable(7), 
+				new IntWritable(14), 
+				new LongWritable(12),
+				new IntWritable(67), 
+				new IntWritable(23), 
+				new IntWritable(45));
+	}
 	
 	@Test
 	public void addExampleRecord() throws ParseException, IOException{
-		Statistic statistic = new Statistic(new IP("127.0.0.1"), 123456789L);
-		FlowRecord testFlow = new FlowRecord(			
-				IP.valueOf("0.0.0.0"), 
-				FlowRecord.valueOfDate("2012-08-02 00:03:45.350"),
-				FlowRecord.valueOfDate("2012-08-02 00:03:45.350"),
-				Constants.TCP,
-				IP.valueOf("4.6.229.242"),
-				IP.valueOf("83.111.58.191"),
-				80,
-				49933,
-				1000,
-				1500000,
-				".A....",
-				"0");
+		Statistic stat1 = sampleStatistic();
+		FlowRecord testFlow = FlowRecordTest.getSampleRecord();
+		stat1.addFlowRecord(testFlow);
+		Statistic stat2 = sampleStatistic();
 		
-		statistic.addFlowRecord(testFlow);
-        //TODO fix this so that it compiles or exclude the line
-//		statistic.putToHbase();
+		stat2.flowCount.set(stat2.flowCount.get() + 1);
+		stat2.packetCount.set(stat2.packetCount.get() + testFlow.packets.get());
+		stat2.TCPCount.set(stat2.TCPCount.get() + 1);
+		stat2.totalDataSize.set(stat2.totalDataSize.get() + testFlow.bytes.get());
+		Assert.assertEquals(stat1, stat2);
+	}	
+	
+	@Test 
+	public void testPutGet() throws IOException
+	{
+		Statistic stat1 = sampleStatisticFull();
+		HBaseAutoWriter.put(stat1);
+		
+		Statistic stat2 = sampleStatistic();
+		HBaseAutoWriter.get(stat2);
+		Assert.assertEquals(stat1, stat2);
 	}
 	
 }
