@@ -1,16 +1,13 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
@@ -65,30 +62,26 @@ public class StatisticsJob {
     public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
         String outputPath = "out/"+routerIp+"-"+timestamp+"-statistics.out";
-        
-        //Set up job1 to perform Map and Reduce
-        Job job = Job.getInstance(new Configuration(), "StatistcsJobPhase1:"+inputPath);
 
-        job.setMapOutputKeyClass(LongWritable.class);
-        job.setMapOutputValueClass(FlowRecord.class);
-
-        job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(Statistic.class);
-
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
-
-        job.setInputFormatClass(TextInputFormat.class);
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
-
-        FileInputFormat.setInputPaths(job, new Path(inputPath));
-        FileOutputFormat.setOutputPath(job, new Path(outputPath));
-
-        job.setJarByClass(StatisticsJob.class);
+        //Set up the first job to perform Map1 and Reduce1.
+        Job job = JobUtils.getNewJob(
+                "StatisticsJob:"+ inputPath,
+                LongWritable.class,
+                FlowRecord.class,
+                LongWritable.class,
+                Statistic.class,
+                Map.class,
+                Reduce.class,
+                TextInputFormat.class,
+                TextOutputFormat.class,
+                new Path(inputPath),
+                new Path(outputPath)
+        );
 
         //Run job and wait for completion
         //Verbose=true for debugging purposes
         job.waitForCompletion(true);
+
         //job done - tell web
         Web.updateJob(routerIp, timestamp, false);
     }

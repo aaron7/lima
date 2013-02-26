@@ -1,23 +1,23 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Iterator;
-
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
-import org.apache.hadoop.mapred.Reporter;
-
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Constants;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 public class SingleFlowJob {
 
@@ -70,13 +70,13 @@ public class SingleFlowJob {
 	 * 	The mapper will determine the potential attack type (if any) for each flow and then will aggregate on attackType and destination IP
 	 *	
 	 */
-	public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, BytesWritable, SingleFlowThreat> 
+	public static class Map extends Mapper<LongWritable, Text, BytesWritable, SingleFlowThreat>
 	{		
 		private static int largePacketCountThreshold = 475; // TODO find an appropriate value
 		private static int largeBytesCountThreshold = 3700;  //TODO find an appropriate value
 
-		public void map(LongWritable key, Text value, OutputCollector<BytesWritable, SingleFlowThreat> output, Reporter reporter) throws IOException 
-		{
+        @Override
+		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			try 
 			{
 				FlowRecord record = FlowRecord.valueOf(value.toString());
@@ -144,7 +144,7 @@ public class SingleFlowJob {
 				}
 				SingleFlowThreat threat = new SingleFlowThreat(new LongWritable(System.currentTimeMillis()), type, record);
 				BytesWritable outputKey = SerializationUtils.asBytesWritable(threat.attackType,record.destAddress);
-				output.collect(outputKey, threat);
+				context.write(outputKey, threat);
 			
 			}catch (ParseException e) 
 			{
@@ -157,7 +157,7 @@ public class SingleFlowJob {
 	/**
 	 *	The reducer will do a single traversal of the set of flows associated with each potential attack and record the relevant stats.
 	 */
-	 public static class Reduce extends MapReduceBase implements Reducer<BytesWritable, SingleFlowThreat, BytesWritable, Threat> 
+	 public static class Reduce extends Reducer<BytesWritable, SingleFlowThreat, BytesWritable, Threat>
 	 {
 		 
 		 private static void updateThreat(Threat threat, FlowRecord record)
@@ -175,12 +175,12 @@ public class SingleFlowJob {
 			 //TODO data avg?
 			 threat.getFlowDataTotal().set(threat.getFlowDataTotal().get() + record.bytes.get());
 		 }
-		 
-		 public void reduce(BytesWritable key, Iterator<SingleFlowThreat> values, OutputCollector<BytesWritable, Threat> output, Reporter reporter) throws IOException 
-		 { 
+
+         @Override
+		 public void reduce(BytesWritable key, Iterable<SingleFlowThreat> values, Context context) throws IOException, InterruptedException {
 			 
 			 Threat threat = null;
-			 for (SingleFlowThreat sft = values.next(); values.hasNext(); sft = values.next()) 
+			 for (SingleFlowThreat sft : values)
 			 {
 				 FlowRecord record = sft.getRecord(); 
 				 if (threat == null)
@@ -191,7 +191,37 @@ public class SingleFlowJob {
 				 updateThreat(threat, record);
 			 } 
 			HBaseAutoWriter.put(threat);
-			output.collect(key, threat);
+			context.write(key, threat);
 		 }
 	 }
+
+    /**
+     * Run a new Statistics job
+     */
+    public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
+        String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
+        String outputPath = "out/"+routerIp+"-"+timestamp+"-singleFlow.out";
+
+        //Set up the first job to perform Map1 and Reduce1.
+        Job job = JobUtils.getNewJob(
+                "SingleFlowJob:"+ inputPath,
+                BytesWritable.class,
+                SingleFlowThreat.class,
+                BytesWritable.class,
+                Threat.class,
+                Map.class,
+                Reduce.class,
+                TextInputFormat.class,
+                TextOutputFormat.class,
+                new Path(inputPath),
+                new Path(outputPath)
+        );
+
+        //Run job and wait for completion
+        //Verbose=true for debugging purposes
+        job.waitForCompletion(true);
+
+        //job done - tell web
+        Web.updateJob(routerIp, timestamp, false);
+    }
 }
