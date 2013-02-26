@@ -12,13 +12,20 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import uk.ac.cam.cl.groupproject12.lima.web.Web;
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
 
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
@@ -29,17 +36,17 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
  * 
  */
 public class EventMonitor {
-    /*
-     * TODO:
-     * Call Web.updateJob(routerIp, timestamp, true); when we have updated stuff to postgreSQL
-     * after the set of map reduce jobs for that router
-     */
+	/*
+	 * TODO: Call Web.updateJob(routerIp, timestamp, true); when we have updated
+	 * stuff to postgreSQL after the set of map reduce jobs for that router
+	 */
 
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
 
 	public EventMonitor(HBaseConnectionDetails hbaseConf,
-			IDataSynchroniser synchroniser) throws PGSQLConfigurationException, SQLException {
+			IDataSynchroniser synchroniser) throws PGSQLConfigurationException,
+			SQLException {
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				hbaseConf.getHost());
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
@@ -127,7 +134,7 @@ public class EventMonitor {
 							Constants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 				} else {
 					return new PostgreSQLConnectionDetails(hostname, port,
-							username, password, dbName);
+							dbName, username, password);
 				}
 			}
 
@@ -149,8 +156,25 @@ public class EventMonitor {
 		return null;
 	}
 
-	public static void main(String[] args) throws PGSQLConfigurationException, SQLException {
+	public static void main(String[] args) throws PGSQLConfigurationException,
+			SQLException {
+		long time = System.currentTimeMillis();
+		Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"), EventType.landAttack, new LongWritable(444L));
+		t.setDestIP(new IP("6.7.8.9"));
+		t.setEndTime(new LongWritable(667L));
+		t.setFlowCount(new IntWritable(678));
+		t.setFlowDataAvg(new IntWritable(11123));
+		t.setFlowDataTotal(new LongWritable(622L));
+		t.setSrcIP(new IP("66.22.11.55"));
+		
+		try {
+			HBaseAutoWriter.put(t);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
-				new ThreatSynchroniser(22));
+				new ThreatSynchroniser("1.2.3.4", time));
 	}
 }

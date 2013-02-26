@@ -26,7 +26,7 @@ public class Threat extends AutoWritable {
 	LongWritable timeProcessed;
 	@HBaseKey
 	IP routerId;
-	@HBaseKey	
+	@HBaseKey
 	Text type;
 	@HBaseKey
 	LongWritable startTime;
@@ -263,5 +263,23 @@ public class Threat extends AutoWritable {
 			return false;
 		return true;
 	}
-	
+
+	/**
+	 * Produces a string representation of an instance of Threat.
+	 */
+	@Override
+	public String toString() {
+		String threatStr;
+		
+		threatStr = "THREAT:\n" + 
+				"Router ID: " + this.routerId + "\n" + 
+				"Time Processed: " + this.timeProcessed + "\n" +
+				"Threat Type: " + this.type + "\n" + 
+				"Start Time: " + this.startTime + "\n" + 
+				"End Time: " + this.endTime + "\n" + 
+				"Source IP: " + this.srcIP + "\n" + 
+				"Destination IP: " + this.destIP + "\n";
+		
+		return threatStr;
+	}
 }
