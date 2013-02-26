@@ -152,6 +152,6 @@ public class EventMonitor {
 	public static void main(String[] args) throws PGSQLConfigurationException,
 			SQLException {
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2181),
-				new ThreatSynchroniser(22));
+				new ThreatSynchroniser("77.22.33.44"));
 	}
 }
