@@ -1,7 +1,7 @@
 <pgsql>
   <host>localhost</host>
   <port>5432</port>
-  <user>postgres</port>
-  <pass>lima</port>
+  <user>postgres</user>
+  <pass>lima</pass>
   <dbName>lima</dbName>
 </pgsql>
