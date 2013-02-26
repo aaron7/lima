@@ -110,7 +110,7 @@ public abstract class AutoWritable implements Writable
 			}
 			catch (IllegalAccessException e) 
 			{
-				//should never happen b/c we just made it accesssible!
+				//should never happen b/c we just made it accessible!
 				throw new RuntimeException(e);
 			}
 		}
