@@ -36,7 +36,7 @@ public class Web {
 	public static void updateJob(String ip, String timestamp,
 			boolean allComplete) {
 		Web.httpRequest("updateJob?ip=" + ip + "&timestamp=" + timestamp
-				+ "&inc=" + (allComplete ? 1 : 0));
+				+ "&complete=" + (allComplete ? 1 : 0));
 	}
 
 	/**

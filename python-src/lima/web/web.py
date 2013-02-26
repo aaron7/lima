@@ -10,7 +10,6 @@ IMPORTANT: Do not run using the normal python interface.
 
 import flask
 import redis
-import random
 import json
 
 from database import PostgresDB, HBaseDB
@@ -68,7 +67,7 @@ def event_stream(channels):
     pubsub.subscribe(channels)
     for message in pubsub.listen():
         print message
-        yield 'data: %s\n\n' % message['data']
+        yield "data: [%s,\"%s\"]\n\n" % (message['data'],message['channel'])
 
 """test function
 """
@@ -91,11 +90,9 @@ def updateRouters():
 @app.route("/java/<action>")
 def java(action):
     if action == "newJob":
-        #routerHandler.addJob(request.args['ip'], request.args['numOfJobs'])
-        print request.args['ip'] + ":" + request.args['numOfJobs']
+        routerHandler.addJob(request.args['ip'], request.args['timestamp'], int(request.args['numOfJobs']))
     elif action == "updateJob":
-        #routerHandler.updateJob(routerHandler.addJob(request.args['ip'], request.args['inc']))
-        print request.args['ip'] + ":" + request.args['inc']
+        routerHandler.updateJob(routerHandler.addJob(request.args['ip'], request.args['timestamp'], int(request.args['complete'])))
     return ("Done")
     
     
@@ -111,15 +108,13 @@ def stream():
 @app.route('/get')
 def get():
     if request.args['id'] == 'events':
-        return json.dumps(eventsHandler.getEventsList());
+        return json.dumps(eventsHandler.getEventsList())
     elif request.args['id'] == 'routers':
-        return json.dumps(routerHandler.getRoutersList());
+        return json.dumps(routerHandler.getRoutersList())
+    elif request.args['id'] == 'jobs':
+        return json.dumps(routerHandler.getJobs())
     else:
         return "Error: did not understand arguments"
-
-    #elif request.args['id'] == 'allrouters':
-    #  return routerHandler.getRoutersJSON();
-    
 
 if __name__ == "__main__":
     app.run(port=7777, threaded=True, debug=True)

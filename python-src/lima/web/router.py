@@ -19,9 +19,7 @@ class RouterHandler():
         self.red = red #get the redis instance
         
         self.routersList = self.getRouters()
-        self.routerStatus = [] #holds router status
-        for router in self.routersList:
-            self.routerStatus.append((router[0],0)) #add the router IP with status 0
+        self.routerJobs = []
     
     """returns the events list in JSON
     """
@@ -46,11 +44,32 @@ class RouterHandler():
             self.routersList = tempList #update our local copy
             
     #def getEventsOverview(self):
+    
+    def getJobs(self):
+        return self.routerJobs
+    
+    def addJob(self,ip,timestamp,numJobs):
+        self.routerJobs.append((ip,timestamp,0,numJobs))
+        self.red.publish("jobUpdates",json.dumps({"ip": ip, "timestamp": timestamp, "status": 0, "numJobs": numJobs}))
         
-   # def updateRouterStatus(self,ip,status):
+    def updateJob(self,ip,timestamp,status):
+        if status == 0:
+            for index, job in enumerate(self.routerJobs):
+                #find the job and update it (inc status)
+                if (job[0],job[1]) == (ip,timestamp):
+                    self.routerJobs[index] = (ip,timestamp,job[2]+1,job[3])
+                    self.red.publish("jobUpdates",json.dumps({"ip": ip, "timestamp": timestamp, "status": job[2]+1, "numJobs": job[3]}))
+                    break
+        if status == 1:
+            for index, job in enumerate(self.routerJobs):
+                #find the job and remove it since we are done
+                if (job[0],job[1]) == (ip,timestamp):
+                    self.routerJobs.remove(job)
+                    self.red.publish("jobUpdates",json.dumps({"ip": ip, "timestamp": timestamp, "status": 0, "numJobs": 0}))
+                    break
+                
         
-        
-        
-        
+            
+                    
         
         
