@@ -18,9 +18,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
@@ -38,16 +40,16 @@ public class EventMonitor implements Runnable {
 
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
-	
+
 	// Instance of the synchroniser for this monitor to run
 	IDataSynchroniser synchroniser = null;
 
 	public EventMonitor(HBaseConnectionDetails hbaseConf,
 			IDataSynchroniser synchroniser) throws PGSQLConfigurationException,
 			SQLException {
-		
+
 		this.synchroniser = synchroniser;
-		
+
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				hbaseConf.getHost());
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
@@ -156,45 +158,90 @@ public class EventMonitor implements Runnable {
 
 	public static void main(String[] args) throws PGSQLConfigurationException,
 			SQLException {
-//		long time = System.currentTimeMillis();
-//		Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"), EventType.landAttack, new LongWritable(444L));
-//		t.setDestIP(new IP("6.7.8.9"));
-//		t.setEndTime(new LongWritable(667L));
-//		t.setFlowCount(new IntWritable(678));
-//		t.setFlowDataAvg(new IntWritable(11123));
-//		t.setFlowDataTotal(new LongWritable(622L));
-//		t.setSrcIP(new IP("66.22.11.55"));
-//		
-//		try {
-//			HBaseAutoWriter.put(t);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// long time = System.currentTimeMillis();
+		// Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"),
+		// EventType.landAttack, new LongWritable(444L));
+		// t.setDestIP(new IP("6.7.8.9"));
+		// t.setEndTime(new LongWritable(667L));
+		// t.setFlowCount(new IntWritable(678));
+		// t.setFlowDataAvg(new IntWritable(11123));
+		// t.setFlowDataTotal(new LongWritable(622L));
+		// t.setSrcIP(new IP("66.22.11.55"));
+		//
+		// try {
+		// HBaseAutoWriter.put(t);
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
-//		
-//		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
-//				new ThreatSynchroniser("1.2.3.4", time));
-		
-//		for (int n = 0; n < 50; n++) {
-//			Statistic s = new Statistic(new IP("1.2.3.4"), new LongWritable(System.currentTimeMillis()), new IntWritable(1), new IntWritable(1), new LongWritable(1), new IntWritable(0), new IntWritable(0), new IntWritable(0));
-//			try {
-//				HBaseAutoWriter.put(s);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			try {
-//				//Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			System.out.println(n);
-//		}
-		
+		//
+		// new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
+		// new ThreatSynchroniser("1.2.3.4", time));
+
+		// for (int n = 0; n < 50; n++) {
+		// Statistic s = new Statistic(new IP("1.2.3.4"), new
+		// LongWritable(System.currentTimeMillis()), new IntWritable(1), new
+		// IntWritable(1), new LongWritable(1), new IntWritable(0), new
+		// IntWritable(0), new IntWritable(0));
+		// try {
+		// HBaseAutoWriter.put(s);
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// try {
+		// //Thread.sleep(100);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// System.out.println(n);
+		// }
+
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
 				new StatisticsSynchroniser("1.2.3.4"));
+	}
+
+	public static void doSynchronise(IP routerIP,
+			HBaseConnectionDetails hbaseConf, long timeProcessed) {
+
+		EventMonitor threat = null;
+		EventMonitor stats = null;
+
+		// Thread for Threat synchronisation
+		try {
+			threat = new EventMonitor(hbaseConf, new ThreatSynchroniser(
+					routerIP.getValue().toString(), timeProcessed));
+		} catch (PGSQLConfigurationException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			stats = new EventMonitor(hbaseConf, new StatisticsSynchroniser(
+					routerIP.getValue().toString()));
+		} catch (PGSQLConfigurationException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Invoke threads
+		Thread threatThread = new Thread(threat);
+		Thread statsThread = new Thread(stats);
+		threatThread.start();
+		statsThread.start();
+
+		// Wait for both to terminate
+		try {
+			threatThread.join();
+			statsThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Done!
 	}
 
 	@Override
