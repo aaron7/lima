@@ -127,7 +127,7 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 		
 		Web.updateJob(this.routerIP.getValue().toString(), Long.toString(currentTime), true);
 		
-		return false;
+		return true;
 	}
 	
 	// Get the results for the key prefix provided from HBase and construct Statistic
