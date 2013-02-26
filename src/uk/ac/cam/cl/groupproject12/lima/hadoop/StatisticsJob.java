@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
@@ -52,14 +53,14 @@ public class StatisticsJob {
                 }
                 stat.addFlowRecord(record);
             }
-            //TODO fix it so that it doesn't throw runtime errors in hadoop
-            //HBaseAutoWriter.put(stat);
+            
+            HBaseAutoWriter.put(stat);
             context.write(key, stat);
         }
     }
     
     /**
-     * Make a new Statistics Controlled job
+     * Run a new Statistics job
      */
     public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";

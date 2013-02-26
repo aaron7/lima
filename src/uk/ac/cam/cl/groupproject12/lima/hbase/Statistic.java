@@ -10,13 +10,12 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 
 /**
- * 
- * @author ernest
+ * @author Team Lima
  *
  *	A class to represent a row in the Hbase Statistic table, 
  *	characterizing the traffic through a router in a timeframe.
  *
- *	Note: the totalDataSize is in bytes. Other fields are unitless. 
+ *	Note: the totalDataSize is in bytes. Other fields are unit-less. 
  *
  */
 public class Statistic extends AutoWritable
@@ -32,6 +31,11 @@ public class Statistic extends AutoWritable
 	IntWritable TCPCount = new IntWritable(0);
 	IntWritable UDPCount = new IntWritable(0);
 	IntWritable ICMPCount = new IntWritable(0);
+	
+	public Statistic()
+	{
+		
+	}
 	
 	public Statistic(IP routerId, long timeframe) 
 	{
@@ -54,8 +58,10 @@ public class Statistic extends AutoWritable
 		ICMPCount = iCMPCount;
 	}
 
-
-
+	/**
+	 * 	Update this statistic with the information in a record. The FlowRecord must 
+	 *  have the same router IP and have its start time fall in the same timeframe.
+	 */
 	public void addFlowRecord(FlowRecord record)
 	{
 		this.flowCount.set(this.flowCount.get() + 1);
@@ -76,14 +82,14 @@ public class Statistic extends AutoWritable
 		}
 		else
 		{
-			//TODO log error?
+			//do nothing!
 		}
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result
 				+ ((ICMPCount == null) ? 0 : ICMPCount.hashCode());
 		result = prime * result
@@ -107,7 +113,7 @@ public class Statistic extends AutoWritable
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -154,5 +160,12 @@ public class Statistic extends AutoWritable
 			return false;
 		return true;
 	}
-		
+
+	@Override
+	public String toString() {
+		return "Statistic [routerId=" + routerId + ", timeFrame=" + timeFrame
+				+ ", flowCount=" + flowCount + ", packetCount=" + packetCount
+				+ ", totalDataSize=" + totalDataSize + ", TCPCount=" + TCPCount
+				+ ", UDPCount=" + UDPCount + ", ICMPCount=" + ICMPCount + "]";
+	}	
 }
