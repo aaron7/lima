@@ -32,7 +32,7 @@ public class IP extends AutoWritable {
 		this.value = new Text(value);
 		if (! this.isValid() )
 		{
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(value + " is not a valid ip");
 		}
 	}
 	
@@ -51,7 +51,7 @@ public class IP extends AutoWritable {
 		{
 			return false;
 		}
-		String[] tokens = this.value.toString().split("\\.");
+		String[] tokens = this.value.toString().trim().split("\\.");
 		if (tokens.length != 4)
 		{
 			return false;
