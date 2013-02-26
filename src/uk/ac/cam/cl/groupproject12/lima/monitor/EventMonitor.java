@@ -18,6 +18,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 /**
