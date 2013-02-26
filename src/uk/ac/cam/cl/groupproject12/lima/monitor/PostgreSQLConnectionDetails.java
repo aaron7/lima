@@ -16,11 +16,11 @@ public class PostgreSQLConnectionDetails {
 	/**
 	 * Construct a new PostgreSQLConnectionDetails with the information about
 	 * connecting to PGSQL.
-	 * 
-	 * @param host
-	 * @param port
-	 * @param username
-	 * @param password
+     *
+     * @param host  Hostname of the PostgreSQL server.
+     * @param port  Port number on which PostgreSQL is listening.
+	 * @param username  Username used to log into PostgreSQL.
+	 * @param password  Password for the PostgreSQL user.
 	 */
 	public PostgreSQLConnectionDetails(String host, int port, String dbname,
 			String username, String password) {
