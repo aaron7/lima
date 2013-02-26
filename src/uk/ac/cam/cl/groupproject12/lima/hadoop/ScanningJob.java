@@ -21,7 +21,7 @@ import java.text.ParseException;
  * Class encapsulating the Mappers, Reducers, the appropriate data structure classes,
  * and an interface to run the job.
  */
-public class ScanningJob {
+public class ScanningJob extends JobBase {
 
     /**
      * The first map job takes in the input from csv files, converts it into PortScan and
@@ -230,9 +230,10 @@ public class ScanningJob {
     }
 
     /**
-     * Run a new DOS Job
+     * Run a new DOS JobBase
      */
-    public static void runJob(String routerIp, String timestamp)
+    @Override
+    public void runJob(String routerIp, String timestamp)
             throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/" + routerIp + "-" + timestamp
                 + "-netflow.csv";
@@ -241,7 +242,7 @@ public class ScanningJob {
         Job nextJob;
 
         //Set up the first job.
-        nextJob = JobUtils.getNewJob(
+        nextJob = getNewJob(
                 "ScanningJobPhase1:" + inputPath,
                 PortScanKey.class,
                 PortScan.class,
@@ -256,12 +257,12 @@ public class ScanningJob {
         );
         // Run it with verbose mode for debugging purposes.
         nextJob.waitForCompletion(true);
-        // Job done - send update to web
+        // JobBase done - send update to web
         Web.updateJob(routerIp, timestamp, false);
 
 
         //Set up the second job.
-        nextJob = JobUtils.getNewJob(
+        nextJob = getNewJob(
                 "ScanningJobPhase2:" + inputPath,
                 PortScanKey.class,
                 PortScan.class,
@@ -276,11 +277,11 @@ public class ScanningJob {
         );
         // Run it with verbose mode for debugging purposes.
         nextJob.waitForCompletion(true);
-        // Job done - send update to web
+        // JobBase done - send update to web
         Web.updateJob(routerIp, timestamp, false);
 
         //Set up the third job
-        nextJob = JobUtils.getNewJob(
+        nextJob = getNewJob(
                 "ScanningJobPhase3:" + inputPath,
                 PortScanKey.class,
                 PortScan.class,
@@ -295,7 +296,7 @@ public class ScanningJob {
         );
         // Run it with verbose mode for debugging purposes.
         nextJob.waitForCompletion(true);
-        // Job done - send update to web
+        // JobBase done - send update to web
         Web.updateJob(routerIp, timestamp, false);
     }
 }

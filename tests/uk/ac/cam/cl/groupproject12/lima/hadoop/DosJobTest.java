@@ -15,12 +15,12 @@ import java.util.List;
 
 public class DosJobTest {
     MapDriver<LongWritable,Text,BytesWritable,FlowRecord> mapDriver1;
-    ReduceDriver<BytesWritable,FlowRecord,BytesWritable,DosJob.DoSAttack> reduceDriver1;
-    MapReduceDriver<LongWritable,Text,BytesWritable,FlowRecord,BytesWritable,DosJob.DoSAttack> mapReduceDriver1;
+    ReduceDriver<BytesWritable,FlowRecord,BytesWritable,BytesWritable> reduceDriver1;
+    MapReduceDriver<LongWritable,Text,BytesWritable,FlowRecord,BytesWritable,BytesWritable> mapReduceDriver1;
 
-    MapDriver<BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack> mapDriver2;
+    MapDriver<BytesWritable,BytesWritable,BytesWritable,DosJob.DoSAttack> mapDriver2;
     ReduceDriver<BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack> reduceDriver2;
-    MapReduceDriver<BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack> mapReduceDriver2;
+    MapReduceDriver<BytesWritable,BytesWritable,BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack> mapReduceDriver2;
 
     @BeforeClass
     public void setUp(){
@@ -45,7 +45,7 @@ public class DosJobTest {
         values.add(rec);
         BytesWritable key = SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2"));
         reduceDriver1.withInput(key,values);
-        reduceDriver1.withOutput(key, new DosJob.DoSAttack(new IP("1.1.1.1"), new LongWritable(0), new LongWritable(1), new IP("0.0.0.0"), new IntWritable(4), new LongWritable(5), new IntWritable(1), new IntWritable(1)));
+        reduceDriver1.withOutput(key,SerializationUtils.asBytesWritable(new DosJob.DoSAttack(new IP("1.1.1.1"), new LongWritable(0), new LongWritable(1), new IP("0.0.0.0"), new IntWritable(4), new LongWritable(5), new IntWritable(1), new IntWritable(1))));
         reduceDriver1.runTest();
     }
 
@@ -61,7 +61,8 @@ public class DosJobTest {
         values.add(new FlowRecord(new IP("1.1.1.1"),30L,3L,6,new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,1,1,"",""));
         values.add(new FlowRecord(new IP("1.1.1.1"),20L,86L,6,new IP("2.2.2.2"),new IP("0.0.0.0"),2,3,1,1,"",""));
         reduceDriver1.withInput(SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2")),values);
-        reduceDriver1.withOutput(SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2")), new DosJob.DoSAttack(new IP("1.1.1.1"), new LongWritable(20), new LongWritable(100), new IP("0.0.0.0"), new IntWritable(11), new LongWritable(15), new IntWritable(4), new IntWritable(1)));
+        reduceDriver1.withOutput(SerializationUtils.asBytesWritable(new IP("0.0.0.0"), new LongWritable(0), new IP("2.2.2.2")),
+                SerializationUtils.asBytesWritable(new DosJob.DoSAttack(new IP("1.1.1.1"), new LongWritable(20), new LongWritable(100), new IP("0.0.0.0"), new IntWritable(11), new LongWritable(15), new IntWritable(4), new IntWritable(1))));
         reduceDriver1.runTest();
     }
 }

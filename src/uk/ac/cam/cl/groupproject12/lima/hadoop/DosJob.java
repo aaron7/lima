@@ -20,7 +20,7 @@ import java.text.ParseException;
 /**
  * Encapsulates the Map and Reduce jobs for the DoS attack threat analysis.
  */
-public class DosJob {
+public class DosJob extends JobBase {
 
 	/**
 	 * The first map job takes text and produces a FlowRecord if the particular
@@ -212,9 +212,10 @@ public class DosJob {
 	}
 
 	/**
-	 * Run a new DOS Job
+	 * Run a new DOS JobBase
 	 */
-	public static void runJob(String routerIp, String timestamp)
+    @Override
+	public void runJob(String routerIp, String timestamp)
 			throws IOException, ClassNotFoundException, InterruptedException {
         //TODO this needs fixing to use BytesWritable
 
@@ -225,7 +226,7 @@ public class DosJob {
 		String phase1Output = outputPath + ".phase1";
 
         //Set up the first job to perform Map1 and Reduce1.
-        Job currentJob = JobUtils.getNewJob(
+        Job currentJob = getNewJob(
                 "DosJobPhase1:"+ inputPath,
                 BytesWritable.class,
                 FlowRecord.class,
@@ -246,7 +247,7 @@ public class DosJob {
 
 
         //Set up the first job to perform Map1 and Reduce1.
-        currentJob = JobUtils.getNewJob(
+        currentJob = getNewJob(
                 "DosJobPhase2:"+ inputPath,
                 BytesWritable.class,
                 DoSAttack.class,

@@ -19,7 +19,7 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
 import java.io.IOException;
 import java.text.ParseException;
 
-public class SingleFlowJob {
+public class SingleFlowJob extends JobBase {
 
 	private static boolean isReflectingPort(IntWritable port) {
 		int portNumber = port.get();
@@ -198,12 +198,13 @@ public class SingleFlowJob {
     /**
      * Run a new Statistics job
      */
-    public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
+    @Override
+    public void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
         String outputPath = "out/"+routerIp+"-"+timestamp+"-singleFlow.out";
 
         //Set up the first job to perform Map1 and Reduce1.
-        Job job = JobUtils.getNewJob(
+        Job job = getNewJob(
                 "SingleFlowJob:"+ inputPath,
                 BytesWritable.class,
                 SingleFlowThreat.class,

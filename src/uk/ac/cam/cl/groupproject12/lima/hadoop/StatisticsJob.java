@@ -15,7 +15,7 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
 import java.io.IOException;
 import java.text.ParseException;
 
-public class StatisticsJob {
+public class StatisticsJob extends JobBase {
 
     public static class Map extends Mapper<LongWritable, Text, LongWritable, FlowRecord> {
         @Override
@@ -59,12 +59,13 @@ public class StatisticsJob {
     /**
      * Run a new Statistics job
      */
-    public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
+    @Override
+    public void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
         String outputPath = "out/"+routerIp+"-"+timestamp+"-statistics.out";
 
         //Set up the first job to perform Map1 and Reduce1.
-        Job job = JobUtils.getNewJob(
+        Job job = getNewJob(
                 "StatisticsJob:"+ inputPath,
                 LongWritable.class,
                 FlowRecord.class,

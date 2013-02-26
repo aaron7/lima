@@ -1,5 +1,6 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.*;
@@ -8,10 +9,26 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
-/**
- * Encapsulates utils for Jobs.
- */
-public class JobUtils {
+public abstract class JobBase {
+    public Thread getThread(final String routerIp, final String timestamp) {
+        return new Thread() {
+            public void run() {
+                try {
+                    runJob(routerIp, timestamp);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
+
+    protected abstract void runJob(String routerIP, String timestamp)
+            throws IOException,ClassNotFoundException,InterruptedException;
+
     /**
      * Sets up a ew job appropriately.
      * @param jobName is the name of the job.
@@ -34,7 +51,7 @@ public class JobUtils {
      * @return the Job.
      * @throws java.io.IOException
      */
-    public static <KEY_IN,VAL_IN,KEY_MED,VAL_MED,KEY_OUT,VAL_OUT> Job getNewJob(
+    protected <KEY_IN,VAL_IN,KEY_MED,VAL_MED,KEY_OUT,VAL_OUT> Job getNewJob(
             String jobName,
             Class<KEY_MED> keyMedCls,
             Class<VAL_MED> valMedCls,
@@ -61,11 +78,12 @@ public class JobUtils {
         job.setInputFormatClass(inputFormatClass);
         job.setOutputFormatClass(outputFormatClass);
 
-        job.setJarByClass(JobUtils.class);
+        job.setJarByClass(JobBase.class);
 
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
 
         return job;
     }
+
 }
