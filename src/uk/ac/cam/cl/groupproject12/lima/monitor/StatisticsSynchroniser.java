@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.groupproject12.lima.monitor;
 
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class StatisticsSynchroniser implements IDataSynchroniser {
@@ -28,7 +30,43 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
-		// TODO Auto-generated method stub
+		HTable table = null;
+		try {
+			table = new HTable(monitor.getBaseConfig(), "Statistic");
+			
+			// Row filter based on the router ID in the key. Substitutes in the
+			// key separator.
+			Filter routerIDFilter = new RowFilter (
+					CompareFilter.CompareOp.EQUAL, new RegextringComparator(
+							String.format(this.routerID + "%s",
+									Constants.HBASE_KEY_SEPERATOR)));
+			
+			Scan scan = new Scan();
+			FilterList fl = new FilterList();
+			fl.addFilter(routerIDfilter);
+			ResultScanner scanner = table.getScanner(scan);
+			
+			for (Result r : scanner) {
+				; //TODO
+			}
+			
+			Connection c = monitor.jdbcPGSQL;
+			
+			String stmt = ""; //TODO
+			PrepareStatement ps = c.prepareStatement(stmt);
+			try {
+
+		} catch (IOException e) {
+			e.printStackTrace();  //TODO
+		} finally {
+			try {
+				if (table != null)
+					table.close()
+			} catch (IOException e) {
+				e.printStackTrace(); //TODO
+			}
+		}
+		
 		return false;
 	}
 
