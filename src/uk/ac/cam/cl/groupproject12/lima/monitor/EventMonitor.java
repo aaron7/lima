@@ -58,6 +58,16 @@ public class EventMonitor {
 			e.printStackTrace();
 		}
 	}
+	
+	Configuration getHBaseConfig()
+	{
+		return this.hbaseConfig;
+	}
+	
+	Connection getPGSQLConnection()
+	{
+		return this.jdbcPGSQL;
+	}
 
 	// Parses the XML file in a well-defined location to obtain PGSQL connection
 	// information. Returns a PostgreSQLConnectionDetails object containing such

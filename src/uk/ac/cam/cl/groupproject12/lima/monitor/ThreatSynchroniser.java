@@ -26,12 +26,12 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 	public boolean synchroniseTables(EventMonitor monitor) {
 
 		try {
-			HTable table = new HTable(monitor.getHbaseConfig(), "Threat");
+			HTable table = new HTable(monitor.getHBaseConfig(), "Threat");
 
 			// Set up a RowFilter to filter based on router ID
 			List<Filter> filters = new ArrayList<Filter>();
 			
-			Filter routerIDFilter = new SingleColumnValueFilter()
+			Filter routerIDFilter = 
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
