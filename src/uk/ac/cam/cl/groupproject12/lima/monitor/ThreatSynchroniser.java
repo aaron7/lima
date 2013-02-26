@@ -18,6 +18,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
 public class ThreatSynchroniser implements IDataSynchroniser {
@@ -56,10 +57,10 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
-		
+
 		// PostgreSQL connection from the monitor.
 		Connection c = monitor.jdbcPGSQL;
-		
+
 		HTable table = null;
 		try {
 			// Use the connection to HBase to obtain a handle on the "Threat"
@@ -90,29 +91,22 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 
 			for (Result r : scanner) {
 
-				// For each result, we obtain a full key including all the
-				// values we did not know. This is used to pull the data into
-				// our the "Threat" class, which represents the manner in which
-				// data is stored in HBase. It is necessary to split on the
-				// basis of the key separator stored externally in the
-				// constants, for which we need to properly escape any special
-				// characters in that constant.
-				String[] keys = Bytes
-						.toString(r.getRow())
-						.split(Pattern
-								.quote(uk.ac.cam.cl.groupproject12.lima.hbase.Constants.HBASE_KEY_SEPARATOR));
+				// From the byte array of the resulting key, use the AutoWriter
+				// to obtain an object of type Threat with all the fields for
+				// this result properly instantiated with the values from HBase.
+				byte[] key = r.getRow();
 
-				// Pass the individual keys to the Threat class in order for it
-				// to populate the values.
-				Threat t = new Threat(new LongWritable(this.timeProcessed),
-						this.routerIP, EventType.valueOf(keys[2]),
-						new LongWritable(Long.parseLong(keys[3])));
-				
-				
+				// Ask the AutoWriter to get the values for the provided key and
+				// populate them into the class "Threat".
+				Threat t = HBaseAutoWriter.get(Threat.class, key);
 
+				// For DEBUG
+				System.out.println(t.getSrcIP().toString());
+
+				// Prepared statement for inserting the threat into the PGSQL
+				// database
+				//String sql = "INSERT INTO "
 			}
-
-			
 
 			String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?,?,?,?,?)";
 			PreparedStatement ps = c.prepareStatement(stmt);
