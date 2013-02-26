@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * The Cleaner class is used to clean the Statistics and Events tables of the HBase instance of data older than a certain threshold.
+ * The Cleaner class is used to clean the Statistics and Threats tables of the HBase instance of data older than a certain threshold.
  *
  * @author Team Lima
  */
@@ -17,18 +17,22 @@ public abstract class Cleaner {
     /**
      * The period of data to be retained in days.  Hard coded to a given value, but may be altered in the code.
      */
-    private static final int period = 14;
+	protected static final int period = 14;
 
     /**
      * The timestamp corresponding to the earliest data to be retained.
      */
-    private static final long minTimeStamp = System.currentTimeMillis() - (period * 86400000);
+	protected static final long minTimeStamp = System.currentTimeMillis() - (period * 86400000);
 
     private static final String HBASE_CONFIGURATION_ZOOKEEPER_QUORUM = "hbase.zookeeper.quorum";
     private static final String HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT = "hbase.zookeeper.property.clientPort";
+    
+    private Cleaner() {
+    	// Constructor not intended for use.
+    }
 
     /**
-     * The main method calls the cleanTable method on both the Statistics and Events tables.
+     * The main method calls the cleanTable method on both the Statistics and Threats tables.
      *
      * @param args Arguments passed to the main method will not be used in execution.
      */
@@ -37,8 +41,8 @@ public abstract class Cleaner {
         conf.set(HBASE_CONFIGURATION_ZOOKEEPER_QUORUM, "localhost");
         conf.setInt(HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT, 2182);
 
-        cleanTable(conf, "statistics");
-        cleanTable(conf, "events");
+        cleanTable(conf, "Statistic");
+        cleanTable(conf, "Threat");
     }
 
     /**
@@ -47,7 +51,7 @@ public abstract class Cleaner {
      * @param conf      The Configuration of the HBase instance which will be cleaned.
      * @param tableName The name of the table in HBase which will be cleaned.
      */
-    private static void cleanTable(Configuration conf, String tableName) {
+    protected static void cleanTable(Configuration conf, String tableName) {
         try {
             HTable table = new HTable(conf, tableName);
             Scan scan = new Scan();

@@ -12,7 +12,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
 /**
- * @author ernest
+ * @author Team Lima
  *
  *	A class which acts as a container for information about a flow.
  *
