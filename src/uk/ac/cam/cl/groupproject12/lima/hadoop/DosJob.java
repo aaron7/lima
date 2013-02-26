@@ -13,7 +13,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 import java.io.IOException;
@@ -158,7 +157,7 @@ public class DosJob {
 						new IntWritable(flowCount), new IntWritable(srcIPCount));
 				if (isSignificant(res))
 					context.write(key, res);
-				// TODO output to HBase here
+				//TODO output to HBase here
 			}
 		}
 
@@ -214,7 +213,7 @@ public class DosJob {
 	}
 
 	/**
-	 * Make a new configuration for a DOS Job
+	 * Run a new DOS Job
 	 */
 	public static void runJob(String routerIp, String timestamp)
 			throws IOException, ClassNotFoundException, InterruptedException {
