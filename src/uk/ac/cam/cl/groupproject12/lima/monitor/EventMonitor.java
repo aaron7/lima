@@ -12,18 +12,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
-import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
-import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
-import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
@@ -36,7 +30,7 @@ import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDet
  * @author Team Lima
  * 
  */
-public class EventMonitor {
+public class EventMonitor implements Runnable {
 	/*
 	 * TODO: Call Web.updateJob(routerIp, timestamp, true); when we have updated
 	 * stuff to postgreSQL after the set of map reduce jobs for that router
@@ -44,10 +38,16 @@ public class EventMonitor {
 
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
+	
+	// Instance of the synchroniser for this monitor to run
+	IDataSynchroniser synchroniser = null;
 
 	public EventMonitor(HBaseConnectionDetails hbaseConf,
 			IDataSynchroniser synchroniser) throws PGSQLConfigurationException,
 			SQLException {
+		
+		this.synchroniser = synchroniser;
+		
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				hbaseConf.getHost());
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
@@ -73,9 +73,6 @@ public class EventMonitor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// Invoke the synchronisation method of the synchroniser
-		synchroniser.synchroniseTables(this);
 	}
 
 	Configuration getHBaseConfig() {
@@ -198,5 +195,16 @@ public class EventMonitor {
 		
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
 				new StatisticsSynchroniser("1.2.3.4"));
+	}
+
+	@Override
+	public void run() {
+		// Invoke the synchronisation method of the synchroniser
+		try {
+			this.synchroniser.synchroniseTables(this);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
