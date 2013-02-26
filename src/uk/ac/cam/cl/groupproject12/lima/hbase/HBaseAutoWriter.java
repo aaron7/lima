@@ -52,7 +52,7 @@ public abstract class HBaseAutoWriter
 			{
 				throw new IllegalArgumentException("Must have at least one field annotated with @HbaseKey");
 			}
-			String key = Joiner.on(",").join(keys);
+			String key = Joiner.on(Constants.HBASE_KEY_SEPARATOR).join(keys);
 			return key.getBytes();
 			
 		}

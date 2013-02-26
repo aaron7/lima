@@ -10,7 +10,13 @@ import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 
 /**
  * 
- *	A Class used to represent a single row in the Hbase Threat table
+ *	A Class used to represent a single row in the Hbase Threat table.
+ *
+ *	The threat was processed at timeProcessed (in unix time) in the loggind data for the router identified by routerId. 
+ *	The threat consists of flowCount differnt flows, the earliest starting at startTime, the lattest ending at endTime. 
+ *	flowDataTotal gives the total number of bytes carried by all of the flows considered as part of this attack.
+ *
+ *	If the threat targets a single IP it will be stored in destIP; if the threat originates from a single IP it will be stored in srcIP.
  */
 public class Threat extends AutoWritable
 {
