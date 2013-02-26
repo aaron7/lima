@@ -57,15 +57,16 @@ public class EventMonitor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		// Invoke the synchronisation method of the synchroniser
+		synchroniser.synchroniseTables(this);
 	}
-	
-	Configuration getHBaseConfig()
-	{
+
+	Configuration getHBaseConfig() {
 		return this.hbaseConfig;
 	}
-	
-	Connection getPGSQLConnection()
-	{
+
+	Connection getPGSQLConnection() {
 		return this.jdbcPGSQL;
 	}
 
@@ -138,5 +139,10 @@ public class EventMonitor {
 		// If it gets to this point without returning, something's horribly
 		// wrong.
 		return null;
+	}
+
+	public static void main(String[] args) throws PGSQLConfigurationException {
+		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
+				new ThreatSynchroniser(22));
 	}
 }
