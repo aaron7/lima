@@ -11,13 +11,11 @@ public class HBaseConnectionDetails {
 	private int port;
 
 	/**
-	 * Construct a new PostgreSQLConnectionDetails with the information about
-	 * connecting to PGSQL.
+	 * Construct a new HBaseConnectionDetails with the information about
+	 * connecting to HBase.
 	 * 
-	 * @param host
-	 * @param port
-	 * @param username
-	 * @param password
+	 * @param host  Hostname of the HBase server.
+	 * @param port  Port number on which HBase is listening.
 	 */
 	public HBaseConnectionDetails(String host, int port) {
 		super();
