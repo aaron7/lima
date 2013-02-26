@@ -34,9 +34,9 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
-
+		HTable table = null;
 		try {
-			HTable table = new HTable(monitor.getHBaseConfig(), "Threat");
+			table = new HTable(monitor.getHBaseConfig(), "Threat");
 
 			// Row filter based on the router ID in the key. Substitutes in the
 			// key separator.
@@ -57,28 +57,36 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 							+ Bytes.toString(kv.getRow()));
 				}
 			}
-			
+
 			Connection c = monitor.jdbcPGSQL;
 
-            String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?)";
-            PreparedStatement ps = c.prepareStatement(stmt);
-            try {
-                ps.setInt(1, 0);
-                ps.setInt(2, 0);
-                ps.setInt(3, 0);
-                ps.setString(4, "");
-                ps.setString(5, "");
-                ps.setString(6, "");
-                ps.setLong(7, 0L);
+			String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?)";
+			PreparedStatement ps = c.prepareStatement(stmt);
+			try {
+				ps.setInt(1, 0);
+				ps.setInt(2, 0);
+				ps.setInt(3, 0);
+				ps.setString(4, "");
+				ps.setString(5, "");
+				ps.setString(6, "");
+				ps.setLong(7, 0L);
 
-                ps.executeUpdate();
-            } finally {
-                ps.close();
-            }
+				ps.executeUpdate();
+			} finally {
+				ps.close();
+			}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				if (table != null)
+					table.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		return false;
