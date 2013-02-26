@@ -2,12 +2,16 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.io.Writable;
+
+import com.google.common.base.Joiner;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.SerializationUtils;
@@ -34,22 +38,23 @@ public abstract class HBaseAutoWriter
 	public static byte[] getKey(AutoWritable w)
 	{
 		try {			
-			StringBuffer sb = new StringBuffer();
+			List<String> keys = new ArrayList<String>();
 			for (Field field : w.getAllInstanceFields())
 			{
 				if (field.isAnnotationPresent(HBaseKey.class))
 				{
 					field.setAccessible(true);
 					String val = field.get(w).toString();
-					sb.append(val);
+					keys.add(val);
 				}
 			}
-			String key = sb.toString();
-			if (key.isEmpty())
+			if (keys.isEmpty())
 			{
 				throw new IllegalArgumentException("Must have at least one field annotated with @HbaseKey");
 			}
+			String key = Joiner.on(",").join(keys);
 			return key.getBytes();
+			
 		}
 		catch (IllegalAccessException e) 
 		{

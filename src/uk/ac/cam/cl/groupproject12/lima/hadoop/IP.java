@@ -19,6 +19,13 @@ public class IP extends AutoWritable {
 		this.value = new Text(value);
 	}
 	
+	@Override
+	public String toString()
+	{
+		return "IP(" + this.value.toString() + ")";
+	}
+	
+	
 	public boolean isValid()
 	{
 		
