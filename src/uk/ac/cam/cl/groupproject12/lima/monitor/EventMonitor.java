@@ -127,7 +127,7 @@ public class EventMonitor {
 							Constants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 				} else {
 					return new PostgreSQLConnectionDetails(hostname, port,
-							username, password, dbName);
+							dbName, username, password);
 				}
 			}
 
