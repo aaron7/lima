@@ -29,6 +29,17 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 		this.routerID = routerID;
 	}
 
+    /**
+     * Reads threats directly from HBase, pushing them into PostgreSQL for further visualisation via the web UI.
+     *
+     * @param monitor
+     *            instance of the EventMonitor which contains the state required
+     *            to interact with the various databases.
+     *
+     * @return A boolean indicating if the entire procedure was successful.
+     * @throws SQLException
+     */
+
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
 		HTable table = null;
