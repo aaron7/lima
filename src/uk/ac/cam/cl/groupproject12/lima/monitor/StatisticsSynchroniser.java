@@ -4,7 +4,7 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) {
-		// TODO retrieve from 
+		// TODO Auto-generated method stub
 		return false;
 	}
 
