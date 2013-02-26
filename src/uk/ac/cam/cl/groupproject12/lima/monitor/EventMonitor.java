@@ -241,6 +241,10 @@ public class EventMonitor implements Runnable {
 			e.printStackTrace();
 		}
 
+		// Call the web GUI to notify it of the new data
+		Web.updateJob(routerIP.getValue().toString(),
+				Long.toString(timeProcessed), true);
+
 		// Done!
 	}
 

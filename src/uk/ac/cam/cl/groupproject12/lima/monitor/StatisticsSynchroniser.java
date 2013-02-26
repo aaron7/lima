@@ -21,7 +21,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
-import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 public class StatisticsSynchroniser implements IDataSynchroniser {
 	private IP routerIP;
@@ -159,9 +158,6 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 				ps2.close();
 			}
 		}
-
-		Web.updateJob(this.routerIP.getValue().toString(),
-				Long.toString(currentTime), true);
 
 		return true;
 	}

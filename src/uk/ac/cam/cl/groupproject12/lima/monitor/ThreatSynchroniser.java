@@ -19,7 +19,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
-import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 public class ThreatSynchroniser implements IDataSynchroniser {
 
@@ -111,11 +110,6 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 				}
 			}
 		}
-
-		// Notify the data visualisation layer to update this router's details
-		// from PostgreSQL
-		Web.updateJob(this.routerIP.getValue().toString(),
-				Long.toString(this.timeProcessed), true);
 
 		return false;
 	}
