@@ -72,8 +72,8 @@ public class SingleFlowJob {
 	 */
 	public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, BytesWritable, SingleFlowThreat> 
 	{		
-		private static int largePacketCountThreshold = -1; // TODO
-		private static int largeBytesCountThreshold = -1; // TODO
+		private static int largePacketCountThreshold = 475; // TODO find an appropriate value
+		private static int largeBytesCountThreshold = 3700;  //TODO find an appropriate value
 
 		public void map(LongWritable key, Text value, OutputCollector<BytesWritable, SingleFlowThreat> output, Reporter reporter) throws IOException 
 		{
