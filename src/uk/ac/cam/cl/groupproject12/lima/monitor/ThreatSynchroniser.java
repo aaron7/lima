@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
+import org.apache.hadoop.hbase.util.Bytes;
 
 public class ThreatSynchroniser implements IDataSynchroniser {
 	private int routerID;
@@ -42,6 +46,14 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 			FilterList fl = new FilterList();
 			fl.addFilter(routerIDFilter);
 			ResultScanner scanner = table.getScanner(scan);
+
+			for (Result r : scanner) {
+				System.out.println("getRow:" + Bytes.toString(r.getRow()));
+				for (KeyValue kv : r.raw()) {
+					System.out.println("kv:" + kv + ", Key: "
+							+ Bytes.toString(kv.getRow()));
+				}
+			}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
