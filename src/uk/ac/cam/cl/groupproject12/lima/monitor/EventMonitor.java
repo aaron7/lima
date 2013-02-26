@@ -179,21 +179,22 @@ public class EventMonitor {
 //		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
 //				new ThreatSynchroniser("1.2.3.4", time));
 		
-		for (int n = 0; n < 1000; n++) {
-			Statistic s = new Statistic(new IP("1.2.3.4"), new LongWritable(System.currentTimeMillis()), new IntWritable(1), new IntWritable(1), new LongWritable(1), new IntWritable(0), new IntWritable(0), new IntWritable(0));
-			try {
-				HBaseAutoWriter.put(s);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		for (int n = 0; n < 50; n++) {
+//			Statistic s = new Statistic(new IP("1.2.3.4"), new LongWritable(System.currentTimeMillis()), new IntWritable(1), new IntWritable(1), new LongWritable(1), new IntWritable(0), new IntWritable(0), new IntWritable(0));
+//			try {
+//				HBaseAutoWriter.put(s);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			try {
+//				//Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			System.out.println(n);
+//		}
 		
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
 				new StatisticsSynchroniser("1.2.3.4"));
