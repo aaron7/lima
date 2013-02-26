@@ -76,7 +76,13 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 						uk.ac.cam.cl.groupproject12.lima.hbase.Constants.HBASE_KEY_SEPARATOR,
 						this.routerIP.toString());
 
-		List<Threat> threats = getThreatsByKey(keyPrefix);
+		List<Threat> threats = null;
+		try {
+			threats = getThreatsByKey(keyPrefix);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?,?,?,?,?)";
 		PreparedStatement ps = c.prepareStatement(stmt);
@@ -99,7 +105,7 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 		List<Threat> threats = new ArrayList<Threat>();
 
 		HTable table = null;
-		
+
 		try {
 			// Use the connection to HBase to obtain a handle on the "Threat"
 			// storage table, where threat events are stored awaiting the
