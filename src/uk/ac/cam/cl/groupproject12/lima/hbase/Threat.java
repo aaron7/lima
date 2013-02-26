@@ -2,6 +2,7 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
@@ -25,7 +26,7 @@ public class Threat extends AutoWritable
 	@HBaseKey
 	IP routerId;
 	@HBaseKey	
-	EventType type;
+	Text type;
 	@HBaseKey
 	LongWritable startTime;
 	
@@ -53,7 +54,7 @@ public class Threat extends AutoWritable
 		
 		this.timeProcessed = timeProcessed;
 		this.routerId = routerId;
-		this.type = type;
+		this.type = new Text(type.toString());
 		this.startTime = startTime;
 	
 		//blank non-key fields:
@@ -82,11 +83,11 @@ public class Threat extends AutoWritable
 	}
 
 	public EventType getType() {
-		return type;
+		return EventType.valueOf(this.type.toString());
 	}
 
 	public void setType(EventType type) {
-		this.type = type;
+		this.type.set(type.toString());
 	}
 
 	public LongWritable getStartTime() {
@@ -144,5 +145,91 @@ public class Threat extends AutoWritable
 	public void setFlowDataTotal(LongWritable flowDataTotal) {
 		this.flowDataTotal = flowDataTotal;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((destIP == null) ? 0 : destIP.hashCode());
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+		result = prime * result
+				+ ((flowCount == null) ? 0 : flowCount.hashCode());
+		result = prime * result
+				+ ((flowDataAvg == null) ? 0 : flowDataAvg.hashCode());
+		result = prime * result
+				+ ((flowDataTotal == null) ? 0 : flowDataTotal.hashCode());
+		result = prime * result
+				+ ((routerId == null) ? 0 : routerId.hashCode());
+		result = prime * result + ((srcIP == null) ? 0 : srcIP.hashCode());
+		result = prime * result
+				+ ((startTime == null) ? 0 : startTime.hashCode());
+		result = prime * result
+				+ ((timeProcessed == null) ? 0 : timeProcessed.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Threat other = (Threat) obj;
+		if (destIP == null) {
+			if (other.destIP != null)
+				return false;
+		} else if (!destIP.equals(other.destIP))
+			return false;
+		if (endTime == null) {
+			if (other.endTime != null)
+				return false;
+		} else if (!endTime.equals(other.endTime))
+			return false;
+		if (flowCount == null) {
+			if (other.flowCount != null)
+				return false;
+		} else if (!flowCount.equals(other.flowCount))
+			return false;
+		if (flowDataAvg == null) {
+			if (other.flowDataAvg != null)
+				return false;
+		} else if (!flowDataAvg.equals(other.flowDataAvg))
+			return false;
+		if (flowDataTotal == null) {
+			if (other.flowDataTotal != null)
+				return false;
+		} else if (!flowDataTotal.equals(other.flowDataTotal))
+			return false;
+		if (routerId == null) {
+			if (other.routerId != null)
+				return false;
+		} else if (!routerId.equals(other.routerId))
+			return false;
+		if (srcIP == null) {
+			if (other.srcIP != null)
+				return false;
+		} else if (!srcIP.equals(other.srcIP))
+			return false;
+		if (startTime == null) {
+			if (other.startTime != null)
+				return false;
+		} else if (!startTime.equals(other.startTime))
+			return false;
+		if (timeProcessed == null) {
+			if (other.timeProcessed != null)
+				return false;
+		} else if (!timeProcessed.equals(other.timeProcessed))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+	
 }
 
