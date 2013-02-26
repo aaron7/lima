@@ -8,8 +8,19 @@ import org.apache.hadoop.io.DataInputBuffer;
 import org.apache.hadoop.io.DataOutputBuffer;
 import org.apache.hadoop.io.Writable;
 
+
+/**
+ * 
+ * @author ernest
+ *	
+ *	A class which provides several serialization related helper methods	
+ *
+ */
 public class SerializationUtils 
 {
+	/**
+	 * 	Converts a list of writables into a writable byte array.
+	 */
 	public static BytesWritable asBytesWritable(Writable... writables)
 	{
 		try 
@@ -27,11 +38,9 @@ public class SerializationUtils
 		}
 	}
 
-	public static byte[] asBytes(Writable[] array) 
-	{
-		return asBytesWritable(array).getBytes();
-	}
-
+	/**
+	 * 	Converts any writable into the bytes that would be used to represent it during serialization
+	 */
 	public static byte[] asBytes(Writable writable)
 	{
 		try 
@@ -46,11 +55,13 @@ public class SerializationUtils
 		}
 	}
 	
+	/**
+	 * 	Creates a DataInput object containing the given byte array.
+	 */
 	public static DataInput asDataInput(byte[] bytes) 
 	{
 		DataInputBuffer in = new DataInputBuffer();
 		in.reset(bytes, bytes.length);
 		return in;
 	}
-	
 }
