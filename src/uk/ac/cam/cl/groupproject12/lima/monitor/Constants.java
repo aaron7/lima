@@ -16,6 +16,5 @@ public class Constants {
 	public static final String HBASE_CONFIGURATION_ZOOKEEPER_QUORUM = "hbase.zookeeper.quorum";
 	public static final String HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT = "hbase.zookeeper.property.clientPort";
 
-	public static final String HBASE_KEY_SEPARATOR = "+";
 	public static final String HBASE_THREAT_KEY_PREFIX = "%s%s%s";
 }
