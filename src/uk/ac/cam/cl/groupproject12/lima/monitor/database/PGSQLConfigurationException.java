@@ -4,7 +4,7 @@ public class PGSQLConfigurationException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	PGSQLConfigurationException(String message) {
+	public PGSQLConfigurationException(String message) {
 		super(message);
 	}
 }

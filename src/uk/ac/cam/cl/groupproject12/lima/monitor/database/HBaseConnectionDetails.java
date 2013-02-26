@@ -26,14 +26,14 @@ public class HBaseConnectionDetails {
 	/**
 	 * @return the host
 	 */
-	String getHost() {
+	public String getHost() {
 		return host;
 	}
 
 	/**
 	 * @return the port
 	 */
-	int getPort() {
+	public int getPort() {
 		return port;
 	}
 }

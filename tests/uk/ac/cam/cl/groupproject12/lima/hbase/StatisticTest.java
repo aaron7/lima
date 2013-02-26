@@ -60,4 +60,17 @@ public class StatisticTest
 		Assert.assertEquals(stat1, stat2);
 	}
 	
+	@Test 
+	public void testPutGetII() throws IOException
+	{
+		Statistic stat1 = sampleStatisticFull();
+		HBaseAutoWriter.put(stat1);
+		
+		byte[] key = HBaseAutoWriter.getKey(stat1);
+		
+		Statistic stat2 = HBaseAutoWriter.get(Statistic.class, key);
+		Assert.assertEquals(stat1, stat2);
+	}
+	
+	
 }

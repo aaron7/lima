@@ -21,7 +21,6 @@ import org.xml.sax.SAXException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
-import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
@@ -154,7 +153,7 @@ public class EventMonitor {
 
 	public static void main(String[] args) throws PGSQLConfigurationException,
 			SQLException {
-		new EventMonitor(new HBaseConnectionDetails("localhost", 2181),
-				new ThreatSynchroniser("77.22.33.44"));
+		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
+				new ThreatSynchroniser("2.3.4.5", 1234567890L));
 	}
 }

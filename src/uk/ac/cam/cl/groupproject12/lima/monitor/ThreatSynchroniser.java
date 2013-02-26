@@ -13,11 +13,19 @@ import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
 public class ThreatSynchroniser implements IDataSynchroniser {
 
 	// The router identifier, i.e. its IP address
-	private String routerID;
+	private IP routerIP;
+
+	// The time of events which this instance of the ThreatSynchroniser is
+	// expected to synchronise between HBase and PGSQL (this is used to filter
+	// on the basis of the key).
+	private long timeProcessed;
 
 	/**
 	 * Constructs an instance of a threat synchroniser.
@@ -26,8 +34,9 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 	 *            The router ID we are to synchronise threats for (its IP
 	 *            address, typically)
 	 */
-	public ThreatSynchroniser(String routerID) {
-		this.routerID = routerID;
+	public ThreatSynchroniser(String routerIP, long timeProcessed) {
+		this.routerIP = new IP(routerIP);
+		this.timeProcessed = timeProcessed;
 	}
 
 	/**
@@ -44,6 +53,10 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
+
+		// PostgreSQL connection from the monitor.
+		Connection c = monitor.jdbcPGSQL;
+
 		HTable table = null;
 		try {
 			// Use the connection to HBase to obtain a handle on the "Threat"
@@ -51,25 +64,45 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 			// monitor's attention.
 			table = new HTable(monitor.getHBaseConfig(), "Threat");
 
-			// Filter the case based on the router ID
-			Filter routerIDFilter = new RowFilter(CompareOp.EQUAL,
-					new BinaryPrefixComparator(Bytes.toBytes(this.routerID)));
+			// Filter the case based on the time processed and router ID,
+			// concatenated together in the key to form its prefix. Of course,
+			// the key will contain other values, so this must simply match in
+			// the prefix of the key in order to obtain all fields matching on
+			// these values.
+			String keyPrefix = String
+					.format(Constants.HBASE_THREAT_KEY_PREFIX,
+							this.timeProcessed,
+							uk.ac.cam.cl.groupproject12.lima.hbase.Constants.HBASE_KEY_SEPARATOR,
+							this.routerIP.getValue().toString());
 
+			// The filter routerIDFilter is intended to search for all rows in
+			// the database which contain the keyPrefix as their key prefix.
+			Filter routerIDFilter = new RowFilter(CompareOp.EQUAL,
+					new BinaryPrefixComparator(Bytes.toBytes(keyPrefix)));
+
+			// Scan the database using the filter specified above.
 			Scan scan = new Scan();
 			scan.setFilter(routerIDFilter);
-
 			ResultScanner scanner = table.getScanner(scan);
 
 			for (Result r : scanner) {
-				// System.out.println("getRow:" + Bytes.toString(r.getRow()));
 
-				String[] keys = Bytes.toString(r.getRow()).split("\\+");
+				// From the byte array of the resulting key, use the AutoWriter
+				// to obtain an object of type Threat with all the fields for
+				// this result properly instantiated with the values from HBase.
+				byte[] key = r.getRow();
 
-				for (String s : keys)
-					System.out.println(s);
+				// Ask the AutoWriter to get the values for the provided key and
+				// populate them into the class "Threat".
+				Threat t = HBaseAutoWriter.get(Threat.class, key);
+
+				// For DEBUG
+				System.out.println(t.getSrcIP().toString());
+
+				// Prepared statement for inserting the threat into the PGSQL
+				// database
+				//String sql = "INSERT INTO "
 			}
-
-			Connection c = monitor.jdbcPGSQL;
 
 			String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?,?,?,?,?)";
 			PreparedStatement ps = c.prepareStatement(stmt);
