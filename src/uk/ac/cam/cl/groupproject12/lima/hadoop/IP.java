@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 
 /**
- * @author ernest
+ * @author Team Lima
  * 
  * A Writable for representing an IPv4 address. A valid instance will have a non-null value field
  * with four integers separated by 3 periods with each int in the range [0,256). 

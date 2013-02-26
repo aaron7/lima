@@ -11,7 +11,7 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 /**
  * 
- * @author ernest
+ * @author Team Lima
  *
  *	A class to represent a row in the Hbase Statistic table, 
  *	characterizing the traffic through a router in a timeframe.
