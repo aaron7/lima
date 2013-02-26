@@ -19,9 +19,9 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.SerializationUtils;
 /**
  *	Facilitates automatic transfer between any Autowritale instance and HBase provided that:
  *		
- *		1) the class name of the AutoWritable is the same as the name of a table in hbase
- *		2) for every field in the AutoWritable descendent type there is a corresponding hbase 
- *			column with name "family:[col name]"
+ *		1) the unqualified class name of the AutoWritable is the same as the name of a table in hbase
+ *		2) for every field in the AutoWritable descendant type there is a corresponding hbase 
+ *			column with name "f1:[col name]"
  */
 public abstract class HBaseAutoWriter
 {
@@ -29,7 +29,7 @@ public abstract class HBaseAutoWriter
 	private static final byte[] FAMILY = "f1".getBytes();
 	
 	
-	private static byte[] getTableName(AutoWritable w)
+	public static byte[] getTableName(AutoWritable w)
 	{
 		String[] tokens = w.getClass().toString().split("\\.");
 		return tokens[tokens.length - 1].getBytes();
