@@ -170,7 +170,7 @@ public class DosJob {
     /**
      * This method takes in a DoSAttack and determines whether it is significant, i.e. whether it is just noise
      * data, or whether it is an actual attack, based on the size of the flow, the packets transmitted, etc.
-     * @param res
+     * @param res A DoS attack object.
      * @return true if res is not noise data.
      */
     private static boolean isSignificant(DoSAttack res) {

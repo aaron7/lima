@@ -29,7 +29,7 @@ public abstract class AutoWritable implements Writable
 	public final List<Field> getAllFields()
 	{
 		List<Field> list = new ArrayList<Field>();
-		Class<? extends Object> clss = this.getClass(); 
+		Class<?> clss = this.getClass();
 		while (! clss.equals(Object.class))
 		{
 			list.addAll(Arrays.asList(clss.getDeclaredFields()));
@@ -129,18 +129,6 @@ public abstract class AutoWritable implements Writable
 		{
 			throw new RuntimeException("Unexpected IO Exception",e);
 		}
-	}
-	
-	@Override
-	public boolean equals(Object other)
-	{
-		return true;
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		return 1;
 	}
 	
 }
