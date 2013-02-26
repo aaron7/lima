@@ -5,7 +5,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class StatisticsSynchroniser implements IDataSynchroniser {
-    private int routerID;
+    private String routerID;
+    private int averageingPeriod = 5; //Period to average over in minutes.
 
     /**
      * Constructs an instance of StatisticsSynchroniser
@@ -16,9 +17,11 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
     public StatisticsSynchroniser(int routerID) {
         this.routerID = routerID;
     }
-
+    
     /**
-     * Reads threats out of HBase, processes them to calculate the relevant moving averages over greater periods of time than that of the logs, then writes the result into PostgreSQL.
+     * Reads data out of HBase, processes it to calculate the relevant moving averages
+     * over greater periods of time than that of the logs, then writes the result into
+     * PostgreSQL.
      *
      * @param monitor
      *            instance of the EventMonitor which contains the state required
@@ -31,20 +34,27 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
 		HTable table = null;
+		long currentTime = System.currentTimeMillis();
+		long minimumTimestamp = currentTime - (averagingPeriod * 60000); //Timestamp corresponding to the earliest data used for averages.
 		try {
+			// Use the connection to HBase to obtain a handle on the "Statistic"
+			// storage table, where router data is stored awaiting the
+			// monitor's attention.
 			table = new HTable(monitor.getBaseConfig(), "Statistic");
 			
-			// Row filter based on the router ID in the key. Substitutes in the
-			// key separator.
-			Filter routerIDFilter = new RowFilter (
-					CompareFilter.CompareOp.EQUAL, new RegextringComparator(
-							String.format(this.routerID + "%s",
-									Constants.HBASE_KEY_SEPERATOR)));
+			// Filter the case based on the router ID
+			Filter routerIDFilter = new RowFilter (CompareOp.EQUAL,
+					new BinaryPrefixComparator(Bytes.toBytes(this.routerID)))));
 			
 			Scan scan = new Scan();
-			FilterList fl = new FilterList();
-			fl.addFilter(routerIDfilter);
+			scan.setFilter(routerIDFilter);
+			scan.setTimeRange(minimumTimestamp, currentTime);
+			
 			ResultScanner scanner = table.getScanner(scan);
+			
+			long flowsPH = 0;
+			long packetsPH = 0;
+			long bytesPH = 0;
 			
 			for (Result r : scanner) {
 				; //TODO
@@ -52,9 +62,9 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 			
 			Connection c = monitor.jdbcPGSQL;
 			
-			String stmt = ""; //TODO
+			String stmt = "INSERT INTO Router(routerIP, lastSeen, flowsPH, packetsPH, bytesPH) VALUES (?,?,?,?,?)"; //TODO
 			PrepareStatement ps = c.prepareStatement(stmt);
-			try {
+			
 
 		} catch (IOException e) {
 			e.printStackTrace();  //TODO
