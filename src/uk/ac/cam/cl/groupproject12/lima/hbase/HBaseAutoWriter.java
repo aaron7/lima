@@ -29,10 +29,15 @@ public abstract class HBaseAutoWriter
 	private static final byte[] FAMILY = "f1".getBytes();
 	
 	
+	public static byte[] getTableName(Class<? extends AutoWritable> type)
+	{
+		String[] tokens = type.toString().split("\\.");
+		return tokens[tokens.length - 1].getBytes();
+	}
+	
 	public static byte[] getTableName(AutoWritable w)
 	{
-		String[] tokens = w.getClass().toString().split("\\.");
-		return tokens[tokens.length - 1].getBytes();
+		return getTableName(w.getClass());
 	}
 	
 	/**
@@ -95,16 +100,46 @@ public abstract class HBaseAutoWriter
 	}
 	
 	/**
+	 * Performs a get operation using the provided key and returns the result in a new instance of the given type.
+	 */
+	public static <T extends AutoWritable> T get(Class<T> type, byte[] key) throws IOException
+	{
+		try {
+			byte[] tableName = getTableName(type);
+			T w = (T)type.newInstance();
+			getIntoObject(tableName, key, w);
+			return w;
+		}
+		catch (IllegalAccessException e) 
+		{
+			throw new RuntimeException("The given class must have an accessible nullary constructor",e);
+		}
+		catch (InstantiationException e) 
+		{
+			throw new RuntimeException("The given class must have an accessible nullary constructor",e);
+		} 
+	}
+	
+	/**
 	 * Gets the row in hbase with the key getKey(w) and sets all the fields in w based on the result of the get.
 	 * 
 	 * Requires that all fields in w are non-null Writables.
 	 */
 	public static void get(AutoWritable w) throws IOException
 	{
-		HTable table = new HTable(connection.getConfig(),getTableName(w));
-		Get get = new Get(getKey(w));
+		byte[] key = getKey(w);
+		byte[] tableName = getTableName(w);
+		getIntoObject(tableName, key, w);
+	}
+	
+	
+	private static void getIntoObject(byte[] tableName, byte[] key, AutoWritable w) throws IOException
+	{
 		try 
 		{
+			HTable table = new HTable(connection.getConfig(),tableName);
+			Get get = new Get(key);
+			
 			for (Field field : w.getAllInstanceFields())
 			{
 				String columnName = field.getName();

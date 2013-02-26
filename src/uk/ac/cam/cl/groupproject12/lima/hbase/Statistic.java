@@ -80,11 +80,11 @@ public class Statistic extends AutoWritable
 			//do nothing!
 		}
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		int result = 1;
 		result = prime * result
 				+ ((ICMPCount == null) ? 0 : ICMPCount.hashCode());
 		result = prime * result
@@ -108,7 +108,7 @@ public class Statistic extends AutoWritable
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -155,5 +155,12 @@ public class Statistic extends AutoWritable
 			return false;
 		return true;
 	}
-		
+
+	@Override
+	public String toString() {
+		return "Statistic [routerId=" + routerId + ", timeFrame=" + timeFrame
+				+ ", flowCount=" + flowCount + ", packetCount=" + packetCount
+				+ ", totalDataSize=" + totalDataSize + ", TCPCount=" + TCPCount
+				+ ", UDPCount=" + UDPCount + ", ICMPCount=" + ICMPCount + "]";
+	}	
 }
