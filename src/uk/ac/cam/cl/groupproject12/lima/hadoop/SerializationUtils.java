@@ -37,6 +37,31 @@ public class SerializationUtils
 			throw new RuntimeException("Unexpected IO Exception",e);
 		}
 	}
+	
+	/**
+	 * 	Creates a new instance of a given AutoWritable class based on the data in a writable byte array
+	 */
+	public static <T extends AutoWritable> T asAutoWritable(Class<T> type, BytesWritable bytes)
+	{
+		try {
+			DataInput input =  SerializationUtils.asDataInput(bytes.getBytes());
+			T instance = (T)type.newInstance();
+			instance.readFields(input);
+			return instance;
+		}
+		catch (IllegalAccessException e) 
+		{
+			throw new RuntimeException("The given class must have an accessible nullary constructor",e);
+		}
+		catch (InstantiationException e) 
+		{
+			throw new RuntimeException("The given class must have an accessible nullary constructor",e);
+		}
+		catch (IOException e) 
+		{
+			throw new RuntimeException("Unexpected IOException",e);
+		} 
+	}
 
 	/**
 	 * 	Converts any writable into the bytes that would be used to represent it during serialization
