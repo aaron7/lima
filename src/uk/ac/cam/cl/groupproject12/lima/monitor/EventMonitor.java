@@ -149,8 +149,9 @@ public class EventMonitor {
 		return null;
 	}
 
-	public static void main(String[] args) throws PGSQLConfigurationException, SQLException {
-		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
+	public static void main(String[] args) throws PGSQLConfigurationException,
+			SQLException {
+		new EventMonitor(new HBaseConnectionDetails("localhost", 2181),
 				new ThreatSynchroniser(22));
 	}
 }
