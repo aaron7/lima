@@ -1,5 +1,7 @@
 package uk.ac.cam.cl.groupproject12.lima.monitor;
 
+import java.sql.SQLException;
+
 /**
  * An interface to describe classes which implement the logic to replicate data
  * from HBase to PostgreSQL.
@@ -20,6 +22,6 @@ public interface IDataSynchroniser {
 	 * 
 	 * @return true on success, false on failure
 	 */
-	boolean synchroniseTables(EventMonitor monitor);
+	boolean synchroniseTables(EventMonitor monitor) throws SQLException;
 
 }
