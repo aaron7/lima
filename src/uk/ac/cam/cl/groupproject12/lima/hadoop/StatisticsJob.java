@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -60,7 +61,10 @@ public class StatisticsJob {
     /**
      * Make a new Statistics Controlled job
      */
-    public static void runJob(String inputPath, String outputPath) throws IOException, ClassNotFoundException, InterruptedException {
+    public static void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
+        String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
+        String outputPath = "out/"+routerIp+"-"+timestamp+"-statistics.out";
+        
         //Set up job1 to perform Map and Reduce
         Job job = Job.getInstance(new Configuration(), "StatistcsJobPhase1:"+inputPath);
 
@@ -84,6 +88,8 @@ public class StatisticsJob {
         //Run job and wait for completion
         //Verbose=true for debugging purposes
         job.waitForCompletion(true);
+        //job done - tell web
+        Web.updateJob(routerIp, timestamp, false);
     }
 }
 

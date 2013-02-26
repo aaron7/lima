@@ -7,6 +7,7 @@ Created on 23 Feb 2013
 import json
 
 routerFields = "\"routerIP\",\"lastSeen\",\"flowsPH\",\"packetsPH\",\"bytesPH\""
+jobsPerRouter = 3
 
 class RouterHandler():
     
@@ -18,6 +19,9 @@ class RouterHandler():
         self.red = red #get the redis instance
         
         self.routersList = self.getRouters()
+        self.routerStatus = [] #holds router status
+        for router in self.routersList:
+            self.routerStatus.append((router[0],0)) #add the router IP with status 0
     
     """returns the events list in JSON
     """
@@ -43,6 +47,7 @@ class RouterHandler():
             
     #def getEventsOverview(self):
         
+   # def updateRouterStatus(self,ip,status):
         
         
         

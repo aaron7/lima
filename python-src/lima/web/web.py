@@ -88,6 +88,17 @@ def updateRouters():
     routerHandler.checkRouterUpdates()
     return ("Done")
 
+@app.route("/java/<action>")
+def java(action):
+    if action == "newJob":
+        #routerHandler.addJob(request.args['ip'], request.args['numOfJobs'])
+        print request.args['ip'] + ":" + request.args['numOfJobs']
+    elif action == "updateJob":
+        #routerHandler.updateJob(routerHandler.addJob(request.args['ip'], request.args['inc']))
+        print request.args['ip'] + ":" + request.args['inc']
+    return ("Done")
+    
+    
 """make a stream to a list of channels /stream?channels=ch1,ch2,ch4
 """
 @app.route('/stream')

@@ -18,14 +18,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
+
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
  * a Hadoop M-R job.
+ * 
  * 
  * @author Team Lima
  * 
  */
 public class EventMonitor {
+    /*
+     * TODO:
+     * Call Web.updateJob(routerIp, timestamp, true); when we have updated stuff to postgreSQL
+     * after the set of map reduce jobs for that router
+     */
 
 	Configuration hbaseConfig = HBaseConfiguration.create();
 	Connection jdbcPGSQL = null;
