@@ -3,6 +3,7 @@ package uk.ac.cam.cl.groupproject12.lima.monitor;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
-import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
 public class StatisticsSynchroniser implements IDataSynchroniser {
     private IP routerIP;
@@ -65,8 +65,6 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 		String keyPrefix = this.routerIP.getValue().toString();
 		long currentTime = System.currentTimeMillis();
 		long minimumTimestamp = currentTime - (averagingPeriod * 60000); //Timestamp corresponding to the earliest data used for averages.
-				
-		HTable table = null;
 
 		List<Statistic> statistics = null;
 		try {
@@ -77,7 +75,18 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 		
 		long lastSeen = 0;
 		
-		
+		String stmt1 = "SELECT \"lastSeen\" FROM router WHERE \"routerIP\"= \"" + routerIP.toString() + "\"";
+		PreparedStatement ps1 = c.prepareStatement(stmt1);
+		try {
+			ResultSet rs = ps1.executeQuery();
+			while (rs.next()) {
+				lastSeen = rs.getLong("\"lastSeen\"");
+			}
+		} finally {
+			if (ps1 != null) {
+				ps1.close();
+			}
+		}
 		
 		int flowsPerPeriod = 0;
 		int packetsPerPeriod = 0;
@@ -99,19 +108,20 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 		int packetsPH = Math.round((float)packetsPerPeriod * 60f / (float)averagingPeriod);;
 		int bytesPH = Math.round((float)bytesPerPeriod * 60f / (float)averagingPeriod);;
 		
-		String stmt = "INSERT INTO ROUTER(routerIP, lastSeen, flowsPH, packetsPH, bytesPH) VALUES (?,?,?,?,?)";
-		PreparedStatement ps = c.prepareStatement(stmt);
-		
+		String stmt2 = "INSERT INTO router(\"routerIP\", \"lastSeen\", \"flowsPH\", \"packetsPH\", \"bytesPH\") VALUES (?,?,?,?,?)";
+		PreparedStatement ps2 = c.prepareStatement(stmt2);
 		try {
-			ps.setString(1, routerIP.getValue().toString());
-			ps.setLong(2, lastSeen);
-			ps.setInt(3, flowsPH);
-			ps.setInt(4, packetsPH);
-			ps.setInt(5, bytesPH);
+			ps2.setString(1, routerIP.getValue().toString());
+			ps2.setLong(2, lastSeen);
+			ps2.setInt(3, flowsPH);
+			ps2.setInt(4, packetsPH);
+			ps2.setInt(5, bytesPH);
 			
-			ps.executeUpdate();
+			ps2.executeUpdate();
 		} finally {
-			ps.close();
+			if (ps2 != null) {
+				ps2.close();
+			}
 		}
 		
 		return false;
