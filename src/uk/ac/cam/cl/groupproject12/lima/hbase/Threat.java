@@ -27,7 +27,7 @@ public class Threat extends AutoWritable
 	IP srcIP;
 	IP destIP;
 	IntWritable flowCount;
-	IntWritable flowDataAvg;
+	IntWritable flowDataAvg; //TODO we should probably remove this thing, its just total/count
 	LongWritable flowDataTotal;
 
 	/**
@@ -59,5 +59,84 @@ public class Threat extends AutoWritable
 		this.flowDataTotal = new LongWritable();
 	}
 
+	public LongWritable getTimeProcessed() {
+		return timeProcessed;
+	}
+
+	public void setTimeProcessed(LongWritable timeProcessed) {
+		this.timeProcessed = timeProcessed;
+	}
+
+	public IP getRouterId() {
+		return routerId;
+	}
+
+	public void setRouterId(IP routerId) {
+		this.routerId = routerId;
+	}
+
+	public EventType getType() {
+		return type;
+	}
+
+	public void setType(EventType type) {
+		this.type = type;
+	}
+
+	public LongWritable getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LongWritable startTime) {
+		this.startTime = startTime;
+	}
+
+	public LongWritable getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(LongWritable endTime) {
+		this.endTime = endTime;
+	}
+
+	public IP getSrcIP() {
+		return srcIP;
+	}
+
+	public void setSrcIP(IP srcIP) {
+		this.srcIP = srcIP;
+	}
+
+	public IP getDestIP() {
+		return destIP;
+	}
+
+	public void setDestIP(IP destIP) {
+		this.destIP = destIP;
+	}
+
+	public IntWritable getFlowCount() {
+		return flowCount;
+	}
+
+	public void setFlowCount(IntWritable flowCount) {
+		this.flowCount = flowCount;
+	}
+
+	public IntWritable getFlowDataAvg() {
+		return flowDataAvg;
+	}
+
+	public void setFlowDataAvg(IntWritable flowDataAvg) {
+		this.flowDataAvg = flowDataAvg;
+	}
+
+	public LongWritable getFlowDataTotal() {
+		return flowDataTotal;
+	}
+
+	public void setFlowDataTotal(LongWritable flowDataTotal) {
+		this.flowDataTotal = flowDataTotal;
+	}
 }
 
