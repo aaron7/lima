@@ -1,6 +1,5 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -9,9 +8,9 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
@@ -61,7 +60,7 @@ public class DosJob {
 	 */
 	public static class Reduce1
 			extends
-				Reducer<BytesWritable, FlowRecord, BytesWritable, DoSAttack> {
+				Reducer<BytesWritable, FlowRecord, BytesWritable, BytesWritable> {
 		@Override
 		public void reduce(BytesWritable key, Iterable<FlowRecord> values,
 				Context context) throws IOException, InterruptedException {
@@ -89,11 +88,10 @@ public class DosJob {
 				}
 				flowCount++;
 			}
-			if (!first)
-				context.write(key, new DoSAttack(routerID, new LongWritable(
-						startTime), new LongWritable(endTime), destAddr,
-						new IntWritable(packets), new LongWritable(bytes),
-						new IntWritable(flowCount), new IntWritable(1)));
+			if (!first)  {
+                DoSAttack valOut = new DoSAttack(routerID, new LongWritable(startTime), new LongWritable(endTime), destAddr,new IntWritable(packets), new LongWritable(bytes),new IntWritable(flowCount), new IntWritable(1));
+				context.write(key,SerializationUtils.asBytesWritable(valOut));
+            }
 		}
 	}
 
@@ -103,10 +101,11 @@ public class DosJob {
 	 */
 	public static class Map2
 			extends
-				Mapper<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
+				Mapper<BytesWritable, BytesWritable, BytesWritable, DoSAttack> {
 		@Override
-		public void map(BytesWritable key, DoSAttack value, Context context)
+		public void map(BytesWritable key, BytesWritable v, Context context)
 				throws IOException, InterruptedException {
+            DoSAttack value = SerializationUtils.asAutoWritable(DoSAttack.class,v);
 			context.write(SerializationUtils.asBytesWritable(value.destAddress,
 					new LongWritable(value.startTime.get() / 60000 * 60000)),
 					value);
@@ -217,63 +216,52 @@ public class DosJob {
 	 */
 	public static void runJob(String routerIp, String timestamp)
 			throws IOException, ClassNotFoundException, InterruptedException {
+        //TODO this needs fixing to use BytesWritable
+
 		String inputPath = "input/" + routerIp + "-" + timestamp
 				+ "-netflow.csv";
 		String outputPath = "out/" + routerIp + "-" + timestamp + "-dos.out";
 
 		String phase1Output = outputPath + ".phase1";
 
-		// Set up job1 to perform Map1 and Reduce1
-		Job job1 = Job.getInstance(new Configuration(), "DosJobPhase1:"
-				+ inputPath);
-
-		job1.setMapOutputKeyClass(BytesWritable.class);
-		job1.setMapOutputValueClass(FlowRecord.class);
-
-		job1.setOutputKeyClass(BytesWritable.class);
-		job1.setOutputValueClass(DosJob.DoSAttack.class);
-
-		job1.setMapperClass(DosJob.Map1.class);
-		job1.setReducerClass(DosJob.Reduce1.class);
-
-		job1.setInputFormatClass(TextInputFormat.class);
-		job1.setOutputFormatClass(TextOutputFormat.class);
-
-		job1.setJarByClass(DosJob.class);
-
-		FileInputFormat.setInputPaths(job1, new Path(inputPath));
-		FileOutputFormat.setOutputPath(job1, new Path(phase1Output));
-
+        //Set up the first job to perform Map1 and Reduce1.
+        Job currentJob = JobUtils.getNewJob(
+                "DosJobPhase1:"+ inputPath,
+                BytesWritable.class,
+                FlowRecord.class,
+                BytesWritable.class,
+                BytesWritable.class,
+                Map1.class,
+                Reduce1.class,
+                TextInputFormat.class,
+                SequenceFileAsBinaryOutputFormat.class,
+                new Path(inputPath),
+                new Path(phase1Output)
+        );
 		// Run job 1:
 		// Verbose for debugging purposes.
-		job1.waitForCompletion(true);
+		currentJob.waitForCompletion(true);
 		// job done - send update to web
 		Web.updateJob(routerIp, timestamp, false);
 
-		// Set up job2 to perform Map2 and Reduce2
-		Job job2 = Job.getInstance(new Configuration(), "DosJobPhase2:"
-				+ inputPath);
 
-		job2.setMapOutputKeyClass(BytesWritable.class);
-		job2.setMapOutputValueClass(DosJob.DoSAttack.class);
-
-		job2.setOutputKeyClass(BytesWritable.class);
-		job2.setOutputValueClass(DoSAttack.class);
-
-		job2.setMapperClass(DosJob.Map2.class);
-		job2.setReducerClass(DosJob.Reduce2.class);
-
-		job2.setInputFormatClass(TextInputFormat.class);
-		job2.setOutputFormatClass(TextOutputFormat.class);
-
-		job2.setJarByClass(DosJob.class);
-
-		FileInputFormat.setInputPaths(job2, new Path(phase1Output));
-		FileOutputFormat.setOutputPath(job2, new Path(outputPath));
-
-		// Run job2:
+        //Set up the first job to perform Map1 and Reduce1.
+        currentJob = JobUtils.getNewJob(
+                "DosJobPhase2:"+ inputPath,
+                BytesWritable.class,
+                DoSAttack.class,
+                BytesWritable.class,
+                DoSAttack.class,
+                Map2.class,
+                Reduce2.class,
+                SequenceFileAsBinaryInputFormat.class,
+                TextOutputFormat.class,
+                new Path(phase1Output),
+                new Path(outputPath)
+        );
+		// Run job 2:
 		// Verbose for debugging purposes
-		job2.waitForCompletion(true);
+		currentJob.waitForCompletion(true);
 		// job done - send update to web
 		Web.updateJob(routerIp, timestamp, false);
 	}

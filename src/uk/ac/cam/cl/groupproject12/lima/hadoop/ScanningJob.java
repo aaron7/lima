@@ -1,16 +1,16 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
@@ -65,7 +65,7 @@ public class ScanningJob {
      * and aggregates the appropriate fields. It outputs an instance of
      * PortScan class, with the key sourceIP,timeframe,destIP.
      */
-    public static class Reduce1 extends Reducer<PortScanKey, PortScan, PortScanKey, PortScan> {
+    public static class Reduce1 extends Reducer<PortScanKey, PortScan, BytesWritable, BytesWritable> {
 
         @Override
         public void reduce(PortScanKey key, Iterable<PortScan> values,
@@ -91,20 +91,22 @@ public class ScanningJob {
             if (flowCount > 0) {
                 PortScan outVal = new PortScan(routerID, key.srcIP, new LongWritable(minTime), new LongWritable(maxTime), new IntWritable(1), new IntWritable(1), new IntWritable(packets), new LongWritable(bytes), new IntWritable(flowCount));
                 PortScanKey outKey = new PortScanKey(key.srcIP, key.timeFrame, key.destIP, new IntWritable(0));
-                context.write(outKey, outVal);
+                context.write(SerializationUtils.asBytesWritable(outKey), SerializationUtils.asBytesWritable(outVal));
             }
         }
     }
 
 
     /**
-     * The Map job used further down the pipeline, which uses the default identity map
-     * from the Mapper class.
+     * The Map job used further down the pipeline, which is an identity map which converts BytesWritable to
+     * PortScanKey and PortScan.
      */
-    public static class MapI extends Mapper<PortScanKey,PortScan,PortScanKey,PortScan> {
+    public static class MapI extends Mapper<BytesWritable,BytesWritable,PortScanKey,PortScan> {
         @Override
-        public void map(PortScanKey key, PortScan value, Context context) throws IOException, InterruptedException {
-            super.map(key,value,context);
+        public void map(BytesWritable key, BytesWritable value, Context context) throws IOException, InterruptedException {
+            context.write(
+                    SerializationUtils.asAutoWritable(PortScanKey.class,key),
+                    SerializationUtils.asAutoWritable(PortScan.class,value));
         }
     }
 
@@ -112,7 +114,7 @@ public class ScanningJob {
      * The second reduce job counts the number of different ports used for a single source address.
      * It outputs an instance of PortScan class with the key sourceIP,timeframe.
      */
-    public static class Reduce2 extends Reducer<PortScanKey, PortScan, PortScanKey, PortScan> {
+    public static class Reduce2 extends Reducer<PortScanKey, PortScan, BytesWritable, BytesWritable> {
         @Override
         public void reduce(PortScanKey key, Iterable<PortScan> values,Context context) throws IOException, InterruptedException {
             IP routerID = null;
@@ -136,7 +138,7 @@ public class ScanningJob {
             if (portCount > 0) {
                 PortScan outVal = new PortScan(routerID, key.srcIP, new LongWritable(minTime), new LongWritable(maxTime), new IntWritable(1), new IntWritable(portCount), new IntWritable(packets), new LongWritable(bytes), new IntWritable(flowCount));
                 PortScanKey outKey = new PortScanKey(key.srcIP, key.timeFrame, new IP("0.0.0.0"), new IntWritable(0));
-                context.write(outKey, outVal);
+                context.write(SerializationUtils.asBytesWritable(outKey),SerializationUtils.asBytesWritable(outVal));
             }
         }
     }
@@ -239,7 +241,19 @@ public class ScanningJob {
         Job nextJob;
 
         //Set up the first job.
-        nextJob = getNewJob("ScanningJobPhase1:"+inputPath,Map1.class,Reduce1.class,new Path(inputPath),new Path(outputPath+".phase1"));
+        nextJob = JobUtils.getNewJob(
+                "ScanningJobPhase1:" + inputPath,
+                PortScanKey.class,
+                PortScan.class,
+                BytesWritable.class,
+                BytesWritable.class,
+                Map1.class,
+                Reduce1.class,
+                TextInputFormat.class,
+                SequenceFileAsBinaryOutputFormat.class,
+                new Path(inputPath),
+                new Path(outputPath + ".phase1")
+        );
         // Run it with verbose mode for debugging purposes.
         nextJob.waitForCompletion(true);
         // Job done - send update to web
@@ -247,57 +261,41 @@ public class ScanningJob {
 
 
         //Set up the second job.
-        nextJob = getNewJob("ScanningJobPhase2:"+inputPath,MapI.class,Reduce2.class,new Path(outputPath+".phase1"),new Path(outputPath+",phase2"));
+        nextJob = JobUtils.getNewJob(
+                "ScanningJobPhase2:" + inputPath,
+                PortScanKey.class,
+                PortScan.class,
+                BytesWritable.class,
+                BytesWritable.class,
+                MapI.class,
+                Reduce2.class,
+                SequenceFileAsBinaryInputFormat.class,
+                SequenceFileAsBinaryOutputFormat.class,
+                new Path(outputPath + ".phase1"),
+                new Path(outputPath + ".phase2")
+        );
         // Run it with verbose mode for debugging purposes.
         nextJob.waitForCompletion(true);
         // Job done - send update to web
         Web.updateJob(routerIp, timestamp, false);
 
         //Set up the third job
-        nextJob = getNewJob("ScanningJobPhase3:"+inputPath,MapI.class,Reduce3.class,new Path(outputPath+".phase2"),new Path(outputPath));
+        nextJob = JobUtils.getNewJob(
+                "ScanningJobPhase3:" + inputPath,
+                PortScanKey.class,
+                PortScan.class,
+                PortScanKey.class,
+                PortScan.class,
+                MapI.class,
+                Reduce3.class,
+                SequenceFileAsBinaryInputFormat.class,
+                TextOutputFormat.class,
+                new Path(outputPath + ".phase2"),
+                new Path(outputPath)
+        );
         // Run it with verbose mode for debugging purposes.
         nextJob.waitForCompletion(true);
         // Job done - send update to web
         Web.updateJob(routerIp, timestamp, false);
-    }
-
-
-    /**
-     * Sets up a new job appropriately.
-     * The new job will be set up with jobName,
-     * @param jobName is the name of the job.
-     * @param mapper is the mapper that the job will run.
-     * @param reducer is the reducer that the job will run.
-     * @param inputPath is the path of the input that the job will run on.
-     * @param outputPath is the path the job will output to.
-     * @return the Job.
-     * @throws IOException
-     */
-    private static Job getNewJob(
-            String jobName,Class<? extends Mapper<?,?,PortScanKey,PortScan>> mapper,
-            Class<? extends Reducer<PortScanKey,PortScan,PortScanKey,PortScan>> reducer,
-            Path inputPath,
-            Path outputPath) throws IOException {
-
-        Job job = Job.getInstance(new Configuration(), jobName);
-
-        job.setMapOutputKeyClass(PortScanKey.class);
-        job.setMapOutputValueClass(PortScan.class);
-
-        job.setOutputKeyClass(PortScanKey.class);
-        job.setOutputValueClass(PortScan.class);
-
-        job.setMapperClass(mapper);
-        job.setReducerClass(reducer);
-
-        job.setInputFormatClass(TextInputFormat.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
-
-        job.setJarByClass(ScanningJob.class);
-
-        FileInputFormat.setInputPaths(job,inputPath);
-        FileOutputFormat.setOutputPath(job,outputPath);
-
-        return job;
     }
 }
