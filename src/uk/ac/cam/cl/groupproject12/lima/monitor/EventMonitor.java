@@ -46,13 +46,13 @@ public class EventMonitor {
 		}
 
 		try {
-			PostgreSQLConnectionDetails hbaseConn = getPostgresConnection();
+			PostgreSQLConnectionDetails pgsqlConn = getPostgresConnection();
 
 			this.jdbcPGSQL = DriverManager.getConnection(
 					String.format(Constants.PGSQL_CONNECTION_STRING,
-							hbaseConn.getHost(), hbaseConn.getPort(),
-							hbaseConn.getDbname()), hbaseConn.getUsername(),
-					hbaseConn.getPassword());
+							pgsqlConn.getHost(), pgsqlConn.getPort(),
+							pgsqlConn.getDbname()), pgsqlConn.getUsername(),
+					pgsqlConn.getPassword());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
