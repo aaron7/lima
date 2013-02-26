@@ -24,7 +24,7 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.SerializationUtils;
 public abstract class HBaseAutoWriter
 {
 	private static final HBaseConnection connection = new HBaseConnection();
-	private static final byte[] FAMILY = "family".getBytes();
+	private static final byte[] FAMILY = "f1".getBytes();
 	
 	public static byte[] getKey(AutoWritable w)
 	{

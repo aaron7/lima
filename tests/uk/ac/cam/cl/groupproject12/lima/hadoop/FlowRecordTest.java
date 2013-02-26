@@ -11,9 +11,9 @@ import uk.ac.cam.cl.groupproject12.lima.hbase.Constants;
 public class FlowRecordTest {
 
 	private static String sampleLine = "0.0.0.0,2012-08-02 00:03:45.350,2012-08-02 00:03:45.350," +
-			"TCP  ,     4.6.229.242,   83.111.58.191,    80, 49933,    1000,   1.5 M,.A....,  0";
+			"17  ,     4.6.229.242,   83.111.58.191,    80, 49933,    1000,   1.5 M,.A....,  0";
 	
-	private static FlowRecord getSampleRecord()
+	public static FlowRecord getSampleRecord()
 	{
 		FlowRecord expected;
 		try {
