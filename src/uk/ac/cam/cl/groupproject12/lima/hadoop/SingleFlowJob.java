@@ -24,6 +24,7 @@ public class SingleFlowJob {
 	private static boolean isReflectingPort(IntWritable port) {
 		int portNumber = port.get();
 		//TODO what are the reflecting ports?
+		
 		return false;
 	}
 

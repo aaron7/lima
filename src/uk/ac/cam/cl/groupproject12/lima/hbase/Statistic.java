@@ -32,6 +32,11 @@ public class Statistic extends AutoWritable
 	IntWritable UDPCount = new IntWritable(0);
 	IntWritable ICMPCount = new IntWritable(0);
 	
+	public Statistic()
+	{
+		
+	}
+	
 	public Statistic(IP routerId, long timeframe) 
 	{
 		this.routerId = routerId;
