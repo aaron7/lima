@@ -1,8 +1,6 @@
 package uk.ac.cam.cl.groupproject12.lima.web;
 
 import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
