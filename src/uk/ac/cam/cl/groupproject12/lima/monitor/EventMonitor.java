@@ -31,7 +31,7 @@ public class EventMonitor {
 	Connection jdbcPGSQL = null;
 
 	public EventMonitor(HBaseConnectionDetails hbaseConf,
-			IDataSynchroniser synchroniser) throws PGSQLConfigurationException {
+			IDataSynchroniser synchroniser) throws PGSQLConfigurationException, SQLException {
 		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				hbaseConf.getHost());
 		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
@@ -141,7 +141,7 @@ public class EventMonitor {
 		return null;
 	}
 
-	public static void main(String[] args) throws PGSQLConfigurationException {
+	public static void main(String[] args) throws PGSQLConfigurationException, SQLException {
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
 				new ThreatSynchroniser(22));
 	}
