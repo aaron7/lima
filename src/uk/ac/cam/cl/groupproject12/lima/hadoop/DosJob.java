@@ -154,8 +154,14 @@ public class DosJob extends JobBase {
 						startTime), new LongWritable(endTime), destAddr,
 						new IntWritable(packets), new LongWritable(bytes),
 						new IntWritable(flowCount), new IntWritable(srcIPCount));
-				if (isSignificant(res))
+				if (isSignificant(res)){
 					context.write(key, res);
+
+//                    Threat threat = new Threat(System.currentTimeMillis(),routerID,"DoSAttack",res.startTime,res.endTime,new IP("0.0.0.0"),destAddr,res.flowCount,destAddr,res.packets,res.bytes);
+                }
+
+
+
 				//TODO output to HBase here
 			}
 		}
@@ -227,7 +233,7 @@ public class DosJob extends JobBase {
 
         //Set up the first job to perform Map1 and Reduce1.
         Job currentJob = getNewJob(
-                "DosJobPhase1:"+ inputPath,
+                "DosJobPhase1:" + inputPath,
                 BytesWritable.class,
                 FlowRecord.class,
                 BytesWritable.class,
@@ -248,7 +254,7 @@ public class DosJob extends JobBase {
 
         //Set up the first job to perform Map1 and Reduce1.
         currentJob = getNewJob(
-                "DosJobPhase2:"+ inputPath,
+                "DosJobPhase2:" + inputPath,
                 BytesWritable.class,
                 DoSAttack.class,
                 BytesWritable.class,

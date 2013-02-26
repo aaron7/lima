@@ -1,15 +1,13 @@
 package uk.ac.cam.cl.groupproject12.lima.hbase;
 
-import java.io.IOException;
-
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
+
+import java.io.IOException;
 
 public class ThreatTest {
 
@@ -30,7 +28,7 @@ public class ThreatTest {
 		threat.setDestIP(IP.valueOf("123.213.123.213"));
 		threat.setEndTime(new LongWritable(2361906293910L));
 		threat.setFlowCount(new IntWritable(45));
-		threat.setFlowDataAvg(new IntWritable(7));
+		threat.setPacketCount(new IntWritable(7));
 		threat.setFlowDataTotal(new LongWritable(235));
 		threat.setSrcIP(IP.valueOf("111.111.111.1"));
 		return threat;

@@ -196,7 +196,7 @@ public class SingleFlowJob extends JobBase {
 	 }
 
     /**
-     * Run a new Statistics job
+     * Run a new SingleFlowJob job
      */
     @Override
     public void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {

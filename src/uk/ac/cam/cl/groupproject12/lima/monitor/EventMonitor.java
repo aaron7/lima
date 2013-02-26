@@ -1,32 +1,24 @@
 package uk.ac.cam.cl.groupproject12.lima.monitor;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
-import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
-import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
-import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
@@ -164,7 +156,7 @@ public class EventMonitor {
 //		t.setDestIP(new IP("6.7.8.9"));
 //		t.setEndTime(new LongWritable(667L));
 //		t.setFlowCount(new IntWritable(678));
-//		t.setFlowDataAvg(new IntWritable(11123));
+//		t.setPacketCount(new IntWritable(11123));
 //		t.setFlowDataTotal(new LongWritable(622L));
 //		t.setSrcIP(new IP("66.22.11.55"));
 //		
