@@ -68,7 +68,7 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 
 			Connection c = monitor.jdbcPGSQL;
 
-			String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?)";
+			String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?,?,?,?,?)";
 			PreparedStatement ps = c.prepareStatement(stmt);
 			try {
 				ps.setInt(1, 0);
