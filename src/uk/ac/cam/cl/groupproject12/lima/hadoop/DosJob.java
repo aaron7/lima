@@ -23,6 +23,7 @@ import java.text.ParseException;
  * Encapsulates the Map and Reduce jobs for the DoS attack threat analysis.
  */
 public class DosJob {
+
 	/**
 	 * The first map job takes text and produces a FlowRecord if the particular
 	 * flow is suspicious. The keys are based on a minute-based timestamp,
@@ -196,8 +197,8 @@ public class DosJob {
 	 * significant, i.e. whether it is just noise data, or whether it is an
 	 * actual attack, based on the size of the flow, the packets transmitted,
 	 * etc.
-	 * 
-	 * @param res
+	 *
+	 * @param res A DoS attack object.
 	 * @return true if res is not noise data.
 	 */
 	private static boolean isSignificant(DoSAttack res) {
