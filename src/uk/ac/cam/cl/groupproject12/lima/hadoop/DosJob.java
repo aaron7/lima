@@ -24,7 +24,7 @@ import java.text.ParseException;
  */
 public class DosJob {
     /**
-     * The firs map job takes text and produces a FlowRecord if the particular flow is suspicious.
+     * The first map job takes text and produces a FlowRecord if the particular flow is suspicious.
      * The keys are based on a minute-based timestamp, destination address and source address.
      */
     public static class Map1 extends Mapper<LongWritable, Text, BytesWritable, FlowRecord> {

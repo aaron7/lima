@@ -11,6 +11,8 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.io.Writable;
 
+import com.google.common.base.Joiner;
+
 import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.SerializationUtils;
 
@@ -26,23 +28,33 @@ public abstract class HBaseAutoWriter
 	private static final HBaseConnection connection = new HBaseConnection();
 	private static final byte[] FAMILY = "f1".getBytes();
 	
+	
+	private static byte[] getTableName(AutoWritable w)
+	{
+		String[] tokens = w.getClass().toString().split("\\.");
+		return tokens[tokens.length - 1].getBytes();
+	}
+	
 	public static byte[] getKey(AutoWritable w)
 	{
-		try {
-			List<Writable> values = new ArrayList<Writable>();
+		try {			
+			List<String> keys = new ArrayList<String>();
 			for (Field field : w.getAllInstanceFields())
 			{
 				if (field.isAnnotationPresent(HBaseKey.class))
 				{
 					field.setAccessible(true);
-					values.add((Writable)field.get(w));
+					String val = field.get(w).toString();
+					keys.add(val);
 				}
 			}
-			if (values.isEmpty())
+			if (keys.isEmpty())
 			{
 				throw new IllegalArgumentException("Must have at least one field annotated with @HbaseKey");
 			}
-			return SerializationUtils.asBytes(values.toArray(new Writable[values.size()]));
+			String key = Joiner.on(",").join(keys);
+			return key.getBytes();
+			
 		}
 		catch (IllegalAccessException e) 
 		{
@@ -54,7 +66,7 @@ public abstract class HBaseAutoWriter
 	
 	public static void put(AutoWritable w) throws IOException
 	{
-		HTable table = new HTable(connection.getConfig(),w.getClass().toString().getBytes());
+		HTable table = new HTable(connection.getConfig(), getTableName(w));
 		Put put = new Put(getKey(w));
 		try 
 		{
@@ -76,7 +88,7 @@ public abstract class HBaseAutoWriter
 	
 	public static void get(AutoWritable w) throws IOException
 	{
-		HTable table = new HTable(connection.getConfig(),w.getClass().toString().getBytes());
+		HTable table = new HTable(connection.getConfig(),getTableName(w));
 		Get get = new Get(getKey(w));
 		try 
 		{
