@@ -19,6 +19,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 public class ThreatSynchroniser implements IDataSynchroniser {
 
@@ -84,19 +85,40 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 			e.printStackTrace();
 		}
 
-		String stmt = "INSERT INTO MESSAGES(eventID, routerIP, ip, type, status, message, createTS) VALUES (?,?,?,?,?,?,?)";
-		PreparedStatement ps = c.prepareStatement(stmt);
-		/*
-		 * try { ps.setInt(1, 0); ps.setInt(2, 0); ps.setInt(3, 0);
-		 * ps.setString(4, ""); ps.setString(5, ""); ps.setString(6, "");
-		 * ps.setLong(7, 0L);
-		 * 
-		 * ps.executeUpdate(); } finally { ps.close(); }
-		 */
+		for (Threat t : threats) {
+
+			PreparedStatement ps = null;
+			try {
+				// PGSQL column references need to be surrounded with double
+				// quotes
+				// if they contain mixed case!
+				String stmt = "INSERT INTO event (\"routerIP\", type, status, message, \"createTS\", \"startTime\", \"endTime\") values (?,?,?,?,?,?,?)";
+				ps = c.prepareStatement(stmt);
+
+				ps.setString(1, t.getRouterId().getValue().toString());
+				ps.setString(2, t.getType().toString());
+				ps.setString(3, EventStatus.event_open.toString());
+				ps.setString(4, "");
+				ps.setLong(5, t.getTimeProcessed().get());
+				ps.setLong(6, t.getStartTime().get());
+				ps.setLong(7, t.getEndTime().get());
+
+				// Attempt to commit
+				ps.executeUpdate();
+			} finally {
+				if (ps != null) {
+					ps.close();
+				}
+			}
+		}
+
+		// Notify the data visualisation layer to update this router's details
+		// from PostgreSQL
+		Web.updateJob(this.routerIP.getValue().toString(),
+				Long.toString(this.timeProcessed), true);
 
 		return false;
 	}
-
 	// Get the results for the key provided out of HBase and construct Threat
 	// objects to internally represent them
 	private List<Threat> getThreatsByKey(String keyPrefix) throws IOException {
