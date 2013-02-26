@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
@@ -158,23 +159,43 @@ public class EventMonitor {
 
 	public static void main(String[] args) throws PGSQLConfigurationException,
 			SQLException {
-		long time = System.currentTimeMillis();
-		Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"), EventType.landAttack, new LongWritable(444L));
-		t.setDestIP(new IP("6.7.8.9"));
-		t.setEndTime(new LongWritable(667L));
-		t.setFlowCount(new IntWritable(678));
-		t.setFlowDataAvg(new IntWritable(11123));
-		t.setFlowDataTotal(new LongWritable(622L));
-		t.setSrcIP(new IP("66.22.11.55"));
+//		long time = System.currentTimeMillis();
+//		Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"), EventType.landAttack, new LongWritable(444L));
+//		t.setDestIP(new IP("6.7.8.9"));
+//		t.setEndTime(new LongWritable(667L));
+//		t.setFlowCount(new IntWritable(678));
+//		t.setFlowDataAvg(new IntWritable(11123));
+//		t.setFlowDataTotal(new LongWritable(622L));
+//		t.setSrcIP(new IP("66.22.11.55"));
+//		
+//		try {
+//			HBaseAutoWriter.put(t);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+//		
+//		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
+//				new ThreatSynchroniser("1.2.3.4", time));
 		
-		try {
-			HBaseAutoWriter.put(t);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (int n = 0; n < 1000; n++) {
+			Statistic s = new Statistic(new IP("1.2.3.4"), new LongWritable(System.currentTimeMillis()), new IntWritable(1), new IntWritable(1), new LongWritable(1), new IntWritable(0), new IntWritable(0), new IntWritable(0));
+			try {
+				HBaseAutoWriter.put(s);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
-				new ThreatSynchroniser("1.2.3.4", time));
+				new StatisticsSynchroniser("1.2.3.4"));
 	}
 }

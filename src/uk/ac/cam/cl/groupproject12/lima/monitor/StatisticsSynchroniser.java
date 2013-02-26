@@ -21,10 +21,11 @@ import org.apache.hadoop.hbase.util.Bytes;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
+import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 public class StatisticsSynchroniser implements IDataSynchroniser {
     private IP routerIP;
-    private int averagingPeriod = 5; //Period to average over in minutes.
+    private int averagingPeriod = 1; //Period to average over in minutes.
     private EventMonitor monitor;
 
     /**
@@ -108,7 +109,7 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 		int packetsPH = Math.round((float)packetsPerPeriod * 60f / (float)averagingPeriod);;
 		int bytesPH = Math.round((float)bytesPerPeriod * 60f / (float)averagingPeriod);;
 		
-		String stmt2 = "INSERT INTO router(\"routerIP\", \"lastSeen\", \"flowsPH\", \"packetsPH\", \"bytesPH\") VALUES (?,?,?,?,?)";
+		String stmt2 = "UPDATE router SET \"routerIP\" = ?, \"lastSeen\" = ?, \"flowsPH\" = ?, \"packetsPH\" = ?, \"bytesPH\" = ?";
 		PreparedStatement ps2 = c.prepareStatement(stmt2);
 		try {
 			ps2.setString(1, routerIP.getValue().toString());
@@ -123,6 +124,8 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 				ps2.close();
 			}
 		}
+		
+		Web.updateJob(this.routerIP.getValue().toString(), Long.toString(currentTime), true);
 		
 		return false;
 	}

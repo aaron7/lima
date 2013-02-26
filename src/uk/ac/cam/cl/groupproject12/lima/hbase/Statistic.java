@@ -42,6 +42,22 @@ public class Statistic extends AutoWritable
 		return totalDataSize;
 	}
 
+	public void setTimeFrame(LongWritable timeFrame) {
+		this.timeFrame = timeFrame;
+	}
+
+	public void setFlowCount(IntWritable flowCount) {
+		this.flowCount = flowCount;
+	}
+
+	public void setPacketCount(IntWritable packetCount) {
+		this.packetCount = packetCount;
+	}
+
+	public void setTotalDataSize(LongWritable totalDataSize) {
+		this.totalDataSize = totalDataSize;
+	}
+
 	IntWritable packetCount = new IntWritable(0);
 	LongWritable totalDataSize = new LongWritable(0L);
 	IntWritable TCPCount = new IntWritable(0);
