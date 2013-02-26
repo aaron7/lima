@@ -90,4 +90,11 @@ public class IP extends AutoWritable {
 		ip.readFields(input);
 		return ip;
 	}
+
+	/**
+	 * @return the value
+	 */
+	public Text getValue() {
+		return value;
+	}
 }
