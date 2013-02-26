@@ -4,9 +4,21 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.BinaryPrefixComparator;
+import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.RowFilter;
+import org.apache.hadoop.hbase.util.Bytes;
+
+import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+
 public class StatisticsSynchroniser implements IDataSynchroniser {
-    private String routerID;
-    private int averageingPeriod = 5; //Period to average over in minutes.
+    private IP routerIP;
+    private int averagingPeriod = 5; //Period to average over in minutes.
 
     /**
      * Constructs an instance of StatisticsSynchroniser
@@ -14,8 +26,8 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
      * @param routerID The router ID we are to synchronise statistics for.
      */
 
-    public StatisticsSynchroniser(int routerID) {
-        this.routerID = routerID;
+    public StatisticsSynchroniser(String routerID) {
+        this.routerIP = new IP(routerID);
     }
     
     /**
@@ -33,45 +45,41 @@ public class StatisticsSynchroniser implements IDataSynchroniser {
 
 	@Override
 	public boolean synchroniseTables(EventMonitor monitor) throws SQLException {
+		// PostgreSQL connection from the monitor.
+		Connection c = monitor.jdbcPGSQL;
+		
 		HTable table = null;
 		long currentTime = System.currentTimeMillis();
 		long minimumTimestamp = currentTime - (averagingPeriod * 60000); //Timestamp corresponding to the earliest data used for averages.
-		try {
-			// Use the connection to HBase to obtain a handle on the "Statistic"
-			// storage table, where router data is stored awaiting the
+		
+		try {			
+			// Use the connection to HBase to obtain a handle on the "Threat"
+			// storage table, where threat events are stored awaiting the
 			// monitor's attention.
-			table = new HTable(monitor.getBaseConfig(), "Statistic");
+			table = new HTable(monitor.getHBaseConfig(), "Statistic");
 			
-			// Filter the case based on the router ID
-			Filter routerIDFilter = new RowFilter (CompareOp.EQUAL,
-					new BinaryPrefixComparator(Bytes.toBytes(this.routerID)))));
+			// Filter the case based on the time processed and router ID,
+			// concatenated together in the key to form its prefix. Of course,
+			// the key will contain other values, so this must simply match in
+			// the prefix of the key in order to obtain all fields matching on
+			// these values.
+			String keyPrefix = this.routerIP.getValue().toString();
 			
+			// The filter routerIDFilter is intended to search for all rows in
+			// the database which contain the keyPrefix as their key prefix.
+			Filter routerIDFilter = new RowFilter(CompareOp.EQUAL,
+					new BinaryPrefixComparator(Bytes.toBytes(keyPrefix)));
+			
+			// Scan the database using the above filter and the required.
 			Scan scan = new Scan();
-			scan.setFilter(routerIDFilter);
-			scan.setTimeRange(minimumTimestamp, currentTime);
+			scan.setFilter();
 			
-			ResultScanner scanner = table.getScanner(scan);
-			
-			long flowsPH = 0;
-			long packetsPH = 0;
-			long bytesPH = 0;
-			
-			for (Result r : scanner) {
-				; //TODO
-			}
-			
-			Connection c = monitor.jdbcPGSQL;
-			
-			String stmt = "INSERT INTO Router(routerIP, lastSeen, flowsPH, packetsPH, bytesPH) VALUES (?,?,?,?,?)"; //TODO
-			PrepareStatement ps = c.prepareStatement(stmt);
-			
-
 		} catch (IOException e) {
 			e.printStackTrace();  //TODO
 		} finally {
 			try {
 				if (table != null)
-					table.close()
+					table.close();
 			} catch (IOException e) {
 				e.printStackTrace(); //TODO
 			}
