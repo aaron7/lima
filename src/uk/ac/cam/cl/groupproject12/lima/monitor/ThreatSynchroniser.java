@@ -8,6 +8,7 @@ import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
 
@@ -30,15 +31,17 @@ public class ThreatSynchroniser implements IDataSynchroniser {
 		try {
 			HTable table = new HTable(monitor.getHBaseConfig(), "Threat");
 
-			// Set up a RowFilter to filter based on router ID
-			List<Filter> filters = new ArrayList<Filter>();
-
+			// Row filter based on the router ID in the key. Substitutes in the
+			// key separator.
 			Filter routerIDFilter = new RowFilter(
 					CompareFilter.CompareOp.EQUAL, new RegexStringComparator(
 							String.format(this.routerID + "%s",
 									Constants.HBASE_KEY_SEPARATOR)));
 
-			filters.add(routerIDFilter);
+			Scan scan = new Scan();
+			FilterList fl = new FilterList();
+			fl.addFilter(routerIDFilter);
+			ResultScanner scanner = table.getScanner(scan);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
