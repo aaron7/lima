@@ -10,13 +10,12 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 
 /**
- * 
- * @author ernest
+ * @author Team Lima
  *
  *	A class to represent a row in the Hbase Statistic table, 
  *	characterizing the traffic through a router in a timeframe.
  *
- *	Note: the totalDataSize is in bytes. Other fields are unitless. 
+ *	Note: the totalDataSize is in bytes. Other fields are unit-less. 
  *
  */
 public class Statistic extends AutoWritable
@@ -54,8 +53,10 @@ public class Statistic extends AutoWritable
 		ICMPCount = iCMPCount;
 	}
 
-
-
+	/**
+	 * 	Update this statistic with the information in a record. The FlowRecord must 
+	 *  have the same router IP and have its start time fall in the same timeframe.
+	 */
 	public void addFlowRecord(FlowRecord record)
 	{
 		this.flowCount.set(this.flowCount.get() + 1);
@@ -76,7 +77,7 @@ public class Statistic extends AutoWritable
 		}
 		else
 		{
-			//TODO log error?
+			//do nothing!
 		}
 	}
 

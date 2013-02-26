@@ -1,4 +1,4 @@
-package uk.ac.cam.cl.groupproject12.lima.monitor;
+package uk.ac.cam.cl.groupproject12.lima.monitor.database;
 
 /**
  * Stores information required to invoke a connection to PGSQL.

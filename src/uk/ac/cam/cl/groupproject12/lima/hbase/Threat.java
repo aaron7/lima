@@ -1,134 +1,63 @@
 package uk.ac.cam.cl.groupproject12.lima.hbase;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.io.DataOutputBuffer;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.Writable;
-
+import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 
-public class Threat implements Writable
+
+/**
+ * 
+ *	A Class used to represent a single row in the Hbase Threat table
+ */
+public class Threat extends AutoWritable
 {
-	private static final byte[] QUANTIFIER = "data".getBytes();
-	private static final byte[] FAMILY = "family".getBytes(); 
+	@HBaseKey
+	LongWritable timeProcessed;
+	@HBaseKey
+	IP routerId;
+	@HBaseKey	
+	EventType type;
+	@HBaseKey
+	LongWritable startTime;
 	
-	public static class Key implements Writable
-	{
-		
-		long timeProcessed;
-		long routerId;
-		EventType type;
-		long startTime;
-		
-		private Key()
-		{
-			super();
-		}
-		
-		public Key(long timeProcessed, long routerId, EventType type,
-				long startTime) {
-			super();
-			this.timeProcessed = timeProcessed;
-			this.routerId = routerId;
-			this.type = type;
-			this.startTime = startTime;
-		}
-		
-		@Override
-		public void readFields(DataInput in) throws IOException {
-			this.timeProcessed = in.readLong();
-			this.routerId = in.readLong();
-			this.type = EventType.valueOf(Text.readString(in));
-			this.startTime = in.readLong();
-		}
-		@Override
-		public void write(DataOutput out) throws IOException {
-			out.writeLong(timeProcessed);
-			out.writeLong(routerId);
-			Text.writeString(out, type.toString());
-			out.writeLong(startTime);
-		}
-		
-		public byte[] getByteValue()
-		{
-			try {
-				DataOutputBuffer out = new DataOutputBuffer();
-				this.write(out);
-				return out.getData();
-			} catch (IOException e) 
-			{
-				throw new RuntimeException("Unexpected IO Exception",e);
-			}
-		}
-	}
-	
-	Key key;
-	long endTime;
+	LongWritable endTime;
 	IP srcIP;
 	IP destIP;
-	int flowCount;
-	int flowDataAvg;
-	int flowDataTotal;
-	
+	IntWritable flowCount;
+	IntWritable flowDataAvg;
+	LongWritable flowDataTotal;
 
-	public void putToHBase()
+	/**
+	 * public nullary constructor for serialization. Not for other uses.
+	 */
+	public Threat()
 	{
-		Put put = new Put(this.getByteKey());
-		put.add(FAMILY, QUANTIFIER, getByteValue());
-		//HTable threats = TODO
-		// threats.put(put);
+		 
 	}
+
+	/**
+	 * Construct a Threat with only the HBaseKey fields set
+	 */
+	public Threat(LongWritable timeProcessed, IP routerId, EventType type,
+			LongWritable startTime) {
+		super();
+		
+		this.timeProcessed = timeProcessed;
+		this.routerId = routerId;
+		this.type = type;
+		this.startTime = startTime;
 	
-	
-	private byte[] getByteKey()
-	{
-		return this.key.getByteValue();
+		//blank non-key fields:
+		this.endTime = new LongWritable();
+		this.srcIP = new IP();
+		this.destIP = new IP();
+		this.flowCount = new IntWritable();
+		this.flowDataAvg = new IntWritable();
+		this.flowDataTotal = new LongWritable();
 	}
-	
-	private byte[] getByteValue()
-	{
-		try {
-			DataOutputBuffer out = new DataOutputBuffer();
-			this.write(out);
-			return out.getData();
-		} catch (IOException e) 
-		{
-			throw new RuntimeException("Unexpected IO Exception",e);
-		}
-	}
-	
-	private static Key readKey(DataInput in) throws IOException
-	{
-		Key key = new Key();
-		key.readFields(in);
-		return key;
-	}
-	
-	@Override
-	public void readFields(DataInput in) throws IOException 
-	{
-		this.key = readKey(in);
-		this.endTime = in.readLong();
-		this.srcIP = IP.read(in);
-		this.destIP = IP.read(in);
-		this.flowCount = in.readInt();
-		this.flowDataAvg = in.readInt();
-		this.flowDataTotal = in.readInt();
-	}
-	@Override
-	public void write(DataOutput out) throws IOException {
-		this.key.write(out);
-		out.writeLong(endTime);
-		this.srcIP.write(out);
-		this.destIP.write(out);
-		out.writeInt(flowCount);
-		out.writeInt(flowDataAvg);
-		out.writeInt(flowDataTotal);
-	}
+
 }
 
