@@ -153,7 +153,7 @@ public class EventMonitor {
 
 	public static void main(String[] args) throws PGSQLConfigurationException,
 			SQLException {
-		new EventMonitor(new HBaseConnectionDetails("localhost", 2181),
+		new EventMonitor(new HBaseConnectionDetails("localhost", 2182),
 				new ThreatSynchroniser("2.3.4.5", 1234567890L));
 	}
 }
