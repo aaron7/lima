@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * The Cleaner class is used to clean the Statistics and Events tables of the HBase instance of data older than a certain threshold.
+ * The Cleaner class is used to clean the Statistics and Threats tables of the HBase instance of data older than a certain threshold.
  *
  * @author Team Lima
  */
@@ -28,7 +28,7 @@ public abstract class Cleaner {
     private static final String HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT = "hbase.zookeeper.property.clientPort";
 
     /**
-     * The main method calls the cleanTable method on both the Statistics and Events tables.
+     * The main method calls the cleanTable method on both the Statistics and Threats tables.
      *
      * @param args Arguments passed to the main method will not be used in execution.
      */
@@ -37,8 +37,8 @@ public abstract class Cleaner {
         conf.set(HBASE_CONFIGURATION_ZOOKEEPER_QUORUM, "localhost");
         conf.setInt(HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT, 2182);
 
-        cleanTable(conf, "statistics");
-        cleanTable(conf, "events");
+        cleanTable(conf, "Statistic");
+        cleanTable(conf, "Threat");
     }
 
     /**
