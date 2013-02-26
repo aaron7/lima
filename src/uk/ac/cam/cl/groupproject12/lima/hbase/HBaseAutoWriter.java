@@ -2,8 +2,6 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
@@ -26,23 +24,32 @@ public abstract class HBaseAutoWriter
 	private static final HBaseConnection connection = new HBaseConnection();
 	private static final byte[] FAMILY = "f1".getBytes();
 	
+	
+	private static byte[] getTableName(AutoWritable w)
+	{
+		String[] tokens = w.getClass().toString().split("\\.");
+		return tokens[tokens.length - 1].getBytes();
+	}
+	
 	public static byte[] getKey(AutoWritable w)
 	{
-		try {
-			List<Writable> values = new ArrayList<Writable>();
+		try {			
+			StringBuffer sb = new StringBuffer();
 			for (Field field : w.getAllInstanceFields())
 			{
 				if (field.isAnnotationPresent(HBaseKey.class))
 				{
 					field.setAccessible(true);
-					values.add((Writable)field.get(w));
+					String val = field.get(w).toString();
+					sb.append(val);
 				}
 			}
-			if (values.isEmpty())
+			String key = sb.toString();
+			if (key.isEmpty())
 			{
 				throw new IllegalArgumentException("Must have at least one field annotated with @HbaseKey");
 			}
-			return SerializationUtils.asBytes(values.toArray(new Writable[values.size()]));
+			return key.getBytes();
 		}
 		catch (IllegalAccessException e) 
 		{
@@ -54,7 +61,7 @@ public abstract class HBaseAutoWriter
 	
 	public static void put(AutoWritable w) throws IOException
 	{
-		HTable table = new HTable(connection.getConfig(),w.getClass().toString().getBytes());
+		HTable table = new HTable(connection.getConfig(), getTableName(w));
 		Put put = new Put(getKey(w));
 		try 
 		{
@@ -76,7 +83,7 @@ public abstract class HBaseAutoWriter
 	
 	public static void get(AutoWritable w) throws IOException
 	{
-		HTable table = new HTable(connection.getConfig(),w.getClass().toString().getBytes());
+		HTable table = new HTable(connection.getConfig(),getTableName(w));
 		Get get = new Get(getKey(w));
 		try 
 		{
