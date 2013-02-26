@@ -59,6 +59,26 @@ public class EventMonitor {
 		}
 	}
 
+	/**
+	 * Retrieve the HBase connection configuration.
+	 * 
+	 * @return An instance of Hadoop's Configuration type containing the
+	 *         necessary information to open a connection.
+	 */
+	Configuration getHbaseConfig() {
+		return this.hbaseConfig;
+	}
+
+	/**
+	 * Retrieve a PGSQL connection (which is open and ready to be manipulated).
+	 * 
+	 * @return An instance of Connection referring to a valid JDBC connection to
+	 *         PGSQL.
+	 */
+	Connection getPGSQLConnection() {
+		return this.jdbcPGSQL;
+	}
+
 	// Parses the XML file in a well-defined location to obtain PGSQL connection
 	// information. Returns a PostgreSQLConnectionDetails object containing such
 	// details.
