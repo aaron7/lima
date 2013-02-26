@@ -35,6 +35,10 @@ public abstract class HBaseAutoWriter
 		return tokens[tokens.length - 1].getBytes();
 	}
 	
+	/**
+	 * Grabs the byte array key for any AutoWritable. Generates bytes from fields annotated with HBaseKey, 
+	 * 	representing them in their declared order as strings joined by a delimiter character. 
+	 */
 	public static byte[] getKey(AutoWritable w)
 	{
 		try {			
@@ -63,7 +67,11 @@ public abstract class HBaseAutoWriter
 		}
 	}
 	
-	
+	/**
+	 *  Inserts/updates a row in the hbase table corresponding with the given AutoWritable. Each field is put in its own column.
+	 *  
+	 *  Requires that all the fields are non-null writables
+	 */
 	public static void put(AutoWritable w) throws IOException
 	{
 		HTable table = new HTable(connection.getConfig(), getTableName(w));
@@ -86,6 +94,11 @@ public abstract class HBaseAutoWriter
 		table.close();
 	}
 	
+	/**
+	 * Gets the row in hbase with the key getKey(w) and sets all the fields in w based on the result of the get.
+	 * 
+	 * Requires that all fields in w are non-null Writables.
+	 */
 	public static void get(AutoWritable w) throws IOException
 	{
 		HTable table = new HTable(connection.getConfig(),getTableName(w));
