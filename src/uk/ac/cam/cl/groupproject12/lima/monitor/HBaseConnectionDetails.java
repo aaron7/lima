@@ -19,8 +19,7 @@ public class HBaseConnectionDetails {
 	 * @param username
 	 * @param password
 	 */
-	public HBaseConnectionDetails(String host, int port, String dbname,
-			String username, String password) {
+	public HBaseConnectionDetails(String host, int port) {
 		super();
 		this.host = host;
 		this.port = port;
