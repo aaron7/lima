@@ -22,7 +22,7 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
 
-public class StatisticsSynchroniser implements IDataSynchroniser {
+class StatisticsSynchroniser implements IDataSynchroniser {
 	private IP routerIP;
 	private int averagingPeriod = 5; // Period to average over in minutes.
 	private EventMonitor monitor;

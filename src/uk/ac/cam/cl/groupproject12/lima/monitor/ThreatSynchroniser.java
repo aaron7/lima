@@ -20,7 +20,7 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
-public class ThreatSynchroniser implements IDataSynchroniser {
+class ThreatSynchroniser implements IDataSynchroniser {
 
 	// The router identifier, i.e. its IP address
 	private IP routerIP;

@@ -44,7 +44,7 @@ public class EventMonitor implements Runnable {
 	// Instance of the synchroniser for this monitor to run
 	IDataSynchroniser synchroniser = null;
 
-	public EventMonitor(HBaseConnectionDetails hbaseConf,
+	private EventMonitor(HBaseConnectionDetails hbaseConf,
 			IDataSynchroniser synchroniser) throws PGSQLConfigurationException,
 			SQLException {
 
