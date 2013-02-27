@@ -3,7 +3,6 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-
 import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
@@ -35,7 +34,7 @@ public class Threat extends AutoWritable {
 	IP srcIP;
 	IP destIP;
 	IntWritable flowCount;
-	IntWritable flowDataAvg; // TODO we should probably remove this thing, its
+	IntWritable packetCount; // TODO we should probably remove this thing, its
 								// just total/count
 	LongWritable flowDataTotal;
 
@@ -63,7 +62,7 @@ public class Threat extends AutoWritable {
 		this.srcIP = new IP();
 		this.destIP = new IP();
 		this.flowCount = new IntWritable();
-		this.flowDataAvg = new IntWritable();
+		this.packetCount = new IntWritable();
 		this.flowDataTotal = new LongWritable();
 	}
 
@@ -79,12 +78,12 @@ public class Threat extends AutoWritable {
 	 * @param srcIP
 	 * @param destIP
 	 * @param flowCount
-	 * @param flowDataAvg
+	 * @param packetCount
 	 * @param flowDataTotal
 	 */
 	public Threat(LongWritable timeProcessed, IP routerId, EventType type,
 			LongWritable startTime, LongWritable endTime, IP srcIP, IP destIP,
-			IntWritable flowCount, IntWritable flowDataAvg,
+			IntWritable flowCount, IntWritable packetCount,
 			LongWritable flowDataTotal) {
 		super();
 		this.timeProcessed = timeProcessed;
@@ -95,7 +94,7 @@ public class Threat extends AutoWritable {
 		this.srcIP = srcIP;
 		this.destIP = destIP;
 		this.flowCount = flowCount;
-		this.flowDataAvg = flowDataAvg;
+		this.packetCount = packetCount;
 		this.flowDataTotal = flowDataTotal;
 	}
 
@@ -163,12 +162,12 @@ public class Threat extends AutoWritable {
 		this.flowCount = flowCount;
 	}
 
-	public IntWritable getFlowDataAvg() {
-		return flowDataAvg;
+	public IntWritable getPacketCount() {
+		return packetCount;
 	}
 
-	public void setFlowDataAvg(IntWritable flowDataAvg) {
-		this.flowDataAvg = flowDataAvg;
+	public void setPacketCount(IntWritable packetCount) {
+		this.packetCount = packetCount;
 	}
 
 	public LongWritable getFlowDataTotal() {
@@ -188,7 +187,7 @@ public class Threat extends AutoWritable {
 		result = prime * result
 				+ ((flowCount == null) ? 0 : flowCount.hashCode());
 		result = prime * result
-				+ ((flowDataAvg == null) ? 0 : flowDataAvg.hashCode());
+				+ ((packetCount == null) ? 0 : packetCount.hashCode());
 		result = prime * result
 				+ ((flowDataTotal == null) ? 0 : flowDataTotal.hashCode());
 		result = prime * result
@@ -226,10 +225,10 @@ public class Threat extends AutoWritable {
 				return false;
 		} else if (!flowCount.equals(other.flowCount))
 			return false;
-		if (flowDataAvg == null) {
-			if (other.flowDataAvg != null)
+		if (packetCount == null) {
+			if (other.packetCount != null)
 				return false;
-		} else if (!flowDataAvg.equals(other.flowDataAvg))
+		} else if (!packetCount.equals(other.packetCount))
 			return false;
 		if (flowDataTotal == null) {
 			if (other.flowDataTotal != null)
