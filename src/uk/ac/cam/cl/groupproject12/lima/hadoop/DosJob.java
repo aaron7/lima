@@ -12,6 +12,9 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
+import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 import java.io.IOException;
@@ -119,7 +122,7 @@ public class DosJob extends JobBase {
 	 */
 	public static class Reduce2
 			extends
-				Reducer<BytesWritable, DoSAttack, BytesWritable, DoSAttack> {
+				Reducer<BytesWritable, DoSAttack, BytesWritable, Threat> {
 		@Override
 		public void reduce(BytesWritable key, Iterable<DoSAttack> values,
 				Context context) throws IOException, InterruptedException {
@@ -155,14 +158,21 @@ public class DosJob extends JobBase {
 						new IntWritable(packets), new LongWritable(bytes),
 						new IntWritable(flowCount), new IntWritable(srcIPCount));
 				if (isSignificant(res)){
-					context.write(key, res);
+                    Threat threat = new Threat(
+                            new LongWritable(System.currentTimeMillis()),
+                            routerID,
+                            EventType.DoSAttack,
+                            res.startTime,
+                            res.endTime,
+                            new IP("0.0.0.0"),
+                            destAddr,
+                            res.flowCount,
+                            res.packets,
+                            res.bytes);
 
-//                    Threat threat = new Threat(System.currentTimeMillis(),routerID,"DoSAttack",res.startTime,res.endTime,new IP("0.0.0.0"),destAddr,res.flowCount,destAddr,res.packets,res.bytes);
+                    context.write(key, threat);
+                    HBaseAutoWriter.put(threat);
                 }
-
-
-
-				//TODO output to HBase here
 			}
 		}
 
@@ -221,10 +231,8 @@ public class DosJob extends JobBase {
 	 * Run a new DOS JobBase
 	 */
     @Override
-	public void runJob(String routerIp, String timestamp)
+	public void runJob(String routerIp, long timestamp)
 			throws IOException, ClassNotFoundException, InterruptedException {
-        //TODO this needs fixing to use BytesWritable
-
 		String inputPath = "input/" + routerIp + "-" + timestamp
 				+ "-netflow.csv";
 		String outputPath = "out/" + routerIp + "-" + timestamp + "-dos.out";
@@ -258,7 +266,7 @@ public class DosJob extends JobBase {
                 BytesWritable.class,
                 DoSAttack.class,
                 BytesWritable.class,
-                DoSAttack.class,
+                Threat.class,
                 Map2.class,
                 Reduce2.class,
                 SequenceFileAsBinaryInputFormat.class,

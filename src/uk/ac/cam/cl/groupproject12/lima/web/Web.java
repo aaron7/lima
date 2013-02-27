@@ -8,7 +8,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 public class Web {
 
-	private static String webUrl = "http://localhost:8000/java/";
+	private static String webUrl = "http://localhost:8001/java/";
 
 	/**
 	 * tells the web UI we are starting to run a set of jobs
@@ -18,7 +18,7 @@ public class Web {
 	 * @param status
 	 *            0 if router updated, 1 to increment
 	 */
-	public static void newJob(String ip, String timestamp, int numOfJobs) {
+	public static void newJob(String ip, long timestamp, int numOfJobs) {
 		Web.httpRequest("newJob?ip=" + ip + "&timestamp=" + timestamp
 				+ "&numOfJobs=" + numOfJobs);
 	}
@@ -31,7 +31,7 @@ public class Web {
 	 * @param allComplete
 	 *            true is the entire set of jobs is complete otherwise we inc
 	 */
-	public static void updateJob(String ip, String timestamp,
+	public static void updateJob(String ip, long timestamp,
 			boolean allComplete) {
 		Web.httpRequest("updateJob?ip=" + ip + "&timestamp=" + timestamp
 				+ "&complete=" + (allComplete ? 1 : 0));

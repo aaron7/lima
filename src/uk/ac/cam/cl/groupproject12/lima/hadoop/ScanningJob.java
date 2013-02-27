@@ -12,6 +12,9 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
+import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 import java.io.IOException;
@@ -147,7 +150,7 @@ public class ScanningJob extends JobBase {
      * The third reduce job counts the number of different destination IP addresses for a single source address.
      * It outputs an instance of PortScan class with the key sourceIP,timeFrame.
      */
-    public static class Reduce3 extends Reducer<PortScanKey, PortScan, PortScanKey, PortScan> {
+    public static class Reduce3 extends Reducer<PortScanKey, PortScan, PortScanKey, Threat> {
         @Override
         public void reduce(PortScanKey key, Iterable<PortScan> values,Context context) throws IOException, InterruptedException {
             IP routerID = null;
@@ -174,10 +177,21 @@ public class ScanningJob extends JobBase {
                 //For getting the thresholds correct, testing on some actual data would be required.
                 //Check whether we actually recorded a PortScan/HostScan.
                 if((flowCount>10) && (bytes/flowCount)<100 && (packets/flowCount)<3 && (destIPCount>10) && (flowCount/destIPCount/portCount<2)){
-                    PortScan outVal = new PortScan(routerID, key.srcIP, new LongWritable(minTime), new LongWritable(maxTime), new IntWritable(destIPCount), new IntWritable(portCount), new IntWritable(packets), new LongWritable(bytes), new IntWritable(flowCount));
+                    Threat threat = new Threat(
+                            new LongWritable(System.currentTimeMillis()),
+                            routerID,
+                            EventType.ScanningAttack,
+                            new LongWritable(minTime),
+                            new LongWritable(maxTime),
+                            key.srcIP,
+                            new IP("0.0.0.0"),
+                            new IntWritable(flowCount),
+                            new IntWritable(packets),
+                            new LongWritable(bytes)
+                    );
                     PortScanKey outKey = new PortScanKey(key.srcIP, key.timeFrame, new IP("0.0.0.0"), new IntWritable(0));
-                    context.write(outKey, outVal);
-                    //TODO output to HBase here.
+                    HBaseAutoWriter.put(threat);
+                    context.write(outKey, threat);
                 }
             }
         }
@@ -233,7 +247,7 @@ public class ScanningJob extends JobBase {
      * Run a new DOS JobBase
      */
     @Override
-    public void runJob(String routerIp, String timestamp)
+    public void runJob(String routerIp, long timestamp)
             throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/" + routerIp + "-" + timestamp
                 + "-netflow.csv";
@@ -286,7 +300,7 @@ public class ScanningJob extends JobBase {
                 PortScanKey.class,
                 PortScan.class,
                 PortScanKey.class,
-                PortScan.class,
+                Threat.class,
                 MapI.class,
                 Reduce3.class,
                 SequenceFileAsBinaryInputFormat.class,

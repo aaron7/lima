@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.IOException;
 
 public abstract class JobBase {
-    public Thread getThread(final String routerIp, final String timestamp) {
+    public Thread getThread(final String routerIp, final long timestamp) {
         return new Thread() {
             public void run() {
                 try {
@@ -26,7 +26,7 @@ public abstract class JobBase {
         };
     }
 
-    protected abstract void runJob(String routerIP, String timestamp)
+    protected abstract void runJob(String routerIP, long timestamp)
             throws IOException,ClassNotFoundException,InterruptedException;
 
     /**

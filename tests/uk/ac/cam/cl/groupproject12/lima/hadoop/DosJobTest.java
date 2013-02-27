@@ -9,6 +9,7 @@ import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,8 @@ public class DosJobTest {
     MapReduceDriver<LongWritable,Text,BytesWritable,FlowRecord,BytesWritable,BytesWritable> mapReduceDriver1;
 
     MapDriver<BytesWritable,BytesWritable,BytesWritable,DosJob.DoSAttack> mapDriver2;
-    ReduceDriver<BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack> reduceDriver2;
-    MapReduceDriver<BytesWritable,BytesWritable,BytesWritable,DosJob.DoSAttack,BytesWritable,DosJob.DoSAttack> mapReduceDriver2;
+    ReduceDriver<BytesWritable,DosJob.DoSAttack,BytesWritable,Threat> reduceDriver2;
+    MapReduceDriver<BytesWritable,BytesWritable,BytesWritable,DosJob.DoSAttack,BytesWritable,Threat> mapReduceDriver2;
 
     @BeforeClass
     public void setUp(){
