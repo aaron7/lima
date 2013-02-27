@@ -233,7 +233,7 @@ public class ScanningJob extends JobBase {
      * Run a new DOS JobBase
      */
     @Override
-    public void runJob(String routerIp, String timestamp)
+    public void runJob(String routerIp, long timestamp)
             throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/" + routerIp + "-" + timestamp
                 + "-netflow.csv";

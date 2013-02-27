@@ -199,7 +199,7 @@ public class SingleFlowJob extends JobBase {
      * Run a new Statistics job
      */
     @Override
-    public void runJob(String routerIp, String timestamp) throws IOException, ClassNotFoundException, InterruptedException {
+    public void runJob(String routerIp, long timestamp) throws IOException, ClassNotFoundException, InterruptedException {
         String inputPath = "input/"+routerIp+"-"+timestamp+"-netflow.csv";
         String outputPath = "out/"+routerIp+"-"+timestamp+"-singleFlow.out";
 

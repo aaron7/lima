@@ -215,7 +215,7 @@ public class DosJob extends JobBase {
 	 * Run a new DOS JobBase
 	 */
     @Override
-	public void runJob(String routerIp, String timestamp)
+	public void runJob(String routerIp, long timestamp)
 			throws IOException, ClassNotFoundException, InterruptedException {
         //TODO this needs fixing to use BytesWritable
 
