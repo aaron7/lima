@@ -191,9 +191,12 @@ public class SingleFlowJob extends JobBase {
 					 threat.setDestIP(record.destAddress); //all destination IPs are the same
 				 }
 				 updateThreat(threat, record);
-			 } 
-			HBaseAutoWriter.put(threat);
-			context.write(key, threat);
+			 }
+			 if (threat != null)
+			 {
+				 HBaseAutoWriter.put(threat);
+				 context.write(key, threat);	 
+			 }
 		 }
 	 }
 
