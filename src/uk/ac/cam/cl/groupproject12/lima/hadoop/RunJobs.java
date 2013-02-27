@@ -13,12 +13,10 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
  */
 public class RunJobs {
 	
-	
 	/** 
 	 * Assume: files we get are in the form of
 	 * "[routerIP]-[timestampMade]-netflow.csv"
 	 * e.g. 127.0.0.1-4234243242-netflow.csv
-	 *
 	 */
 	public static void main(String[] args) throws IOException 
 	{	
@@ -27,8 +25,6 @@ public class RunJobs {
 		long timestamp = Long.valueOf(tokens[1]);
 		runJobs(routerIp, timestamp);
 	}
-	
-	
 		
 	public static void runJobs(final String routerIp, final long timestamp)
 	{

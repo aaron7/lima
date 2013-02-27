@@ -106,6 +106,10 @@ public abstract class AutoWritable implements Writable
 			{
 				field.setAccessible(true);
 				Writable val = (Writable)field.get(this);
+				if (val == null)
+				{
+					throw new IllegalStateException(field.getName() + " is null in " + this.getClass() + "  but musnt be");
+				}
 				val.write(output);
 			}
 			catch (IllegalAccessException e) 

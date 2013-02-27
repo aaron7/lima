@@ -58,8 +58,8 @@ public class Threat extends AutoWritable {
 
 		// blank non-key fields:
 		this.endTime = new LongWritable();
-		this.srcIP = new IP();
-		this.destIP = new IP();
+		this.srcIP = new IP("0.0.0.0");
+		this.destIP = new IP("0.0.0.0");
 		this.flowCount = new IntWritable();
 		this.packetCount = new IntWritable();
 		this.flowDataTotal = new LongWritable();
