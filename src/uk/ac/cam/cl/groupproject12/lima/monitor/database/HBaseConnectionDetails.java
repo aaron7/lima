@@ -36,4 +36,9 @@ public class HBaseConnectionDetails {
 	public int getPort() {
 		return port;
 	}
+
+	public static HBaseConnectionDetails getDefault() 
+	{
+		return new HBaseConnectionDetails("localhost", 2182);
+	}
 }

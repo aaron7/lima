@@ -1,12 +1,10 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+import java.io.IOException;
+
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventMonitor;
-import uk.ac.cam.cl.groupproject12.lima.monitor.StatisticsSynchroniser;
-import uk.ac.cam.cl.groupproject12.lima.monitor.ThreatSynchroniser;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
-
-import java.io.IOException;
 
 /**
  * This is the main java class which is run for each router when we receive
@@ -64,14 +62,8 @@ public class RunJobs {
 
 		// Event monitor now runs and calls Web.updateJob(....,true) to tell the
 		// web it has completely finished
-	
-		ThreatSynchroniser ts = new ThreatSynchroniser(routerIp, timestamp);
-		StatisticsSynchroniser ss = new StatisticsSynchroniser(routerIp);
-		
-		HBaseConnectionDetails hbaseConf = new HBaseConnectionDetails(host, port);
-		
-		EventMonitor threatMonitor = new EventMonitor(hbaseConf, ts);
-		EventMonitor statisticsMonitor = new EventMonitor(hbaseConf, ss);
+		HBaseConnectionDetails hbaseConf = HBaseConnectionDetails.getDefault();
+		EventMonitor.doSynchronise(new IP(routerIp), hbaseConf, timestamp);
 	}
 
 
