@@ -1,3 +1,4 @@
+
 package uk.ac.cam.cl.groupproject12.lima.monitor;
 
 import java.io.IOException;
@@ -128,9 +129,9 @@ class StatisticsSynchroniser implements IDataSynchroniser {
 		int flowsPH = Math.round((float) flowsPerPeriod * 60f
 				/ (float) averagingPeriod);
 		int packetsPH = Math.round((float) packetsPerPeriod * 60f
-				/ (float) averagingPeriod);;
+				/ (float) averagingPeriod);
 		int bytesPH = Math.round((float) bytesPerPeriod * 60f
-				/ (float) averagingPeriod);;
+				/ (float) averagingPeriod);
 
 		// Check the number of routers returned earlier. This dictates whether
 		// it is necessary to use INSERT INTO or an UPDATE SQL operation.
