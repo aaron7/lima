@@ -57,7 +57,7 @@ public class FlowRecord extends AutoWritable{
 		this.typeOfService = new Text(typeOfService);
 	}
 
-	private FlowRecord() {
+	public FlowRecord() {
 		super(); //private constructor for deserializing
 	}
 

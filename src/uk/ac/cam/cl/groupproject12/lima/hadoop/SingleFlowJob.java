@@ -22,11 +22,12 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 public class SingleFlowJob extends JobBase {
 
+	/**
+	 * returns whether the given port number is reflecting under the UDP protocol
+	 */
 	private static boolean isReflectingPort(IntWritable port) {
 		int portNumber = port.get();
-		//TODO what are the reflecting ports?
-		
-		return false;
+		return portNumber == 7 || portNumber == 13 || portNumber == 17 || portNumber == 19;
 	}
 
 	/**
