@@ -22,6 +22,15 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
 
+/**
+ * Statistics synchroniser synchronises the stats on a per-router basis from
+ * HBase to PostgreSQL, aggregating them along the way. Due to the manner in
+ * which the EventMonitor invokes the synchronisers, this is package visible
+ * only.
+ * 
+ * @author Team Lima
+ * 
+ */
 class StatisticsSynchroniser implements IDataSynchroniser {
 	private IP routerIP;
 	private int averagingPeriod = 5; // Period to average over in minutes.
@@ -184,7 +193,7 @@ class StatisticsSynchroniser implements IDataSynchroniser {
 			// Scan the database using the above filter and the required.
 			Scan scan = new Scan();
 			scan.setFilter(routerIPFilter);
-			//scan.setTimeRange(minimumTimestamp, currentTime);
+			// scan.setTimeRange(minimumTimestamp, currentTime);
 			ResultScanner scanner = table.getScanner(scan);
 
 			for (Result r : scanner) {
