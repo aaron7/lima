@@ -1,10 +1,7 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.BytesWritable;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -225,7 +222,7 @@ public class ScanningJob extends JobBase {
         }
     }
 
-    public static class PortScanKey extends AutoWritable {
+    public static class PortScanKey extends AutoWritable implements WritableComparable<PortScanKey>{
         public IP srcIP;
         public LongWritable timeFrame;
         public IP destIP;
@@ -240,6 +237,18 @@ public class ScanningJob extends JobBase {
             this.timeFrame = timeFrame;
             this.destIP = destIP;
             this.port = port;
+        }
+
+        @Override
+        public int compareTo(PortScanKey o) {
+            int res;
+            if((res=timeFrame.compareTo(o.timeFrame))!=0)
+                return res;
+            if((res=port.compareTo(o.port))!=0)
+                return res;
+            if((res=srcIP.value.compareTo(o.srcIP.value))!=0)
+                return res;
+            return destIP.value.compareTo(o.destIP.value);
         }
     }
 
