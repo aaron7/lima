@@ -212,16 +212,22 @@ public class EventMonitor implements Runnable {
 		try {
 			threat = new EventMonitor(hbaseConf, new ThreatSynchroniser(
 					routerIP.getValue().toString(), timeProcessed));
-		} catch (PGSQLConfigurationException | SQLException e) {
+		} catch (PGSQLConfigurationException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO
 			e.printStackTrace();
 		}
 
 		try {
 			stats = new EventMonitor(hbaseConf, new StatisticsSynchroniser(
 					routerIP.getValue().toString()));
-		} catch (PGSQLConfigurationException | SQLException e) {
+		} catch (PGSQLConfigurationException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO
 			e.printStackTrace();
 		}
 
@@ -241,8 +247,7 @@ public class EventMonitor implements Runnable {
 		}
 
 		// Call the web GUI to notify it of the new data
-		Web.updateJob(routerIP.getValue().toString(),
-				timeProcessed, true);
+		Web.updateJob(routerIP.getValue().toString(), timeProcessed, true);
 
 		// Done!
 	}
