@@ -1,5 +1,8 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+import java.io.IOException;
+import java.text.ParseException;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -10,14 +13,12 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
 import uk.ac.cam.cl.groupproject12.lima.hbase.Constants;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
-
-import java.io.IOException;
-import java.text.ParseException;
 
 public class SingleFlowJob extends JobBase {
 
@@ -172,7 +173,7 @@ public class SingleFlowJob extends JobBase {
 			 }
 			 // leave the srcIP blank
 			 threat.getFlowCount().set(threat.getFlowCount().get() + 1);
-			 //TODO data avg?
+			 threat.getPacketCount().set(threat.getPacketCount().get() + record.packets.get());
 			 threat.getFlowDataTotal().set(threat.getFlowDataTotal().get() + record.bytes.get());
 		 }
 

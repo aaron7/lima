@@ -34,8 +34,7 @@ public class Threat extends AutoWritable {
 	IP srcIP;
 	IP destIP;
 	IntWritable flowCount;
-	IntWritable packetCount; // TODO we should probably remove this thing, its
-								// just total/count
+	IntWritable packetCount; 
 	LongWritable flowDataTotal;
 
 	/**
