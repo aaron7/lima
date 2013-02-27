@@ -1,5 +1,9 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
+import uk.ac.cam.cl.groupproject12.lima.monitor.EventMonitor;
+import uk.ac.cam.cl.groupproject12.lima.monitor.StatisticsSynchroniser;
+import uk.ac.cam.cl.groupproject12.lima.monitor.ThreatSynchroniser;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 import java.io.IOException;
@@ -10,49 +14,64 @@ import java.io.IOException;
  * 
  */
 public class RunJobs {
-	public static void main(String[] args) throws IOException {
-		// ASSUME: files we get are in the form of
-		// routerIP-timestampMade-netflow.csv
-		// e.g. 127.0.0.1-4234243242-netflow.csv
-		// TODO: uncomment this:
-		/*
-		 * String[] details = args[0].split("-"); final String routerIp =
-		 * details[0]; final String timestamp = details[1]; //value to just
-		 * identify a unique job
-		 */
-		final String routerIp = "127.0.0.1";
-		final String timestamp = "12345678"; // value to just identify a unique
-												// job
+	
+	
+	/** 
+	 * Assume: files we get are in the form of
+	 * "[routerIP]-[timestampMade]-netflow.csv"
+	 * e.g. 127.0.0.1-4234243242-netflow.csv
+	 *
+	 */
+	public static void main(String[] args) throws IOException 
+	{	
+		String[] tokens = args[0].split("-");
+		String routerIp = tokens[0];
+		long timestamp = Long.valueOf(tokens[1]);
+		runJobs(routerIp, timestamp);
+	}
+	
+	
+		
+	public static void runJobs(final String routerIp, final long timestamp)
+	{
+		
 		final int jobParts = 3; // There are 3 parts:Stats,Dos1,Dos2
-
 		// Tell the web that we have a new job
 		Web.newJob(routerIp, timestamp, jobParts);
 
-		// Set up and run the statistics thread
-		Thread statisticsThread = new StatisticsJob().getThread(routerIp,timestamp);
-		statisticsThread.run();
-
-		// Set up and run the DoS thread.
-        Thread dosThread = new DosJob().getThread(routerIp, timestamp);
-        dosThread.run();
-
-		System.out.println("running...");
-		try {
-			statisticsThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		Thread[] threads = new Thread[] { 
+				new StatisticsJob().getThread(routerIp,timestamp),
+				new DosJob().getThread(routerIp, timestamp),
+				new SingleFlowJob().getThread(routerIp, timestamp),
+				new ScanningJob().getThread(routerIp, timestamp)};
+		try 
+		{
+			System.out.println("Starting threads...");
+			for (Thread thread : threads)
+			{
+				thread.start();
+			}		
+			for (Thread thread : threads)
+			{
+				thread.join();
+			}
+			System.out.println("... All threads finished!");
 		}
-		try {
-			dosThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+		catch (InterruptedException e) 
+		{
+			throw new RuntimeException("Unexpected interruption exception",e);
 		}
 
-		System.out.println("All jobs finished.");
 		// Event monitor now runs and calls Web.updateJob(....,true) to tell the
 		// web it has completely finished
+	
+		ThreatSynchroniser ts = new ThreatSynchroniser(routerIp, timestamp);
+		StatisticsSynchroniser ss = new StatisticsSynchroniser(routerIp);
+		
+		HBaseConnectionDetails hbaseConf = new HBaseConnectionDetails(host, port);
+		
+		EventMonitor threatMonitor = new EventMonitor(hbaseConf, ts);
+		EventMonitor statisticsMonitor = new EventMonitor(hbaseConf, ss);
 	}
 
 
