@@ -29,7 +29,7 @@ public class IP extends AutoWritable {
 	 */
 	public IP(String value) 
 	{
-		this.value = new Text(value);
+		this.value = new Text(value.trim());
 		if (! this.isValid() )
 		{
 			throw new IllegalArgumentException(value + " is not a valid ip");

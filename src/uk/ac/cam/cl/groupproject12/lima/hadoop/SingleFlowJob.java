@@ -74,8 +74,8 @@ public class SingleFlowJob extends JobBase {
 	 */
 	public static class Map extends Mapper<LongWritable, Text, BytesWritable, SingleFlowThreat>
 	{		
-		private static int largePacketCountThreshold = 475; // TODO find an appropriate value
-		private static int largeBytesCountThreshold = 3700;  //TODO find an appropriate value
+		private static int largePacketCountThreshold = 47500; // TODO find an appropriate value
+		private static int largeBytesCountThreshold = 370000;  //TODO find an appropriate value
 
         @Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
