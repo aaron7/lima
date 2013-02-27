@@ -57,8 +57,11 @@ public class FlowRecord extends AutoWritable{
 		this.typeOfService = new Text(typeOfService);
 	}
 
-	public FlowRecord() {
-		super(); //private constructor for deserializing
+	/**
+	 * Empty constructor for serialization. Not for other uses.
+	 */
+	public FlowRecord() 
+	{
 	}
 
 	public static long valueOfDate(String string) throws ParseException
