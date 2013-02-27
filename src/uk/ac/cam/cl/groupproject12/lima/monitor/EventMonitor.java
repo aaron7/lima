@@ -164,7 +164,7 @@ public class EventMonitor implements Runnable {
 		// t.setDestIP(new IP("6.7.8.9"));
 		// t.setEndTime(new LongWritable(667L));
 		// t.setFlowCount(new IntWritable(678));
-		// t.setFlowDataAvg(new IntWritable(11123));
+		// t.setPacketCount(new IntWritable(11123));
 		// t.setFlowDataTotal(new LongWritable(622L));
 		// t.setSrcIP(new IP("66.22.11.55"));
 		//
