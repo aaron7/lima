@@ -7,7 +7,7 @@ public enum EventStatus {
     /**
      * The event is open or unhandled.
      */
-	event_open,
+    event_open,
     /**
      * The event has been closed and marked as completed.
      */

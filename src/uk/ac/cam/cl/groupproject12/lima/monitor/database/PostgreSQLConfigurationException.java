@@ -5,12 +5,13 @@ package uk.ac.cam.cl.groupproject12.lima.monitor.database;
  */
 public class PostgreSQLConfigurationException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * @param message A string stating the issue.
+     * @param message
+     *         A string stating the issue.
      */
-	public PostgreSQLConfigurationException(String message) {
-		super(message);
-	}
+    public PostgreSQLConfigurationException(String message) {
+        super(message);
+    }
 }

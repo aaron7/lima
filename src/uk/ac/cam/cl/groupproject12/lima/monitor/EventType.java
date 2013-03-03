@@ -7,7 +7,7 @@ public enum EventType {
     /**
      * Used if the attack is a Land Attack.
      */
-	landAttack,
+    landAttack,
     /**
      * Used if the attack is a TCP flood.
      */

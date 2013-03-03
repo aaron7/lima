@@ -1,33 +1,27 @@
 package uk.ac.cam.cl.groupproject12.lima.hadoop;
 
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
-import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants;
-import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
-import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
-import uk.ac.cam.cl.groupproject12.lima.web.Web;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.*;
+import org.apache.hadoop.mapreduce.lib.output.*;
+import uk.ac.cam.cl.groupproject12.lima.hbase.*;
+import uk.ac.cam.cl.groupproject12.lima.monitor.*;
+import uk.ac.cam.cl.groupproject12.lima.web.*;
 
-import java.io.IOException;
-import java.text.ParseException;
+import java.io.*;
+import java.text.*;
 
 /**
- * Class encapsulating the Mappers, Reducers, the appropriate data structure classes,
- * and an interface to run the job.
+ * Class encapsulating the Mappers, Reducers, the appropriate data structure classes, and an interface to run the job.
  */
 public class ScanningJob extends JobBase {
 
     /**
-     * The first map job takes in the input from csv files, converts it into PortScan and
-     * collects on sourceIP,timeframe(x,startTime),destIP,destPort, where x is 10, 60, 300.
-     * The first digit of 'x' is added to the timeframe to identify it at later points.
+     * The first map job takes in the input from csv files, converts it into PortScan and collects on
+     * sourceIP,timeframe(x,startTime),destIP,destPort, where x is 10, 60, 300. The first digit of 'x' is added to the
+     * timeframe to identify it at later points.
+     *
      * @see PortScan
      */
     public static class Map1
@@ -43,18 +37,18 @@ public class ScanningJob extends JobBase {
                 record = FlowRecord.valueOf(line);
                 if (record.protocol.get() == HBaseConstants.TCP || record.protocol.get() == HBaseConstants.UDP) { //TCP or UDP
                     //Build up for 10s time frame
-                    LongWritable timeFrame = new LongWritable((record.startTime.get() / 10000) * 10000+1); //10s
+                    LongWritable timeFrame = new LongWritable((record.startTime.get() / 10000) * 10000 + 1); //10s
                     PortScanKey outKey = new PortScanKey(record.srcAddress, timeFrame, record.destAddress, record.destPort);
-                    PortScan outVal = new PortScan(record.routerId, record.srcAddress, record.startTime,record.endTime, new IntWritable(1), new IntWritable(1), record.packets, record.bytes, new IntWritable(1));
+                    PortScan outVal = new PortScan(record.routerId, record.srcAddress, record.startTime, record.endTime, new IntWritable(1), new IntWritable(1), record.packets, record.bytes, new IntWritable(1));
                     context.write(outKey, outVal);
 
                     //60s time frame
-                    outKey.timeFrame = new LongWritable((outKey.timeFrame.get()/60000)*60000+6);
-                    context.write(outKey,outVal);
+                    outKey.timeFrame = new LongWritable((outKey.timeFrame.get() / 60000) * 60000 + 6);
+                    context.write(outKey, outVal);
 
                     //300s time frame
-                    outKey.timeFrame = new LongWritable((outKey.timeFrame.get()/300000)*300000+3);
-                    context.write(outKey,outVal);
+                    outKey.timeFrame = new LongWritable((outKey.timeFrame.get() / 300000) * 300000 + 3);
+                    context.write(outKey, outVal);
                 }
             } catch (ParseException e) {
                 throw new RuntimeException("Parse Error", e);
@@ -63,9 +57,9 @@ public class ScanningJob extends JobBase {
     }
 
     /**
-     * The first reduce job combines the different flows with the same key
-     * and aggregates the appropriate fields. It outputs an instance of
-     * PortScan, with the key sourceIP,timeframe,destIP.
+     * The first reduce job combines the different flows with the same key and aggregates the appropriate fields. It
+     * outputs an instance of PortScan, with the key sourceIP,timeframe,destIP.
+     *
      * @see PortScan
      */
     public static class Reduce1 extends Reducer<PortScanKey, PortScan, BytesWritable, BytesWritable> {
@@ -88,7 +82,7 @@ public class ScanningJob extends JobBase {
                 bytes += val.bytes.get();
                 packets += val.packets.get();
                 minTime = Math.min(minTime, val.startTime.get());
-                maxTime = Math.max(maxTime,val.endTime.get());
+                maxTime = Math.max(maxTime, val.endTime.get());
                 flowCount++;
             }
             if (flowCount > 0) {
@@ -101,29 +95,31 @@ public class ScanningJob extends JobBase {
 
 
     /**
-     * The Map job used further down the pipeline, which is an identity map which converts BytesWritable to
-     * PortScanKey and PortScan.
+     * The Map job used further down the pipeline, which is an identity map which converts BytesWritable to PortScanKey
+     * and PortScan.
+     *
      * @see BytesWritable
      * @see PortScanKey
      * @see PortScan
      */
-    public static class MapI extends Mapper<BytesWritable,BytesWritable,PortScanKey,PortScan> {
+    public static class MapI extends Mapper<BytesWritable, BytesWritable, PortScanKey, PortScan> {
         @Override
         public void map(BytesWritable key, BytesWritable value, Context context) throws IOException, InterruptedException {
             context.write(
-                    SerializationUtils.asAutoWritable(PortScanKey.class,key),
-                    SerializationUtils.asAutoWritable(PortScan.class,value));
+                    SerializationUtils.asAutoWritable(PortScanKey.class, key),
+                    SerializationUtils.asAutoWritable(PortScan.class, value));
         }
     }
 
     /**
-     * The second reduce job counts the number of different ports used for a single source address.
-     * It outputs an instance of PortScan with the key sourceIP,timeframe.
+     * The second reduce job counts the number of different ports used for a single source address. It outputs an
+     * instance of PortScan with the key sourceIP,timeframe.
+     *
      * @see PortScan
      */
     public static class Reduce2 extends Reducer<PortScanKey, PortScan, BytesWritable, BytesWritable> {
         @Override
-        public void reduce(PortScanKey key, Iterable<PortScan> values,Context context) throws IOException, InterruptedException {
+        public void reduce(PortScanKey key, Iterable<PortScan> values, Context context) throws IOException, InterruptedException {
             IP routerID = null;
 
             long bytes = 0, minTime = 0, maxTime = 0;
@@ -139,25 +135,26 @@ public class ScanningJob extends JobBase {
                 packets += val.packets.get();
                 minTime = Math.min(minTime, val.startTime.get());
                 maxTime = Math.max(maxTime, val.endTime.get());
-                flowCount +=val.flowCount.get();
+                flowCount += val.flowCount.get();
                 portCount++;
             }
             if (portCount > 0) {
                 PortScan outVal = new PortScan(routerID, key.srcIP, new LongWritable(minTime), new LongWritable(maxTime), new IntWritable(1), new IntWritable(portCount), new IntWritable(packets), new LongWritable(bytes), new IntWritable(flowCount));
                 PortScanKey outKey = new PortScanKey(key.srcIP, key.timeFrame, new IP("0.0.0.0"), new IntWritable(0));
-                context.write(SerializationUtils.asBytesWritable(outKey),SerializationUtils.asBytesWritable(outVal));
+                context.write(SerializationUtils.asBytesWritable(outKey), SerializationUtils.asBytesWritable(outVal));
             }
         }
     }
 
     /**
-     * The third reduce job counts the number of different destination IP addresses for a single source address.
-     * It outputs an instance of PortScan with the key sourceIP,timeFrame.
+     * The third reduce job counts the number of different destination IP addresses for a single source address. It
+     * outputs an instance of PortScan with the key sourceIP,timeFrame.
+     *
      * @see PortScan
      */
     public static class Reduce3 extends Reducer<PortScanKey, PortScan, PortScanKey, Threat> {
         @Override
-        public void reduce(PortScanKey key, Iterable<PortScan> values,Context context) throws IOException, InterruptedException {
+        public void reduce(PortScanKey key, Iterable<PortScan> values, Context context) throws IOException, InterruptedException {
             IP routerID = null;
 
             long bytes = 0, minTime = 0, maxTime = 0;
@@ -173,15 +170,15 @@ public class ScanningJob extends JobBase {
                 packets += val.packets.get();
                 minTime = Math.min(minTime, val.startTime.get());
                 maxTime = Math.max(maxTime, val.endTime.get());
-                flowCount +=val.flowCount.get();
-                portCount +=val.destPortCount.get();
+                flowCount += val.flowCount.get();
+                portCount += val.destPortCount.get();
                 destIPCount++;
             }
             if (destIPCount > 0) {
                 //These thresholds would require some tweaking and are just a wild guess.
                 //For getting the thresholds correct, testing on some actual data would be required.
                 //Check whether we actually recorded a PortScan/HostScan.
-                if((flowCount>10) && (bytes/flowCount)<100 && (packets/flowCount)<3 && (destIPCount>10) && (flowCount/destIPCount/portCount<2)){
+                if ((flowCount > 10) && (bytes / flowCount) < 100 && (packets / flowCount) < 3 && (destIPCount > 10) && (flowCount / destIPCount / portCount < 2)) {
                     Threat threat = new Threat(
                             new LongWritable(System.currentTimeMillis()),
                             routerID,
@@ -268,7 +265,7 @@ public class ScanningJob extends JobBase {
     /**
      * The key for a given port scan for HBase storage.
      */
-    public static class PortScanKey extends AutoWritable implements WritableComparable<PortScanKey>{
+    public static class PortScanKey extends AutoWritable implements WritableComparable<PortScanKey> {
         /**
          * Source IP of the port scan.
          */
@@ -304,17 +301,20 @@ public class ScanningJob extends JobBase {
 
         /**
          * Compares two PortScanKeys.
-         * @param o The object to compare against.
+         *
+         * @param o
+         *         The object to compare against.
+         *
          * @return An integer showing if this object is less than, equal to, or greater than the passed parameter.
          */
         @Override
         public int compareTo(PortScanKey o) {
             int res;
-            if((res=timeFrame.compareTo(o.timeFrame))!=0)
+            if ((res = timeFrame.compareTo(o.timeFrame)) != 0)
                 return res;
-            if((res=port.compareTo(o.port))!=0)
+            if ((res = port.compareTo(o.port)) != 0)
                 return res;
-            if((res=srcIP.value.compareTo(o.srcIP.value))!=0)
+            if ((res = srcIP.value.compareTo(o.srcIP.value)) != 0)
                 return res;
             return destIP.value.compareTo(o.destIP.value);
         }
@@ -322,8 +322,12 @@ public class ScanningJob extends JobBase {
 
     /**
      * Run a new job.
-     * @param routerIp IP of the router the job is for.
-     * @param timestamp Timestamp from the logfile.
+     *
+     * @param routerIp
+     *         IP of the router the job is for.
+     * @param timestamp
+     *         Timestamp from the logfile.
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws InterruptedException

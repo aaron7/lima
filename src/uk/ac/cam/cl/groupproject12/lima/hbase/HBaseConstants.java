@@ -5,21 +5,21 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
  */
 public class HBaseConstants {
     /**
-     *  IANA-assigned protocol number for ICMP.
+     * IANA-assigned protocol number for ICMP.
      *
-     *  @see <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">IANA Protocol Numbers</a>
+     * @see <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">IANA Protocol Numbers</a>
      */
     public static final int ICMP = 1;
     /**
-     *  IANA-assigned protocol number for UDP.
+     * IANA-assigned protocol number for UDP.
      *
-     *  @see <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">IANA Protocol Numbers</a>
+     * @see <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">IANA Protocol Numbers</a>
      */
     public static final int UDP = 17;
     /**
-     *  IANA-assigned protocol number for TCP.
+     * IANA-assigned protocol number for TCP.
      *
-     *  @see <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">IANA Protocol Numbers</a>
+     * @see <a href="https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xml">IANA Protocol Numbers</a>
      */
     public static final int TCP = 6;
 
