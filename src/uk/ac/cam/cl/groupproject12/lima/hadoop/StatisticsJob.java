@@ -15,6 +15,9 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
 import java.io.IOException;
 import java.text.ParseException;
 
+/**
+ * Mapper and Reducer used to generate statistics for a given router over a given timeframe.
+ */
 public class StatisticsJob extends JobBase {
 
     public static class Map extends Mapper<LongWritable, Text, LongWritable, FlowRecord> {
@@ -55,9 +58,14 @@ public class StatisticsJob extends JobBase {
             context.write(key, stat);
         }
     }
-    
+
     /**
-     * Run a new Statistics job
+     * Runs a new statistics job.
+     * @param routerIp IP of the router the flow comes from.
+     * @param timestamp Timestamp of the file the flow comes from.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     @Override
     public void runJob(String routerIp, long timestamp) throws IOException, ClassNotFoundException, InterruptedException {

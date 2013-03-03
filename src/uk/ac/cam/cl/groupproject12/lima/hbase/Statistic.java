@@ -10,10 +10,9 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 
 /**
- *	A class to represent a row in the Hbase Statistic table,
- *	characterising the traffic through a router in a timeframe.
+ *	A class to represent a row in the HBase Statistic table, characterising the traffic through a router in a timeframe. <br />
  *
- *	Note: the totalDataSize is in bytes. Other fields are unit-less.
+ *	Note: the totalDataSize is in bytes. Other fields are unitless.
  */
 public class Statistic extends AutoWritable
 {
@@ -23,34 +22,59 @@ public class Statistic extends AutoWritable
 	LongWritable timeFrame;
 	
 	IntWritable flowCount = new IntWritable(0);
+
+    /**
+     * @return The timeframe stored in this object.
+     */
 	public LongWritable getTimeFrame() {
 		return timeFrame;
 	}
 
+    /**
+     * @return The flow count stored in this object.
+     */
 	public IntWritable getFlowCount() {
 		return flowCount;
 	}
 
+    /**
+     * @return The packet count stored in this object.
+     */
 	public IntWritable getPacketCount() {
 		return packetCount;
 	}
 
+    /**
+     * @return The total data size field stored in this object.
+     */
 	public LongWritable getTotalDataSize() {
 		return totalDataSize;
 	}
 
+    /**
+     * @param timeFrame Timeframe to set within this object.
+     */
 	public void setTimeFrame(LongWritable timeFrame) {
 		this.timeFrame = timeFrame;
 	}
 
+    /**
+     * @param flowCount Flow count to set within this object.
+     */
 	public void setFlowCount(IntWritable flowCount) {
 		this.flowCount = flowCount;
 	}
 
+    /**
+     * @param packetCount Packet count to set within this object.
+     */
 	public void setPacketCount(IntWritable packetCount) {
 		this.packetCount = packetCount;
 	}
 
+    /**
+     * @param totalDataSize Total data size to set within this object.
+     */
 	public void setTotalDataSize(LongWritable totalDataSize) {
 		this.totalDataSize = totalDataSize;
 	}
@@ -60,12 +84,20 @@ public class Statistic extends AutoWritable
 	IntWritable TCPCount = new IntWritable(0);
 	IntWritable UDPCount = new IntWritable(0);
 	IntWritable ICMPCount = new IntWritable(0);
-	
+
+    /**
+     * Constructor only used during serialisation.
+     */
 	public Statistic()
 	{
 		
 	}
-	
+
+    /**
+     * Creates a new instance with the values preset.
+     * @param routerId The router's IP address.
+     * @param timeframe The timeframe of the statistics.
+     */
 	public Statistic(IP routerId, long timeframe) 
 	{
 		this.routerId = routerId;
@@ -74,23 +106,24 @@ public class Statistic extends AutoWritable
 	
 	public Statistic(IP routerId, LongWritable timeFrame,
 			IntWritable flowCount, IntWritable packetCount,
-			LongWritable totalDataSize, IntWritable tCPCount,
-			IntWritable uDPCount, IntWritable iCMPCount) {
+			LongWritable totalDataSize, IntWritable TCPCount,
+			IntWritable UDPCount, IntWritable ICMPCount) {
 		super();
 		this.routerId = routerId;
 		this.timeFrame = timeFrame;
 		this.flowCount = flowCount;
 		this.packetCount = packetCount;
 		this.totalDataSize = totalDataSize;
-		TCPCount = tCPCount;
-		UDPCount = uDPCount;
-		ICMPCount = iCMPCount;
+		this.TCPCount = TCPCount;
+		this.UDPCount = UDPCount;
+		this.ICMPCount = ICMPCount;
 	}
 
-	/**
-	 * 	Update this statistic with the information in a record. The FlowRecord must 
-	 *  have the same router IP and have its start time fall in the same timeframe.
-	 */
+    /**
+     * Updates the statistics with information from a given FlowRecord.
+     * @param record A FlowRecord for the same router IP and a start time within the timeframe.
+     * @see FlowRecord
+     */
 	public void addFlowRecord(FlowRecord record)
 	{
 		this.flowCount.set(this.flowCount.get() + 1);
@@ -114,7 +147,11 @@ public class Statistic extends AutoWritable
 			//do nothing!
 		}
 	}
-	
+
+    /**
+     * Custom implementation of hashCode.
+     * @return An integer representing the object's hashCode.
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -138,6 +175,11 @@ public class Statistic extends AutoWritable
 		return result;
 	}
 
+    /**
+     * Overridden definition of equals.
+     * @param obj The object to compare against.
+     * @return Boolean true if the two objects contain the same values in all fields or are the same object entirely.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -190,6 +232,9 @@ public class Statistic extends AutoWritable
 		return true;
 	}
 
+    /**
+     * @return A string representing the given object.
+     */
 	@Override
 	public String toString() {
 		return "Statistic [routerId=" + routerId + ", timeFrame=" + timeFrame

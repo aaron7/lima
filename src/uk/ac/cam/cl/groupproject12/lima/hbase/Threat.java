@@ -9,13 +9,13 @@ import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 
 /**
  * 
- * A Class used to represent a single row in the Hbase Threat table.
+ * A Class used to represent a single row in the HBase Threat table.<br />
  * 
- * The threat was processed at timeProcessed (in unix time) in the loggind data
+ * The threat was processed at timeProcessed (in UNIX time) in the logged data
  * for the router identified by routerId. The threat consists of flowCount
- * differnt flows, the earliest starting at startTime, the lattest ending at
+ * different flows, the earliest starting at startTime, the latest ending at
  * endTime. flowDataTotal gives the total number of bytes carried by all of the
- * flows considered as part of this attack.
+ * flows considered as part of this attack.<br />
  * 
  * If the threat targets a single IP it will be stored in destIP; if the threat
  * originates from a single IP it will be stored in srcIP.
@@ -38,15 +38,22 @@ public class Threat extends AutoWritable {
 	LongWritable flowDataTotal;
 
 	/**
-	 * public nullary constructor for serialization. Not for other uses.
+	 * Public nullary constructor used only for serialisation.
 	 */
 	public Threat() {
 
 	}
 
-	/**
-	 * Construct a Threat with only the HBaseKey fields set
-	 */
+    /**
+     * Constructs a Threat by setting only fields that represent parts of the key.
+     *
+     * @param timeProcessed The time the threat was processed.
+     * @param routerId The IP address of the router the threat was logged upon.
+     * @param type The type of the event from the EventType enumeration.
+     * @param startTime The time of the first flow that was part of this threat.
+     * @see IP
+     * @see EventType
+     */
 	public Threat(LongWritable timeProcessed, IP routerId, EventType type,
 			LongWritable startTime) {
 		super();
@@ -66,19 +73,21 @@ public class Threat extends AutoWritable {
 	}
 
 	/**
-	 * Constructor to build an instance of Threat with all possible field values
-	 * passed in (rather than retrieving them using the HBaseAutoWriter later).
+     * Constructor that sets all values the Threat can have, allowing for null entries.
 	 * 
-	 * @param timeProcessed
-	 * @param routerId
-	 * @param type
-	 * @param startTime
-	 * @param endTime
-	 * @param srcIP
-	 * @param destIP
-	 * @param flowCount
-	 * @param packetCount
-	 * @param flowDataTotal
+	 * @param timeProcessed The time the threat was processed.
+	 * @param routerId The IP address of the router the threat was logged upon.
+	 * @param type The type of the event from the EventType enumeration.
+	 * @param startTime The time of the first flow that was part of this threat.
+	 * @param endTime The time of the last flow detected to be part of this threat.
+	 * @param srcIP The single source IP involved in this threat (if applicable)
+	 * @param destIP The single destination IP involved in this threat (if applicable)
+	 * @param flowCount The number of flows relating to this threat.
+	 * @param packetCount The number of packets sent in this threat.
+	 * @param flowDataTotal The total amount of data to be transferred during this threat.
+     * @see EventType
+     * @see IP
+     *
 	 */
 	public Threat(LongWritable timeProcessed, IP routerId, EventType type,
 			LongWritable startTime, LongWritable endTime, IP srcIP, IP destIP,
@@ -177,6 +186,10 @@ public class Threat extends AutoWritable {
 		this.flowDataTotal = flowDataTotal;
 	}
 
+    /**
+     * Custom implementation of hashCode.
+     * @return An integer hashCode for the object.
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -200,6 +213,11 @@ public class Threat extends AutoWritable {
 		return result;
 	}
 
+    /**
+     * A custom implementation of equals.
+     * @param obj The onject to compare against.
+     * @return The boolean true if the two objects contain identical fields or if they are the same object.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -262,9 +280,9 @@ public class Threat extends AutoWritable {
 		return true;
 	}
 
-	/**
-	 * Produces a string representation of an instance of Threat.
-	 */
+    /**
+     * @return A string representation of the instance of Threat.
+     */
 	@Override
 	public String toString() {
 		String threatStr;

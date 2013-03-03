@@ -10,6 +10,7 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileAsBinaryOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
@@ -25,8 +26,9 @@ public class ScanningJob extends JobBase {
 
     /**
      * The first map job takes in the input from csv files, converts it into PortScan and
-     * collects on sourceIP,timeframe(x,startTime),destIP,destPort, where x is 10, 60, 300. Not to mix the keys,
-     * if the time frame is 6, 6 is added, if it's 300, 3 is added, and if it's 10, 1 is added.
+     * collects on sourceIP,timeframe(x,startTime),destIP,destPort, where x is 10, 60, 300.
+     * The first digit of 'x' is added to the timeframe to identify it at later points.
+     * @see PortScan
      */
     public static class Map1
             extends
@@ -39,7 +41,7 @@ public class ScanningJob extends JobBase {
             FlowRecord record;
             try {
                 record = FlowRecord.valueOf(line);
-                if (record.protocol.get() == 6 || record.protocol.get() == 17) { //TCP or UDP
+                if (record.protocol.get() == HBaseConstants.TCP || record.protocol.get() == HBaseConstants.UDP) { //TCP or UDP
                     //Build up for 10s time frame
                     LongWritable timeFrame = new LongWritable((record.startTime.get() / 10000) * 10000+1); //10s
                     PortScanKey outKey = new PortScanKey(record.srcAddress, timeFrame, record.destAddress, record.destPort);
@@ -61,9 +63,10 @@ public class ScanningJob extends JobBase {
     }
 
     /**
-     * The first reduce job just combines the different flows with the same key
+     * The first reduce job combines the different flows with the same key
      * and aggregates the appropriate fields. It outputs an instance of
-     * PortScan class, with the key sourceIP,timeframe,destIP.
+     * PortScan, with the key sourceIP,timeframe,destIP.
+     * @see PortScan
      */
     public static class Reduce1 extends Reducer<PortScanKey, PortScan, BytesWritable, BytesWritable> {
 
@@ -100,6 +103,9 @@ public class ScanningJob extends JobBase {
     /**
      * The Map job used further down the pipeline, which is an identity map which converts BytesWritable to
      * PortScanKey and PortScan.
+     * @see BytesWritable
+     * @see PortScanKey
+     * @see PortScan
      */
     public static class MapI extends Mapper<BytesWritable,BytesWritable,PortScanKey,PortScan> {
         @Override
@@ -112,7 +118,8 @@ public class ScanningJob extends JobBase {
 
     /**
      * The second reduce job counts the number of different ports used for a single source address.
-     * It outputs an instance of PortScan class with the key sourceIP,timeframe.
+     * It outputs an instance of PortScan with the key sourceIP,timeframe.
+     * @see PortScan
      */
     public static class Reduce2 extends Reducer<PortScanKey, PortScan, BytesWritable, BytesWritable> {
         @Override
@@ -145,7 +152,8 @@ public class ScanningJob extends JobBase {
 
     /**
      * The third reduce job counts the number of different destination IP addresses for a single source address.
-     * It outputs an instance of PortScan class with the key sourceIP,timeFrame.
+     * It outputs an instance of PortScan with the key sourceIP,timeFrame.
+     * @see PortScan
      */
     public static class Reduce3 extends Reducer<PortScanKey, PortScan, PortScanKey, Threat> {
         @Override
@@ -164,7 +172,7 @@ public class ScanningJob extends JobBase {
                 bytes += val.bytes.get();
                 packets += val.packets.get();
                 minTime = Math.min(minTime, val.startTime.get());
-                maxTime = Math.max(maxTime,val.endTime.get());
+                maxTime = Math.max(maxTime, val.endTime.get());
                 flowCount +=val.flowCount.get();
                 portCount +=val.destPortCount.get();
                 destIPCount++;
@@ -194,21 +202,56 @@ public class ScanningJob extends JobBase {
         }
     }
 
+    /**
+     * A construct used to hold a port scan's data.
+     */
     public static class PortScan extends AutoWritable {
+        /**
+         * Unique ID for the router, its IP.
+         */
         public IP routerId;
+        /**
+         * IP from which the scan is originating.
+         */
         public IP srcIP;
-        public LongWritable startTime; // in ms
-        public LongWritable endTime; //in ms
+        /**
+         * Start time of the detected attack, in milliseconds.
+         */
+        public LongWritable startTime;
+        /**
+         * End time of the detected attack, in milliseconds.
+         */
+        public LongWritable endTime;
+        /**
+         * How many IPs have been scanned by the source.
+         */
         public IntWritable destIPCount;
+        /**
+         * How many ports have been scanned by the source.
+         */
         public IntWritable destPortCount;
+        /**
+         * How many packets have been sent in this attack.
+         */
         public IntWritable packets;
+        /**
+         * How many bytes have been sent during this attack.
+         */
         public LongWritable bytes;
+        /**
+         * How many flows have been used to conduct this attack.
+         */
         public IntWritable flowCount;
 
-        //For AutoWritable
+        /**
+         * Used only in serialisation.
+         */
         public PortScan() {
         }
 
+        /**
+         * Constructs a new PortScan object.
+         */
         public PortScan(IP routerId, IP srcIP, LongWritable startTime, LongWritable endTime, IntWritable destIPCount, IntWritable destPortCount, IntWritable packets, LongWritable bytes, IntWritable flowCount) {
             this.routerId = routerId;
             this.srcIP = srcIP;
@@ -222,16 +265,36 @@ public class ScanningJob extends JobBase {
         }
     }
 
+    /**
+     * The key for a given port scan for HBase storage.
+     */
     public static class PortScanKey extends AutoWritable implements WritableComparable<PortScanKey>{
+        /**
+         * Source IP of the port scan.
+         */
         public IP srcIP;
+        /**
+         * Timeframe of the analysis.
+         */
         public LongWritable timeFrame;
+        /**
+         * Destination IP for the scan.
+         */
         public IP destIP;
+        /**
+         * Port that was scanned.
+         */
         public IntWritable port;
 
-        //For AutoWritable
+        /**
+         * Used solely for serialisation.
+         */
         public PortScanKey() {
         }
 
+        /**
+         * Creates a PortScanKey object.
+         */
         public PortScanKey(IP srcIP, LongWritable timeFrame, IP destIP, IntWritable port) {
             this.srcIP = srcIP;
             this.timeFrame = timeFrame;
@@ -239,6 +302,11 @@ public class ScanningJob extends JobBase {
             this.port = port;
         }
 
+        /**
+         * Compares two PortScanKeys.
+         * @param o The object to compare against.
+         * @return An integer showing if this object is less than, equal to, or greater than the passed parameter.
+         */
         @Override
         public int compareTo(PortScanKey o) {
             int res;
@@ -253,7 +321,12 @@ public class ScanningJob extends JobBase {
     }
 
     /**
-     * Run a new DOS JobBase
+     * Run a new job.
+     * @param routerIp IP of the router the job is for.
+     * @param timestamp Timestamp from the logfile.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     @Override
     public void runJob(String routerIp, long timestamp)

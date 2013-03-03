@@ -17,9 +17,9 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.SerializationUtils;
 
 /**
- *	Facilitates automatic transfer between any AutoWritable instance and HBase provided that:</br>
+ *	Facilitates automatic transfer between any AutoWritable instance and HBase provided that:<br />
  *		
- *  1) the unqualified class name of the AutoWritable is the same as the name of a table in HBase</br>
+ *  1) the unqualified class name of the AutoWritable is the same as the name of a table in HBase<br />
  *  2) for every field in the AutoWritable descendant type there is a corresponding HBase
  *			column with name "f1:[col name]"
  *  @see AutoWritable

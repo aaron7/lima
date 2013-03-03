@@ -91,7 +91,7 @@ public class FlowRecord extends AutoWritable{
 	}
 
 	/**
-	 * Empty constructor for serialization. Not for other uses.
+	 * Empty constructor for serialisation. Not for other uses.
 	 */
 	public FlowRecord() 
 	{

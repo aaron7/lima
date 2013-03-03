@@ -10,13 +10,14 @@ import org.apache.hadoop.io.Writable;
 
 
 /**
- *	A class which provides several serialization related helper methods
+ *	A class which provides several serialisation related helper methods
  */
 public class SerializationUtils 
 {
-	/**
-	 * 	Converts a list of writables into a writable byte array.
-	 */
+    /**
+     * @param writables A list of writables
+     * @return A writable byte array.
+     */
 	public static BytesWritable asBytesWritable(Writable... writables)
 	{
 		try 
@@ -33,10 +34,13 @@ public class SerializationUtils
 			throw new RuntimeException("Unexpected IO Exception",e);
 		}
 	}
-	
-	/**
-	 * 	Creates a new instance of a given AutoWritable class based on the data in a writable byte array
-	 */
+
+    /**
+     * @param type An class of a given type.
+     * @param bytes Byte array of fields for the given class.
+     * @param <T> The generic type of the instance.
+     * @return A new instance of the given AutoWritable class.
+     */
 	public static <T extends AutoWritable> T asAutoWritable(Class<T> type, BytesWritable bytes)
 	{
 		try {
@@ -59,9 +63,10 @@ public class SerializationUtils
 		} 
 	}
 
-	/**
-	 * 	Converts any writable into the bytes that would be used to represent it during serialization
-	 */
+    /**
+     * @param writable An input writable.
+     * @return The byte array that would represent the input after serialisation.
+     */
 	public static byte[] asBytes(Writable writable)
 	{
 		try 
@@ -75,10 +80,11 @@ public class SerializationUtils
 			throw new RuntimeException("Unexpected IO Exception",e);
 		}
 	}
-	
-	/**
-	 * 	Creates a DataInput object containing the given byte array.
-	 */
+
+    /**
+     * @param bytes A byte array of fields.
+     * @return The corresponding DataInput object.
+     */
 	public static DataInput asDataInput(byte[] bytes) 
 	{
 		DataInputBuffer in = new DataInputBuffer();

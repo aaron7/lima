@@ -22,9 +22,11 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 public class SingleFlowJob extends JobBase {
 
-	/**
-	 * returns whether the given port number is reflecting under the UDP protocol
-	 */
+    /**
+     * Checks if a port is known to be reflecting under UDP.
+     * @param port A port number.
+     * @return A boolean corresponding to if this port reflects input.
+     */
 	private static boolean isReflectingPort(IntWritable port) {
 		int portNumber = port.get();
 		return portNumber == 7 || portNumber == 13 || portNumber == 17 || portNumber == 19;
@@ -40,12 +42,19 @@ public class SingleFlowJob extends JobBase {
 		private FlowRecord record;
 
 		/**
-		 * Empty constructor for serialization. Not for other uses.
+		 * Empty constructor for serialisation. Not for other uses.
 		 */
 		public SingleFlowThreat() {
 
 		}
 
+        /**
+         * Helps with data passing between Mappers and Reducers.
+         * @param timeProcessed The time the data was processed.
+         * @param attackType The type of attack that is being detected.
+         * @param record The FlowRecord being read.
+         * @see FlowRecord
+         */
 		public SingleFlowThreat(LongWritable timeProcessed,
 				EventType attackType, FlowRecord record) {
 			super();
@@ -53,29 +62,40 @@ public class SingleFlowJob extends JobBase {
 			this.attackType = new Text(attackType.toString());
 			this.record = record;
 		}
-		
+
+        /**
+         * @return The stored attack type.
+         */
 		public EventType getAttackType()
 		{
 			return EventType.valueOf(this.attackType.toString());
 		}
 
+        /**
+         * @return The stored information about the time processed.
+         */
 		public LongWritable getTimeProcessed() {
 			return timeProcessed;
 		}
 
+        /**
+         * @return The corresponding FlowRecord.
+         * @see FlowRecord
+         */
 		public FlowRecord getRecord() {
 			return record;
 		}
 	}
 
 	/**
-	 * 	The mapper will determine the potential attack type (if any) for each flow and then will aggregate on attackType and destination IP
-	 *	
+	 * 	The mapper will determine the potential attack type (if any) for each flow
+     * 	and then will aggregate on attackType and destination IP.
 	 */
 	public static class Map extends Mapper<LongWritable, Text, BytesWritable, SingleFlowThreat>
 	{		
 		private static int largePacketCountThreshold = 47500; // TODO find an appropriate value
 		private static int largeBytesCountThreshold = 370000;  //TODO find an appropriate value
+
 
         @Override
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
@@ -157,7 +177,8 @@ public class SingleFlowJob extends JobBase {
 
 	
 	/**
-	 *	The reducer will do a single traversal of the set of flows associated with each potential attack and record the relevant stats.
+	 *	The reducer will do a single traversal of the set of flows associated with each potential attack
+     *	and record the relevant statistics.
 	 */
 	 public static class Reduce extends Reducer<BytesWritable, SingleFlowThreat, BytesWritable, Threat>
 	 {
@@ -201,7 +222,12 @@ public class SingleFlowJob extends JobBase {
 	 }
 
     /**
-     * Run a new SingleFlowJob job
+     * Run a new SingleFlowJob
+     * @param routerIp IP of the router the flow is from.
+     * @param timestamp Timestamp of the logfile this flow is from.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
      */
     @Override
     public void runJob(String routerIp, long timestamp) throws IOException, ClassNotFoundException, InterruptedException {
