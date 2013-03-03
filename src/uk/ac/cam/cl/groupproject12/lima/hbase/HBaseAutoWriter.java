@@ -17,24 +17,33 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.SerializationUtils;
 
 /**
- *	Facilitates automatic transfer between any Autowritale instance and HBase provided that:
+ *	Facilitates automatic transfer between any AutoWritable instance and HBase provided that:</br>
  *		
- *		1) the unqualified class name of the AutoWritable is the same as the name of a table in hbase
- *		2) for every field in the AutoWritable descendant type there is a corresponding hbase 
+ *  1) the unqualified class name of the AutoWritable is the same as the name of a table in HBase</br>
+ *  2) for every field in the AutoWritable descendant type there is a corresponding HBase
  *			column with name "f1:[col name]"
+ *  @see AutoWritable
  */
 public abstract class HBaseAutoWriter
 {
 	private static final HBaseConnection connection = new HBaseConnection();
 	private static final byte[] FAMILY = "f1".getBytes();
-	
-	
+
+    /**
+     * Returns the table name corresponding to a class that extends AutoWritable.
+     * @param type A class that extends AutoWritable.
+     * @return Corresponding table name as a byte array.
+     */
 	public static byte[] getTableName(Class<? extends AutoWritable> type)
 	{
 		String[] tokens = type.toString().split("\\.");
 		return tokens[tokens.length - 1].getBytes();
 	}
-	
+
+    /**
+     * Returns the table name corresponding to an AutoWritable by retrieving its class.
+     * @see #getTableName(Class)
+     */
 	public static byte[] getTableName(AutoWritable w)
 	{
 		return getTableName(w.getClass());
@@ -42,7 +51,10 @@ public abstract class HBaseAutoWriter
 	
 	/**
 	 * Grabs the byte array key for any AutoWritable. Generates bytes from fields annotated with HBaseKey, 
-	 * 	representing them in their declared order as strings joined by a delimiter character. 
+	 * 	representing them in their declared order as strings joined by a delimiter character.7
+     *
+     * 	@param w AutoWritable to analyse.
+     * 	@return Corresponding byte[] key.
 	 */
 	public static byte[] getKey(AutoWritable w)
 	{
@@ -61,21 +73,24 @@ public abstract class HBaseAutoWriter
 			{
 				throw new IllegalArgumentException("Must have at least one field annotated with @HbaseKey");
 			}
-			String key = Joiner.on(Constants.HBASE_KEY_SEPARATOR).join(keys);
+			String key = Joiner.on(HBaseConstants.HBASE_KEY_SEPARATOR).join(keys);
 			return key.getBytes();
 			
 		}
 		catch (IllegalAccessException e) 
 		{
-			//we just set it as accessible so this shouldnt happen
+			//we just set it as accessible so this shouldn't happen
 			throw new RuntimeException(e);
 		}
 	}
 	
 	/**
-	 *  Inserts/updates a row in the hbase table corresponding with the given AutoWritable. Each field is put in its own column.
+	 *  Inserts/updates a row in the HBase table corresponding to the given AutoWritable.
+     *  Each field is put in its own column.
 	 *  
-	 *  Requires that all the fields are non-null writables
+	 *  Requires that all the fields are non-null writables.
+     *
+     *  @param w AutoWritable containing the data to update from.
 	 */
 	public static void put(AutoWritable w) throws IOException
 	{
@@ -98,10 +113,15 @@ public abstract class HBaseAutoWriter
 		table.put(put);
 		table.close();
 	}
-	
-	/**
-	 * Performs a get operation using the provided key and returns the result in a new instance of the given type.
-	 */
+
+    /**
+     * Performs a get operation using the provided key and returns the result in a new instance of the given type.
+     * @param type Input on which getTableName() can be called.
+     * @param key The byte[] value of the HBase key.
+     * @return A new instance of an AutoWritable equivalent to the 'type' input field.
+     * @throws IOException
+     * @see #getTableName(Class)
+     */
 	public static <T extends AutoWritable> T get(Class<T> type, byte[] key) throws IOException
 	{
 		try {
@@ -121,9 +141,12 @@ public abstract class HBaseAutoWriter
 	}
 	
 	/**
-	 * Gets the row in hbase with the key getKey(w) and sets all the fields in w based on the result of the get.
+	 * Gets the row in HBase with the key getKey(w) and sets all the fields in w based on the result of the get.
 	 * 
-	 * Requires that all fields in w are non-null Writables.
+	 * Requires that all fields in w are non-null writables.
+     *
+     * @param w AutoWritable on which getTableName() is to be called.
+     * @see #getTableName(uk.ac.cam.cl.groupproject12.lima.hadoop.AutoWritable)
 	 */
 	public static void get(AutoWritable w) throws IOException
 	{
@@ -131,8 +154,14 @@ public abstract class HBaseAutoWriter
 		byte[] tableName = getTableName(w);
 		getIntoObject(tableName, key, w);
 	}
-	
-	
+
+    /**
+     * Method to retrieve a row of from the HBase table specified and construct it into an AutoWritable.
+     * @param tableName Table name to fetch from.
+     * @param key Key of the row to get.
+     * @param w AutoWritable to collect the result set in.
+     * @throws IOException
+     */
 	private static void getIntoObject(byte[] tableName, byte[] key, AutoWritable w) throws IOException
 	{
 		try 
@@ -172,7 +201,7 @@ public abstract class HBaseAutoWriter
 		}
 		catch (IllegalAccessException e) 
 		{
-			throw new RuntimeException("Writable Constructor musnt be private");
+			throw new RuntimeException("Writable Constructor mustn't be private");
 		}
 		catch (InstantiationException e) 
 		{

@@ -24,7 +24,7 @@ public abstract class AutoWritable implements Writable
 {
 	
 	/**
-	 * @return all the fields of this object, and all its super types up to but not including Object.
+	 * @return All the fields of this object, and all its super types up to but not including Object.
 	 */
 	public final List<Field> getAllFields()
 	{
@@ -40,7 +40,7 @@ public abstract class AutoWritable implements Writable
 	
 	/**
 	 * 
-	 * @return all the non-static fields of this object and of all its super types except Object.
+	 * @return All the non-static fields of this object and of all its super types except Object.
 	 */
 	public List<Field> getAllInstanceFields()
 	{
@@ -56,7 +56,9 @@ public abstract class AutoWritable implements Writable
 	}
 	
 	/**
-	 * de-serialize this object from a DataInput. 
+	 * Deserialises an object from a DataInput.
+     *
+     * @param input The object to deserialise.
 	 */
 	public final void readFields(DataInput input) throws IOException {
 		
@@ -90,7 +92,9 @@ public abstract class AutoWritable implements Writable
 	}
 	
 	/**
-	 * Serialize this object to a DataOutput
+	 * Serialises an object to a DataOutput
+     *
+     * @param output The object to serialise.
 	 */
 	public final void write(DataOutput output) throws IOException {
 		
@@ -121,7 +125,7 @@ public abstract class AutoWritable implements Writable
 	}
 
 	/**
-	 * @return the byte array that would be written to a DataOutput object during serialization.
+	 * @return The same byte array that would be written to a DataOutput object during serialisation.
 	 */
 	public byte[] getByteValue()
 	{

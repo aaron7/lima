@@ -18,6 +18,7 @@ import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 
 /**
@@ -77,9 +78,9 @@ class ThreatSynchroniser implements IDataSynchroniser {
 		// the prefix of the key in order to obtain all fields matching on
 		// these values.
 		String keyPrefix = String
-				.format(Constants.HBASE_THREAT_KEY_PREFIX,
+				.format(MonitorConstants.HBASE_CONCATENATE_TWO_KEYS,
 						this.timeProcessed,
-						uk.ac.cam.cl.groupproject12.lima.hbase.Constants.HBASE_KEY_SEPARATOR,
+						HBaseConstants.HBASE_KEY_SEPARATOR,
 						this.routerIP.toString());
 
 		List<Threat> threats = null;

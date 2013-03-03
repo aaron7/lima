@@ -177,7 +177,7 @@ public class ScanningJob extends JobBase {
                     Threat threat = new Threat(
                             new LongWritable(System.currentTimeMillis()),
                             routerID,
-                            EventType.ScanningAttack,
+                            EventType.scanningAttack,
                             new LongWritable(minTime),
                             new LongWritable(maxTime),
                             key.srcIP,

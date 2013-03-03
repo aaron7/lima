@@ -27,13 +27,20 @@ public class DosJob extends JobBase {
 
 	/**
 	 * The first map job takes text and produces a FlowRecord if the particular
-	 * flow is suspicious. The keys are based on a minute-based timestamp,
-	 * destination address and source address.
+	 * flow is suspicious. The keys are based on a minute-based timestamp, the
+	 * destination address and the source address.
+     *
+     * @see FlowRecord
 	 */
 	public static class Map1
 			extends
 				Mapper<LongWritable, Text, BytesWritable, FlowRecord> {
 		// TODO determine a sensible threshold.
+        /**
+         * Parameter upon which an input is considered 'suspicious' for the purposes of FlowRecord production.
+         *
+         * @see FlowRecord
+         */
 		public static final int bytesPacketsThreshold = 30;
 
 		@Override
@@ -57,9 +64,9 @@ public class DosJob extends JobBase {
 	}
 
 	/**
-	 * The first reduce jobs just combines the different flows with the same key
+	 * The first reduce job combines all flows with the same key
 	 * and aggregates the appropriate fields. It outputs an instance of
-	 * DoSAttack class, with the same key.
+	 * DoSAttack with the same key.
 	 */
 	public static class Reduce1
 			extends
@@ -99,7 +106,7 @@ public class DosJob extends JobBase {
 	}
 
 	/**
-	 * The second map job only creates a key that represents the minute
+	 * The second map job creates a key that represents the minute
 	 * timestamp and the destination address of the attack.
 	 */
 	public static class Map2
@@ -178,19 +185,56 @@ public class DosJob extends JobBase {
 
 	}
 	public static class DoSAttack extends AutoWritable {
+        /**
+         * Unique ID for the router.
+         */
 		public IP routerId;
-		public LongWritable startTime; // in ms
-		public LongWritable endTime; // in ms
+        /**
+         * Start time for the identified attack, in milliseconds.
+         */
+		public LongWritable startTime;
+        /**
+         * End time for the identified attack, in milliseconds.  May be empty, since the attack may be ongoing.
+         */
+		public LongWritable endTime;
+        /**
+         * Destination address that is being attacked.
+         */
 		public IP destAddress;
+        /**
+         * Number of packets that have been sent to the endpoint.
+         */
 		public IntWritable packets;
+        /**
+         * Number of bytes that have been sent to the endpoint.
+         */
 		public LongWritable bytes;
+        /**
+         * Number of flows that exist to the endpoint.
+         */
 		public IntWritable flowCount;
+        /**
+         * Number of source IPs that have been identified as participating in the attack.
+         */
 		public IntWritable srcIPCount;
 
+        /**
+         * Used by serialisation only.
+         */
 		public DoSAttack() {
-			// Used by serialization
 		}
 
+        /**
+         *
+         * @param routerId IP of the router.
+         * @param startTime Start time of the attack.
+         * @param endTime End time of the attack.
+         * @param destAddress Destination of the attack.
+         * @param packets Number of packets in the attack
+         * @param bytes Number of bytes in the attack.
+         * @param flowCount Number of flows in the attack.
+         * @param srcIPCount Number of sources participating in the attack.
+         */
 		public DoSAttack(IP routerId, LongWritable startTime,
 				LongWritable endTime, IP destAddress, IntWritable packets,
 				LongWritable bytes, IntWritable flowCount,
@@ -209,11 +253,11 @@ public class DosJob extends JobBase {
 	/**
 	 * This method takes in a DoSAttack and determines whether it is
 	 * significant, i.e. whether it is just noise data, or whether it is an
-	 * actual attack, based on the size of the flow, the packets transmitted,
-	 * etc.
+	 * actual attack.  This is based on the size of the flow, the number of packets transmitted,
+	 * and so on.
 	 *
 	 * @param res A DoS attack object.
-	 * @return true if res is not noise data.
+	 * @return A boolean value, where false indicates noise, or true indicates significance.
 	 */
 	private static boolean isSignificant(DoSAttack res) {
 		// TODO determine whether the result is significant enough to be
@@ -227,9 +271,14 @@ public class DosJob extends JobBase {
 		return res.packets.get() > 10000;
 	}
 
-	/**
-	 * Run a new DOS JobBase
-	 */
+    /**
+     * Runs a new instance of DosJob.
+     * @param routerIp IP of the router from which this logfile excerpt was split.
+     * @param timestamp Timestamp of the log entry.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InterruptedException
+     */
     @Override
 	public void runJob(String routerIp, long timestamp)
 			throws IOException, ClassNotFoundException, InterruptedException {

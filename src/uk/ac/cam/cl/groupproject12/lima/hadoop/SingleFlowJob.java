@@ -14,7 +14,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
-import uk.ac.cam.cl.groupproject12.lima.hbase.Constants;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseAutoWriter;
 import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 import uk.ac.cam.cl.groupproject12.lima.monitor.EventType;
@@ -87,7 +87,7 @@ public class SingleFlowJob extends JobBase {
 
 				int protocol = record.protocol.get();
 				EventType type;
-				if (Constants.TCP == protocol) 
+				if (HBaseConstants.TCP == protocol)
 				{
 					if (record.srcAddress.equals(record.destAddress)
 							&& record.srcPort.equals(record.destPort)) 
@@ -104,7 +104,7 @@ public class SingleFlowJob extends JobBase {
 						return; //ignore this flow
 					}
 				} 
-				else if (Constants.UDP == protocol) 
+				else if (HBaseConstants.UDP == protocol)
 				{
 					if (isReflectingPort(record.destPort)) 
 					{
@@ -129,7 +129,7 @@ public class SingleFlowJob extends JobBase {
 						return; //ignore this flow
 					}
 				}
-				else if (Constants.ICMP == protocol) 
+				else if (HBaseConstants.ICMP == protocol)
 				{
 					if (largeFlow) {
 						// ICMP flooding!

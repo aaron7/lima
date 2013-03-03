@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
+import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
@@ -26,7 +27,7 @@ import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
- * a Hadoop M-R job.
+ * a Hadoop MapReduce job.
  * 
  * @author Team Lima
  * 
@@ -49,16 +50,16 @@ public class EventMonitor implements Runnable {
 
 		this.synchroniser = synchroniser;
 
-		hbaseConfig.set(Constants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
+		hbaseConfig.set(HBaseConstants.HBASE_CONFIGURATION_ZOOKEEPER_QUORUM,
 				hbaseConf.getHost());
-		hbaseConfig.setInt(Constants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
+		hbaseConfig.setInt(HBaseConstants.HBASE_CONFIGURATION_ZOOKEEPER_CLIENTPORT,
 				hbaseConf.getPort());
 
 		// Set up PGSQL connection
 		try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
-			System.err.println(Constants.ERROR_POSTGRESQL_DRIVER_MISSING);
+			System.err.println(MonitorConstants.ERROR_POSTGRESQL_DRIVER_MISSING);
 			System.exit(1);
 		}
 
@@ -66,7 +67,7 @@ public class EventMonitor implements Runnable {
 			PostgreSQLConnectionDetails pgsqlConn = getPostgresConnection();
 
 			this.jdbcPGSQL = DriverManager.getConnection(
-					String.format(Constants.PGSQL_CONNECTION_STRING,
+					String.format(MonitorConstants.PGSQL_CONNECTION_STRING,
 							pgsqlConn.getHost(), pgsqlConn.getPort(),
 							pgsqlConn.getDbname()), pgsqlConn.getUsername(),
 					pgsqlConn.getPassword());
@@ -90,7 +91,7 @@ public class EventMonitor implements Runnable {
 	private static PostgreSQLConnectionDetails getPostgresConnection()
 			throws PGSQLConfigurationException {
 		File fXmlFile = new File(String.format(
-				Constants.PGSQL_CONNECTION_XML_LOCATION,
+				MonitorConstants.PGSQL_CONNECTION_XML_LOCATION,
 				System.getProperty("user.dir")));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
@@ -108,7 +109,7 @@ public class EventMonitor implements Runnable {
 			// report this error.
 			if (PGSQLConnectionInfo.getLength() != 1) {
 				throw new PGSQLConfigurationException(
-						Constants.ERROR_POSTGRESQL_CONFIG_NOT_ONE);
+						MonitorConstants.ERROR_POSTGRESQL_CONFIG_NOT_ONE);
 			}
 
 			Node node = PGSQLConnectionInfo.item(0);
@@ -130,7 +131,7 @@ public class EventMonitor implements Runnable {
 				if (hostname == null || port == 0 || username == null
 						|| password == null || dbName == null) {
 					throw new PGSQLConfigurationException(
-							Constants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
+						    MonitorConstants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 				} else {
 					return new PostgreSQLConnectionDetails(hostname, port,
 							dbName, username, password);
@@ -138,7 +139,7 @@ public class EventMonitor implements Runnable {
 			}
 
 			throw new PGSQLConfigurationException(
-					Constants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
+					MonitorConstants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -202,6 +203,12 @@ public class EventMonitor implements Runnable {
 				new StatisticsSynchroniser("1.2.3.4"));
 	}
 
+    /**
+     * Invokes and runs synchronisers on a hardcoded list of tables.
+     * @param routerIP Router to synchronise.
+     * @param hbaseConf Configuration data to be able to connect to HBase
+     * @param timeProcessed Timestamp carried from the start of the processing phase.
+     */
 	public static void doSynchronise(IP routerIP,
 			HBaseConnectionDetails hbaseConf, long timeProcessed) {
 
@@ -252,9 +259,11 @@ public class EventMonitor implements Runnable {
 		// Done!
 	}
 
+    /**
+     * Invokes the synchronisation method of the synchroniser.
+     */
 	@Override
 	public void run() {
-		// Invoke the synchronisation method of the synchroniser
 		try {
 			this.synchroniser.synchroniseTables(this);
 		} catch (SQLException e) {

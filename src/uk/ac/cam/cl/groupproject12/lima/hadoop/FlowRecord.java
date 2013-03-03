@@ -12,33 +12,66 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
 /**
- * @author Team Lima
- *
  *	A class which acts as a container for information about a flow.
- *
- *	startTime, endTime are in unix epoch format
- *	protocol is an integer with meanings in Constants.java
- *	
  */
 public class FlowRecord extends AutoWritable{
 	
 	private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-	
+
+    /**
+     * IP address for the router.
+     */
 	public IP routerId;
-	public LongWritable startTime;  	//in ms
-	public LongWritable endTime;		//in ms
+    /**
+     * Start time, in milliseconds, in UNIX time.
+     */
+	public LongWritable startTime;
+    /**
+     * End time, in milliseconds, in UNIX time.
+     */
+	public LongWritable endTime;
+    /**
+     * Protocol number, as per IANA.
+     *
+     * @see uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants
+     */
 	public IntWritable protocol;
+    /**
+     * Source IP of the flow.
+     */
 	public IP srcAddress;
+    /**
+     * Destination IP of the flow.
+     */
 	public IP destAddress;
+    /**
+     * Source port of the flow.
+     */
 	public IntWritable srcPort;
+    /**
+     * Destination port of the flow.
+     */
 	public IntWritable destPort;
+    /**
+     * Packets in the flow.
+     */
 	public IntWritable packets;
+    /**
+     * Bytes in the flow.
+     */
 	public LongWritable bytes;
+    /**
+     * TCP flags set in the flow.
+     */
 	public Text tcpFlags;
+    /**
+     * IPv4 Type of Service data.
+     */
 	public Text typeOfService;
-	
-	
-	
+
+    /**
+     * Creates a new FlowRecord.
+     */
 	public FlowRecord(IP routerId, long startTime, long endTime, int protocol,
 			IP srcAddress, IP destAddress, int srcPort, int destPort,
 			int packets, long bytes, String tcpFlags, String typeOfService) {
@@ -64,6 +97,12 @@ public class FlowRecord extends AutoWritable{
 	{
 	}
 
+    /**
+     * Parses dates into timestamps.
+     * @param string Datestamp as a string.
+     * @return Timestamp as a long.
+     * @throws ParseException
+     */
 	public static long valueOfDate(String string) throws ParseException
 	{
 		Date date = dateFormat.parse(string);
@@ -71,9 +110,11 @@ public class FlowRecord extends AutoWritable{
 	}
 	
 	/**
-	 * Interprets the value of the bytes field. Which can either be a plain interger or
-	 * in the form "[integer] M" representing megabytes.
-	 * 
+	 * Interprets the value of the bytes field. This value can be an integer number,
+     * however it can also have a suffix of 'M' to indicate megabytes.
+	 *
+     * @param string Raw data from the bytes field.
+     * @return Exact number of bytes as a long.
 	 */
 	static long valueOfBytes(String string)
 	{
@@ -89,6 +130,9 @@ public class FlowRecord extends AutoWritable{
 	/**
 	 * 	Factory method for generating a FlowRecord from a line of nfdump outputted with format
 	 * 		"fmt:%ra,%ts,%te,%pr,%sa,%da,%sp,%dp,%pkt,%byt,%flg,%tos"
+     *
+     * 	@param str Line of the logfile.
+     * 	@return FlowRecord corresponding to that line.
 	 */
 	public static FlowRecord valueOf(String str) throws ParseException
 	{
@@ -117,6 +161,8 @@ public class FlowRecord extends AutoWritable{
 	
 	/**
 	 * A factory method for reading a FlowRecord from a DataInput
+     * @param input Item to read FlowRecord content from.
+     * @return New FlowRecord.
 	 */
 	public static FlowRecord read(DataInput input) throws IOException
 	{
@@ -125,6 +171,10 @@ public class FlowRecord extends AutoWritable{
 		return record;
 	}
 
+    /**
+     * Alternate method of generating a hashCode for a FlowRecord.
+     * @return The current FlowRecord's hashCode.
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -152,6 +202,11 @@ public class FlowRecord extends AutoWritable{
 		return result;
 	}
 
+    /**
+     * Method to check if two FlowRecords are equal.
+     * @param obj The second FlowRecord.
+     * @return A boolean true if the two FlowRecords contain the same content, or are the same FlowRecord.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
