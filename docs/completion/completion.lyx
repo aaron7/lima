@@ -1,0 +1,226 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage[all]{xy}
+%\usepackage[basic,box,gate,oldgate,ic,optics,physics]{circ}
+%\usepackage{pgfplots}
+%\usepackage{etex}
+%\usepackage{tikz}
+%\usepackage{tikz-qtree}
+\usepackage{datetime}
+\usepackage{bussproofs}
+\def\fCenter{\ \implies\ }
+\usepackage{siunitx}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\footskip 1cm
+\secnumdepth 3
+\tocdepth 2
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Terabyte Threat Analysis
+\begin_inset Newline newline
+\end_inset
+
+Acceptance Criteria Consideration
+\end_layout
+
+\begin_layout Author
+Team Lima
+\begin_inset Newline newline
+\end_inset
+
+For Paul Reid on behalf of BT
+\end_layout
+
+\begin_layout Date
+4th March, 2013
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Acceptance Criteria
+\end_layout
+
+\begin_layout Standard
+As per the document dated 12th February, 2013 regarding the specifications
+ for the software project that Team Lima produced, this retrospective serves
+ as a consideration as to whether the final result does or does not meet
+ the needs initially identified and agreed upon.
+ For each section, the name of the requirement, the previous description
+ of the requirement, and a justification are provided.
+\end_layout
+
+\begin_layout Subsection
+Importer tool
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+The importer tool must be able to take .nfcapd files, convert them into CSV
+ and place them into the HDFS.
+ If a malformed file is created, it is not expected to do anything other
+ than throw an error - no error correction attempt will be made.
+\end_layout
+
+\begin_layout Standard
+As specified, the importer tool does watch a directory and convert .nfcapd
+ files to .csv files.
+ The resultant file does appear in the HDFS.
+ No consideration has been made for malformedness, so a failure of the nfdump
+ utility will halt importing.
+\end_layout
+
+\begin_layout Subsection
+MapReduce
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+The Hadoop MapReduce jobs are not expected to produce 100% correct results
+ at identifying threats.
+ The system is unable to be tweaked to such degrees without all of BT’s
+ data, something that must be honed during real operation.
+ Provided the CSV is read in and statistics and metrics pertaining to possible
+ threats are logged reasonably, this section is functional.
+\end_layout
+
+\begin_layout Standard
+We have created a series of MapReduce jobs to identify statistics and metrics
+ as to threats.
+ They are all rule-based, containing a variable that identifies when a given
+ flow is considered to be worth investigation.
+ Given the low amount of test data we had, we are aware that we did not
+ produce 100% correct results, but this is functional given the above criteria
+ nonetheless.
+\end_layout
+
+\begin_layout Subsection
+Cleaner
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+An investigation to ensure that the HBase cleaner only deletes required
+ rows will be made.
+\end_layout
+
+\begin_layout Standard
+Although we have no way to physically prove that this is the case, the fact
+ we pass in the timestamp of the earliest acceptable row to HBase and use
+ their methods to perform the rest leads us to believe that it is functional.
+ Test cases have confirmed that in those instances, only the correct rows
+ were removed.
+\end_layout
+
+\begin_layout Subsection
+Monitor
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Confirmation that the monitor passes through the correct inputs to the PGSQL
+ database will be checked and tested.
+\end_layout
+
+\begin_layout Standard
+Given the change in the purpose of the Monitor to mostly a simple passthrough,
+ this was not truly necessary any more.
+ However, the Statistics module does aggregate the data prior to output.
+ This stage has been tested and is believed to correctly perform its calculation
+s.
+\end_layout
+
+\begin_layout Subsection
+Web UI
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+The frontend will be checked for updating bugs, framework errors and syntax/layo
+ut mistakes to ensure it complies with web standards correctly.
+\end_layout
+
+\begin_layout Standard
+Due to use of so many frameworks, a significant portion of the generated
+ code is of such a form that another developer has confirmed that the structure
+ is valid.
+ The portions that have been created by the team have been passed through
+ the W3C validator in a final test that confirms adherence to specification.
+ Finally, scripting has been confirmed not to throw warnings or errors to
+ the browser.
+\end_layout
+
+\end_body
+\end_document
