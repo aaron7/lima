@@ -1,0 +1,13 @@
+README file for importer.sh
+
+This is a README file for the shell importer script that serves as the first stage of the visualiser for threats and statistics pertaining to inputted nfcapd files.  As the first stage, this importer is responsible for converting these files into a format that is splittable by Hadoop.
+
+The following prerequisites exist for using this script:
+- nfdump 1.6.5 (nfdump.sourceforge.net)
+- liblockfile (system library, can be found in package repositories)
+- Hadoop (and the command line facilities that allow `hadoop fs` commands)
+
+How it works:
+Files that are found in the source directory with an .nfcapd extension are read and converted into csv files in the HDFS.  Input files should be dropped into the folder designated by IMPORT_DIR, which will write results to HDFS_DIR.  SCRIPT_DIR should specify a folder importer.sh can 'dirty' during work, such as placing a lockfile named LOCKFILE and a FIFO named FIFO_FILE there until execution finishes.  It is advised to place them in the same directory as the shell script itself.
+
+Other documentation exists in PDF format within the specification and addendum documents.
