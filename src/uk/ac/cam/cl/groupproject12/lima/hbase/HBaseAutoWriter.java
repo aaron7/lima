@@ -71,7 +71,7 @@ public abstract class HBaseAutoWriter
 			}
 			if (keys.isEmpty())
 			{
-				throw new IllegalArgumentException("Must have at least one field annotated with @HbaseKey");
+				throw new IllegalArgumentException("Must have at least one field annotated with @HBaseKey");
 			}
 			String key = Joiner.on(HBaseConstants.HBASE_KEY_SEPARATOR).join(keys);
 			return key.getBytes();

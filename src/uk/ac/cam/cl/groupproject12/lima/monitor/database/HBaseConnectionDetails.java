@@ -2,8 +2,6 @@ package uk.ac.cam.cl.groupproject12.lima.monitor.database;
 
 /**
  * Stores information required to invoke a connection to HBase.
- * 
- * @author Team Lima
  */
 public class HBaseConnectionDetails {
 
@@ -24,19 +22,22 @@ public class HBaseConnectionDetails {
 	}
 
 	/**
-	 * @return the host
+	 * @return The host.
 	 */
 	public String getHost() {
 		return host;
 	}
 
 	/**
-	 * @return the port
+	 * @return The port.
 	 */
 	public int getPort() {
 		return port;
 	}
 
+    /**
+     * @return A default HBaseConnectionDetails of 'localhost:2182'.
+     */
 	public static HBaseConnectionDetails getDefault() 
 	{
 		return new HBaseConnectionDetails("localhost", 2182);

@@ -16,9 +16,6 @@ import org.apache.hadoop.io.Writable;
 /**
  * Acts as a base class for any Writable. Works via reflection as long as all of its fields are Writable (not primitive) and it has a non-private
  * constructor taking zero arguments.
- * 
- * @author Team Lima
- *
  */
 public abstract class AutoWritable implements Writable 
 {

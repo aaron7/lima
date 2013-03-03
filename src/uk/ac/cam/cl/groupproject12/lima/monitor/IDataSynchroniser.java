@@ -5,9 +5,6 @@ import java.sql.SQLException;
 /**
  * An interface to describe classes which implement the logic to replicate data
  * from HBase to PostgreSQL.
- * 
- * @author Team Lima
- * 
  */
 public interface IDataSynchroniser {
 
@@ -17,10 +14,10 @@ public interface IDataSynchroniser {
 	 * to replicate).
 	 * 
 	 * @param monitor
-	 *            instance of the EventMonitor which contains the state required
+	 *            Instance of the EventMonitor which contains the state required
 	 *            to interact with the various databases.
 	 * 
-	 * @return true on success, false on failure
+	 * @return True on success, false on failure.
 	 */
 	boolean synchroniseTables(EventMonitor monitor) throws SQLException;
 

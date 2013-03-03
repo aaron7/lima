@@ -28,9 +28,6 @@ import uk.ac.cam.cl.groupproject12.lima.hbase.Statistic;
  * HBase to PostgreSQL, aggregating them along the way. Due to the manner in
  * which the EventMonitor invokes the synchronisers, this is package visible
  * only.
- * 
- * @author Team Lima
- * 
  */
 class StatisticsSynchroniser implements IDataSynchroniser {
 	private IP routerIP;

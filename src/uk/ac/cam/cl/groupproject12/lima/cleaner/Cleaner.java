@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 /**
  * The Cleaner class is used to clean the Statistics and Threats tables of the HBase instance of data older than a certain threshold.
- *
- * @author Team Lima
  */
 public abstract class Cleaner {
 

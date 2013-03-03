@@ -21,16 +21,13 @@ import org.xml.sax.SAXException;
 import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 import uk.ac.cam.cl.groupproject12.lima.hbase.HBaseConstants;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.HBaseConnectionDetails;
-import uk.ac.cam.cl.groupproject12.lima.monitor.database.PGSQLConfigurationException;
+import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConfigurationException;
 import uk.ac.cam.cl.groupproject12.lima.monitor.database.PostgreSQLConnectionDetails;
 import uk.ac.cam.cl.groupproject12.lima.web.Web;
 
 /**
  * Manages the replication of data between HBase and PostgreSQL on completion of
  * a Hadoop MapReduce job.
- * 
- * @author Team Lima
- * 
  */
 public class EventMonitor implements Runnable {
 	/*
@@ -45,7 +42,7 @@ public class EventMonitor implements Runnable {
 	IDataSynchroniser synchroniser = null;
 
 	private EventMonitor(HBaseConnectionDetails hbaseConf,
-			IDataSynchroniser synchroniser) throws PGSQLConfigurationException,
+			IDataSynchroniser synchroniser) throws PostgreSQLConfigurationException,
 			SQLException {
 
 		this.synchroniser = synchroniser;
@@ -89,7 +86,7 @@ public class EventMonitor implements Runnable {
 	// information. Returns a PostgreSQLConnectionDetails object containing such
 	// details.
 	private static PostgreSQLConnectionDetails getPostgresConnection()
-			throws PGSQLConfigurationException {
+			throws PostgreSQLConfigurationException {
 		File fXmlFile = new File(String.format(
 				MonitorConstants.PGSQL_CONNECTION_XML_LOCATION,
 				System.getProperty("user.dir")));
@@ -108,7 +105,7 @@ public class EventMonitor implements Runnable {
 			// one deterministically... which PGSQL are we to use? Abort and
 			// report this error.
 			if (PGSQLConnectionInfo.getLength() != 1) {
-				throw new PGSQLConfigurationException(
+				throw new PostgreSQLConfigurationException(
 						MonitorConstants.ERROR_POSTGRESQL_CONFIG_NOT_ONE);
 			}
 
@@ -130,7 +127,7 @@ public class EventMonitor implements Runnable {
 
 				if (hostname == null || port == 0 || username == null
 						|| password == null || dbName == null) {
-					throw new PGSQLConfigurationException(
+					throw new PostgreSQLConfigurationException(
 						    MonitorConstants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 				} else {
 					return new PostgreSQLConnectionDetails(hostname, port,
@@ -138,7 +135,7 @@ public class EventMonitor implements Runnable {
 				}
 			}
 
-			throw new PGSQLConfigurationException(
+			throw new PostgreSQLConfigurationException(
 					MonitorConstants.ERROR_POSTGRESQL_CONFIG_MALFORMED);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -156,7 +153,7 @@ public class EventMonitor implements Runnable {
 		return null;
 	}
 
-	public static void main(String[] args) throws PGSQLConfigurationException,
+	public static void main(String[] args) throws PostgreSQLConfigurationException,
 			SQLException {
 		// long time = System.currentTimeMillis();
 		// Threat t = new Threat(new LongWritable(time), new IP("1.2.3.4"),
@@ -219,7 +216,7 @@ public class EventMonitor implements Runnable {
 		try {
 			threat = new EventMonitor(hbaseConf, new ThreatSynchroniser(
 					routerIP.getValue().toString(), timeProcessed));
-		} catch (PGSQLConfigurationException e) {
+		} catch (PostgreSQLConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -230,7 +227,7 @@ public class EventMonitor implements Runnable {
 		try {
 			stats = new EventMonitor(hbaseConf, new StatisticsSynchroniser(
 					routerIP.getValue().toString()));
-		} catch (PGSQLConfigurationException e) {
+		} catch (PostgreSQLConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {

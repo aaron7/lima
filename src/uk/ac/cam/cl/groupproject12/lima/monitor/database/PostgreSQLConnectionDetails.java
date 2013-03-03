@@ -2,8 +2,6 @@ package uk.ac.cam.cl.groupproject12.lima.monitor.database;
 
 /**
  * Stores information required to invoke a connection to PGSQL.
- * 
- * @author Team Lima
  */
 public class PostgreSQLConnectionDetails {
 
@@ -15,7 +13,7 @@ public class PostgreSQLConnectionDetails {
 
 	/**
 	 * Construct a new PostgreSQLConnectionDetails with the information about
-	 * connecting to PGSQL.
+	 * connecting to PostgreSQL.
      *
      * @param host  Hostname of the PostgreSQL server.
      * @param port  Port number on which PostgreSQL is listening.
@@ -33,35 +31,35 @@ public class PostgreSQLConnectionDetails {
 	}
 
 	/**
-	 * @return the host
+	 * @return The host.
 	 */
 	public String getHost() {
 		return host;
 	}
 
 	/**
-	 * @return the port
+	 * @return The port.
 	 */
 	public int getPort() {
 		return port;
 	}
 
 	/**
-	 * @return the username
+	 * @return The username.
 	 */
 	public String getUsername() {
 		return username;
 	}
 
 	/**
-	 * @return the password
+	 * @return The password.
 	 */
 	public String getPassword() {
 		return password;
 	}
 
 	/**
-	 * @return the dbname
+	 * @return The database name.
 	 */
 	public String getDbname() {
 		return dbname;

@@ -9,7 +9,17 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
 
+/**
+ * Base class to get and run jobs in Hadoop.
+ */
 public abstract class JobBase {
+    /**
+     * Starts a new thread for running a job upon.
+     * @param routerIp Router IP for the job.
+     * @param timestamp Input timestamp.
+     * @return A thread for which runJob is now executing.
+     * @see #runJob(String, long)
+     */
     public Thread getThread(final String routerIp, final long timestamp) {
         return new Thread() {
             public void run() {
@@ -26,30 +36,33 @@ public abstract class JobBase {
         };
     }
 
+    /**
+     * Abstract class for derived jobs to implement to run.
+     */
     protected abstract void runJob(String routerIP, long timestamp)
             throws IOException,ClassNotFoundException,InterruptedException;
 
     /**
-     * Sets up a ew job appropriately.
-     * @param jobName is the name of the job.
-     * @param keyMedCls is the class of the mapper output key
-     * @param valMedCls is the class of the mapper output value
-     * @param keyOutCls is the class of the reducer output key
-     * @param valOutCls is the class of the reducer output value
-     * @param mapper is the mapper that the job will run.
-     * @param reducer is the reducer that the job will run.
-     * @param inputFormatClass is the input format class that the job will use.
-     * @param outputFormatClass is the output format class that the job will use.
-     * @param inputPath is the path of the input that the job will get data from.
-     * @param outputPath is the path the job will output to
-     * @param <KEY_IN> is the type of the input key
-     * @param <VAL_IN> is the type of the input value
-     * @param <KEY_MED> is the type of the key outputted by map and received by reduce
-     * @param <VAL_MED> is the type of the value outputted by map and received by reduce
-     * @param <KEY_OUT> is the type of the output key
-     * @param <VAL_OUT> is the type of the output value
-     * @return the Job.
-     * @throws java.io.IOException
+     * Sets up a new job.
+     * @param jobName The name of the job.
+     * @param keyMedCls The class of the Mapper output key.
+     * @param valMedCls The class of the Mapper output value.
+     * @param keyOutCls The class of the Reducer output key.
+     * @param valOutCls The class of the Reducer output value.
+     * @param mapper The mapper that the job will run.
+     * @param reducer The reducer that the job will run.
+     * @param inputFormatClass The input format class the job will use.
+     * @param outputFormatClass The output format class the job will use.
+     * @param inputPath The path to the data that the job will read from.
+     * @param outputPath The path to where the job will output.
+     * @param <KEY_IN> The type of the input key.
+     * @param <VAL_IN> The type of the input value.
+     * @param <KEY_MED> The type of the key outputted by Map, which is also received by Reduce.
+     * @param <VAL_MED> The type of the value outputted by Map, which is also received by Reduce.
+     * @param <KEY_OUT> The type of the output key.
+     * @param <VAL_OUT> The type of the output value.
+     * @return The corresponding job.
+     * @throws IOException
      */
     protected <KEY_IN,VAL_IN,KEY_MED,VAL_MED,KEY_OUT,VAL_OUT> Job getNewJob(
             String jobName,

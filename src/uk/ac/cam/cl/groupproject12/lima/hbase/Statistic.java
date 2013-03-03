@@ -10,13 +10,10 @@ import uk.ac.cam.cl.groupproject12.lima.hadoop.IP;
 
 
 /**
- * @author Team Lima
- *
- *	A class to represent a row in the Hbase Statistic table, 
+ *	A class to represent a row in the Hbase Statistic table,
  *	characterising the traffic through a router in a timeframe.
  *
- *	Note: the totalDataSize is in bytes. Other fields are unit-less. 
- *
+ *	Note: the totalDataSize is in bytes. Other fields are unit-less.
  */
 public class Statistic extends AutoWritable
 {

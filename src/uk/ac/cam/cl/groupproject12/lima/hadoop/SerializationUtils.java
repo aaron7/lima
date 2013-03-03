@@ -10,11 +10,7 @@ import org.apache.hadoop.io.Writable;
 
 
 /**
- * 
- * @author ernest
- *	
- *	A class which provides several serialization related helper methods	
- *
+ *	A class which provides several serialization related helper methods
  */
 public class SerializationUtils 
 {

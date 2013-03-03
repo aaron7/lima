@@ -24,8 +24,6 @@ import uk.ac.cam.cl.groupproject12.lima.hbase.Threat;
 /**
  * Threat synchroniser synchronises the threats from HBase to PGSQL with no
  * intermediate operation taking place.
- * 
- * @author Team Lima
  */
 class ThreatSynchroniser implements IDataSynchroniser {
 

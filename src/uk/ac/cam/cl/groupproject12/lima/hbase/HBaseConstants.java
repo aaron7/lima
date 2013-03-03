@@ -2,8 +2,6 @@ package uk.ac.cam.cl.groupproject12.lima.hbase;
 
 /**
  * A location for constant values internal to HBase to be specified.
- *
- * @author Team Lima
  */
 public class HBaseConstants {
     /**
