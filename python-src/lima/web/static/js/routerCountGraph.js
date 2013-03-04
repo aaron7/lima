@@ -58,7 +58,7 @@ function fnMakeGraph( routerIP ) {
 
     //re-render graph when window resize
     $(window).resize(function() {
-      graph.configure({ width: $('#routers').width(), height: 150 }); 
+      graph.configure({ width: ($('#routers').width()-50), height: 150 }); 
       graph.render();
     });
 

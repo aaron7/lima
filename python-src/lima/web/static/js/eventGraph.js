@@ -62,7 +62,7 @@ function fnMakeGraph( eventID, largeData ) {
 
   //redraw graph when window resizes
   $(window).resize(function() {
-    graph.configure({ width: $('#events').width(), height: 150 }); 
+    graph.configure({ width: ($('#events').width() - 50), height: 150 }); 
     graph.render();
   });
 
