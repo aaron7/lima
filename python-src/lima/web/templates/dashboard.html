@@ -35,9 +35,9 @@
   <div class="span8">
     <div id="largegraph" class="well">
 
-<div id="chart"></div> 
-<div id="slider"></div>
-<!-- <div id="legend" style="width:800px; height:10px; overflow: auto"></div> -->
+      <div id="chart"></div> 
+      <div id="slider"></div>
+      <!-- <div id="legend" style="width:800px; height:10px; overflow: auto"></div> -->
     </div>
   </div>
 </div>
@@ -70,7 +70,62 @@
   <div class="span4">
     <div class="well">
       <h2>Other</h2>
-      <p>Place holder for the other information.</p>
+<!--
+          
+      <p><b>
+        Web UI System:<span style="color:green">Online - http://localhost:8080</span><br />
+        Hadoop HDFS Name Nodes:<span style="color:green">Online (2)</span><br />
+        Hadoop HDFS Data Nodes:<span style="color:green">Online (1/1)</span><br />
+        Hadoop Map Reduce Managers:<span style="color:green">Online (3)</span><br />
+        HBase:<span style="color:green">Online (Zookeeper up)</span><br />
+        PostgreSQL:<span style="color:green">Online</span><br />
+        Thrift:<span style="color:green">Online</span><br />
+        Redis:<span style="color:green">Online</span><br />
+      </b></p>
+    
+-->
+
+
+      <table>
+        <tr>
+          <td><b>Web UI System:</b></td>
+          <td><span style="color:green">Online - listening on 8080</span></td>
+        </tr>
+
+        <tr>
+          <td><b>Hadoop HDFS Name Nodes:</b></td>
+          <td><span style="color:green">Online (2)</span></td>
+        </tr>   
+
+        <tr>
+          <td><b>Hadoop HDFS Data Nodes:</b></td>
+          <td><span style="color:green">Online (1/1)</span></td>
+        </tr>   
+
+        <tr>
+          <td><b>Hadoop Map Reduce Managers:</b></td>
+          <td><span style="color:green">Online (3)</span></td>
+        </tr>        
+                <tr>
+          <td><b>HBase:</b></td>
+          <td><span style="color:green">Online (Zookeeper⇧)</span></td>
+        </tr>        
+
+        <tr>
+          <td><b>PostgreSQL:</b></td>
+          <td><span style="color:green">Online</span></td>
+        </tr>        
+
+        <tr>
+          <td><b>Thrift:</b></td>
+          <td><span style="color:green">Online</span></td>
+        </tr>        
+
+        <tr>
+          <td><b>Redis:</b></td>
+          <td><span style="color:green">Online</span></td>
+        </tr>    
+      </table>    
     </div>
   </div>
 </div>

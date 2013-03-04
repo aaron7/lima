@@ -64,6 +64,13 @@ function fnMakeGraph( eventID, largeData ) {
   $(window).resize(function() {
     graph.configure({ width: ($('#events').width() - 50), height: 150 }); 
     graph.render();
+
+      //redraw the time slider
+      var slider = new Rickshaw.Graph.RangeSlider({
+        graph: graph,
+        element: document.querySelector('#slider-'+eventID)
+      });
+
   });
 
   //hover detail for graph

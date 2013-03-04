@@ -60,6 +60,11 @@ function fnMakeGraph( routerIP ) {
     $(window).resize(function() {
       graph.configure({ width: ($('#routers').width()-50), height: 150 }); 
       graph.render();
+        //redraw the time slider
+        var slider = new Rickshaw.Graph.RangeSlider({
+          graph: graph,
+          element: document.querySelector('#slider-'+routerIP.replace(/\./g,"-"))
+        });
     });
 
   //hover detail for graph

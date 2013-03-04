@@ -47,6 +47,12 @@ $.getJSON("/get?id=allLargeData", function(routerData){
   $(window).resize(function() {
     graph.configure({ width: $('#largegraph').width(), height: 250 }); 
     graph.render();
+
+    //redraw time slider
+    var slider = new Rickshaw.Graph.RangeSlider({
+      graph: graph,
+      element: document.querySelector('#slider')
+    });
   });
 
   //hover details
