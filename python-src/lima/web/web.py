@@ -1,11 +1,8 @@
 '''
-Created on 1 Feb 2013
-
-@author: aaron
+Lima Web UI
 
 IMPORTANT: Do not run using the normal python interface.
-#1: Use the python virtual enviroment by running: python-env/bin/activate
-#2: Run using gunicorn by running: gunicorn --debug --worker-class=gevent -t 99999 web:app
+Read the README.txt file
 '''
 
 import flask
@@ -21,46 +18,32 @@ from flask import request
 app = flask.Flask(__name__)
 red = redis.StrictRedis()
 
-#make connections to databases
+#make the connections to the databases and handlers
 postgresDB = PostgresDB()
 hbaseDB = HBaseDB()
 eventsHandler = EventsHandler(postgresDB,red)
-routerHandler = RouterHandler(postgresDB,red)
-
-'''
-Other
-'''
-
-
-'''
-End of other
-'''
+routerHandler = RouterHandler(postgresDB,red,hbaseDB)
 
 '''
 Web routes
+
+Routes the address to the correct flask template
 '''
 @app.route("/")
 def dashboard():
     return flask.render_template('dashboard.html')
-
 @app.route("/routers")
 def routers():
     return flask.render_template('routers.html')
-
 @app.route("/events")
 def events():
     return flask.render_template('events.html')
-
 @app.route("/status")
 def status():
     return flask.render_template('status.html')
 
-'''
-End of web routes
-'''
-
-
-"""subscribe to a list of channels and listen to these channels
+"""
+Subscribe to the list of channels given in the argument and listen to them
 """
 def event_stream(channels):
     pubsub = red.pubsub()
@@ -69,41 +52,53 @@ def event_stream(channels):
         print message
         yield "data: [%s,\"%s\"]\n\n" % (message['data'],message['channel'])
 
-"""test function
+"""
+Used for demonstration purposes to update the events and routers from PostgreSQL
 """
 @app.route("/updateEvents")
 def updateEvents():
     eventsHandler.checkNewEvents();
-    #red.publish("events", eventsHandler.getEventsList())
-    #red.publish("events", eventsHandler.getEventsJSON())
-    # num = random.randint(10000000,99999999) #make a random number
-    # tablelist = ', '.join(hbaseDB.getTables()) #get the tables from HBase
-    # data = {"count":str(num), "tables":tablelist} #make a json like data structure
-    # red.publish('events', json.dumps(data)) #push into the events channel through a json dump
     return ("Done")
-
 @app.route("/updateRouters")
 def updateRouters():
     routerHandler.checkRouterUpdates()
     return ("Done")
 
+"""
+Interface for the Java map reduce jobs and the Event Monitor
+
+NewJob sets up a new map reduce job for a router, defining the number of parts to be completed
+UpdateJob increments the job counter and if complete is passed as true then the job is updated
+to be finished
+"""
 @app.route("/java/<action>")
 def java(action):
     if action == "newJob":
         routerHandler.addJob(request.args['ip'], request.args['timestamp'], int(request.args['numOfJobs']))
     elif action == "updateJob":
-        routerHandler.updateJob(routerHandler.addJob(request.args['ip'], request.args['timestamp'], int(request.args['complete'])))
+        routerHandler.updateJob(request.args['ip'], request.args['timestamp'], int(request.args['complete']))
     return ("Done")
     
-    
-"""make a stream to a list of channels /stream?channels=ch1,ch2,ch4
+"""
+An interface for a stream to a list of channels
+e.g. /stream?channels=ch1,ch2,ch4
 """
 @app.route('/stream')
 def stream():
     channels = request.args['channels'].split(',') #get the list of channels
     return flask.Response(event_stream(channels), mimetype="text/event-stream")
 
-"""get rest query to get static or initial data from the server
+"""
+Get API query to poll from the server
+
+events - return all of the events as JSON
+routers - return all of the routers as JSON
+largeData - return all of the data from the Statistic table in HBase for a particular router
+eventData - return all the events associated with the router given
+threatData - return the data from the Threat table in HBase for a particular event
+latestEvents - return the last 5 events
+runningJobs - return details of routers which have a job running
+allLargeData - return the complete total of the data from each router in the Statistic table in HBase
 """
 @app.route('/get')
 def get():
@@ -111,21 +106,26 @@ def get():
         return json.dumps(eventsHandler.getEventsList())
     elif request.args['id'] == 'routers':
         return json.dumps(routerHandler.getRoutersList())
-    elif request.args['id'] == 'jobs':
-        return json.dumps(routerHandler.getJobs())
+    elif request.args['id'] == 'largeData':
+        return json.dumps(routerHandler.getLargeData(request.args['router']))
+    elif request.args['id'] == 'eventData':
+        return json.dumps(routerHandler.getEventData(request.args['router']))
+    elif request.args['id'] == 'threatData':
+        return json.dumps(routerHandler.getThreatData(request.args['timestamp'],request.args['routerIP'],request.args['type'],request.args['startTime'],request.args['endTime']))
+    elif request.args['id'] == 'latestEvents':
+        return json.dumps(eventsHandler.getLatestEvents())
+    elif request.args['id'] == 'runningJobs':
+        return json.dumps(routerHandler.getRunningJobs())
+    elif request.args['id'] == 'allLargeData':
+        return json.dumps(routerHandler.getAllLargeData())
     else:
         return "Error: did not understand arguments"
 
+"""
+main function to start the Flask server
+Disable debug when in production.
+"""
 if __name__ == "__main__":
     app.run(port=7777, threaded=True, debug=True)
-    """
-    flask.url_for("static", filename='main.css')
-    flask.url_for("static", filename='bootstrap.css')
-    flask.url_for("static", filename='bootstrap-responsive.css')
-    flask.url_for("static", filename='jquery.min.js')
-    flask.url_for("static", filename='bootstrap.min.js')
-    flask.url_for("static", filename='jquery.dataTables.min.js')
-    flask.url_for("static", filename='jquery.dataTables.css')
-    flask.url_for("static", filename='jquery.dataTables_themeroller.css')
-    """
-    
+
+

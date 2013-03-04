@@ -2,11 +2,28 @@
 {% set pagename = "Routers" %}
 {% block title %}Routers{% endblock %}
 
+
+{% block head %}
+<script src="static/js/d3.min.js"></script> 
+<script src="static/js/d3.layout.min.js"></script> 
+<script src="static/js/rickshaw.min.js"></script>  
+{% endblock %}
+
 {% block content %}
-<h4>Routers</h4>
 <div class="row-fluid">
-  <div class="span12">
+
+  <div class="span3">
     <div class="well">
+      <h4>Router Information</h4>
+      Total # of routers: 11<br />
+      Last update router: 10.0.10.7<br />
+    </div>
+  </div>
+
+
+  <div class="span9">
+    <div class="well">
+      <h4>Routers List</h4>
       <table id="routers">
         <thead>
           <tr>
@@ -15,6 +32,8 @@
             <th>Flows Per Hour</th>
             <th>Packets Per Hour</th>
             <th>Bytes Per Hour</th>
+            <th>Progress</th>
+            <th>Progress</th>
             <th>Progress</th>
           </tr>
         </thead>
@@ -31,4 +50,5 @@
 
 {% block scripts %}
 <script src="static/js/routers.js"></script>
+<script src="static/js/routerCountGraph.js"></script>
 {% endblock %}

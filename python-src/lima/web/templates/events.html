@@ -2,11 +2,27 @@
 {% set pagename = "Events" %}
 {% block title %}Events{% endblock %}
 
+{% block head %}
+<script src="static/js/d3.min.js"></script> 
+<script src="static/js/d3.layout.min.js"></script> 
+<script src="static/js/rickshaw.min.js"></script>  
+{% endblock %}
+
 {% block content %}
-<h4>Events >> Overview</h4>
 <div class="row-fluid">
-  <div class="span12">
+
+  <div class="span3">
     <div class="well">
+      <h4>Event Information</h4>
+      Total # of active events: 4<br />
+      Other info coming soon...<br />
+    </div>
+  </div>
+
+
+  <div class="span9">
+    <div class="well">
+      <h4>Events List</h4>
       <table id="events">
         <thead>
           <tr>
@@ -33,4 +49,5 @@
 
 {% block scripts %}
 <script src="static/js/events.js"></script>
+<script src="static/js/eventGraph.js"></script>
 {% endblock %}

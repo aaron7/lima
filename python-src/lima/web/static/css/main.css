@@ -27,3 +27,5 @@
 	-moz-box-shadow: none;
 	box-shadow: none;
 }
+
+div.innerDetails { display: none }

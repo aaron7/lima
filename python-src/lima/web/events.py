@@ -1,32 +1,39 @@
 '''
-Created on 14 Feb 2013
-
-@author: aaron
+Lima Web UI
 '''
 
 import json
 
+#define fields for SQL queries
 eventFields = "\"eventID\",\"routerIP\",\"type\",\"status\",\"message\",\"startTime\",\"endTime\",\"createTS\""
 
+"""
+This class contains all the functions to handle the information for all of the events
+"""
 class EventsHandler():
     
-    """get the database connections, get all of the events in the DB and put them in the events list
     """
+    Initial startup function
     
+    Set up databases, create cache and get all of the routers
+    """
     def __init__(self,pgDB,red):
-        self.pgDB = pgDB #set the postgreSQL connection
-        self.red = red #get the redis instance
+        self.pgDB = pgDB
+        self.red = red
         
+        #get all fo the events and store them in the class
         curEvents = self.pgDB.executeQuery("SELECT "+eventFields+" FROM event ORDER BY \"eventID\" ASC")
         self.eventsList = curEvents.fetchall()
         self.lastEventID = self.eventsList[len(self.eventsList)-1][0] #update last event ID
     
-    """returns the events list in JSON
+    """
+    Returns the events list
     """
     def getEventsList(self):
         return self.eventsList
     
-    """get new events, publish the new events, update last event ID and append to the Events List
+    """
+    Get new events, publish the new events, update last event ID and append to the Events List
     """
     def checkNewEvents(self):
         curNewEvents = self.pgDB.executeQuery("SELECT "+eventFields+" FROM event WHERE \"eventID\" > '"+str(self.lastEventID)+"'")
@@ -36,10 +43,11 @@ class EventsHandler():
             self.lastEventID = newEvents[len(newEvents)-1][0] #update last event ID
             self.eventsList.extend(newEvents)
             
-            
-    #TODO: PRUNE OLD EVENTS FROM THE TABLE
-    
-    
-    
-    
-    
+    """
+    Return the last 5 events
+    """
+    def getLatestEvents(self):
+        curLatestEvents = self.pgDB.executeQuery("SELECT \"eventID\",\"routerIP\",\"type\",\"createTS\" FROM event ORDER BY \"eventID\" DESC LIMIT 5")
+        return curLatestEvents.fetchall()
+
+

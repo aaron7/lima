@@ -1,0 +1,34 @@
+====LIMA WEB UI====
+
+Installation
+-------------
+
+Included in the git repository is an example python environment. To create the
+python environment to run the web UI, you first need to install the python
+virtual environment package.
+
+1. Install the virtual environment package.
+    Under debian based systems this is called: python-virtualenv
+2. Go to the directory where you wish to install the python environment
+3. Create the environment: virtualenv (nameOfEnv) , where nameOfEnv is the name
+    of the folder you wish to use
+4. Activate the new environment: source (nameOfEnv)/bin/activate
+
+You now need to install the python packages required to run the web UI. We also need to install some packages to allow for compilation of these packages
+for your system.
+
+5. On debian based systems: sudo apt-get install python-dev libpq-dev libevent-dev redis-server
+
+6. Run: pip install flask gevent gunicorn happybase psycopg2 redis sse thrift
+
+7. Go to the directory where the python files are located:
+    lima/python-src/lima/web/
+
+8. Start the web UI by: gunicorn --worker-class=gevent -t 99999 web:app
+
+The web UI will now be running on port 8000.
+
+To end the server you can either kill the process or a supervisor can be
+set up to your requirements.
+
+-------------

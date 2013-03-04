@@ -1,0 +1,53 @@
+
+
+    <div id="largegraph" class="well">
+
+<div id="chart"></div> 
+
+    </div>
+
+
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<script src="../static/js/d3.min.js"></script> 
+<script src="../static/js/d3.layout.min.js"></script> 
+<script src="../static/js/rickshaw.min.js"></script>  
+
+
+
+
+<script>
+
+$.getJSON("http://localhost:8000/get?id=allLargeData", function(routerData){
+    console.log("LARGE DATA",routerData)
+    var graph = new Rickshaw.Graph( {
+      element: document.querySelector("#chart"),
+      width: $('#largegraph').width(),
+      height: 250,
+      renderer: 'area',
+      stroke: true,
+      series: [ {
+        data: routerData[1],
+        color: '#FFCC00'
+      }, {
+        data: routerData[2],
+        color: '#FF9900'
+      } ]
+    } );
+    graph.renderer.unstack = true;
+    graph.render();
+
+$(window).resize(function() {
+    graph.configure({ width: $('#largegraph').width(), height: 250 }); 
+    graph.render();
+});
+
+var xAxis = new Rickshaw.Graph.Axis.Time({
+    graph: graph
+});
+
+xAxis.render();
+
+  } );
+
+</script>
