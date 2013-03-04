@@ -2021,7 +2021,7 @@ Rickshaw.Graph.RangeSlider = function(args) {
 		} );
 	} );
 
-	element[0].style.width = graph.width + 'px';
+	element.style.width = graph.width + 'px';
 
 	graph.onUpdate( function() {
 
