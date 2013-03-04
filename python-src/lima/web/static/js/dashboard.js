@@ -1,62 +1,47 @@
+/*
+This file contains the scripts to control the objects on the dashboard page
+*/
 
+/*
+This section gets the latest events and shows them in a table
+*/
 $.getJSON("/get?id=latestEvents", function(data){
-  console.debug("INITAL GET", data)
-
-
-var myStringArray = ["Hello","World"];
-
-
-
-for (var i = 0; i < data.length; i++) {
+  //format timestamps
+  for (var i = 0; i < data.length; i++) {
     var date = new Date(data[i][3]);
     data[i][3] = date.toLocaleString();
-}
+  }
 
-
-
+  //make table
   $('#latestEvents').dataTable( {
     "aaData": data,
     "bLengthChange": false,
     "bPaginate": false,
-    //"sPaginationType": "bootstrap",
     "bSort": false,
     "bFilter": false,
     "bInfo": false,
-    //"sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-    //"oLanguage": {
-    //        "sLengthMenu": "_MENU_ records per page"
-    //    },
     "aoColumns": [
     { "sTitle": "Event ID", "sClass": "control", "bVisible": false },
     { "sTitle": "Router IP" , "sClass": "control"},
     { "sTitle": "Type", "sClass": "control" },
     { "sTitle": "Time Submitted", "sClass": "control" }
     ]
-  } );
+} );
 
-
-
-/*
-$('#example').dataTable( {
-        "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-        "sPaginationType": "bootstrap",
-        "oLanguage": {
-            "sLengthMenu": "_MENU_ records per page"
-        }
-    } );
-*/
 });
 
-
+/*
+This section gets the running map reduce jobs and shows them in a table
+*/
 $.getJSON("/get?id=runningJobs", function(data){
-  console.debug("INITAL GET", data)
 
-for (var i = 0; i < data.length; i++) {
+  //format timestamps
+  for (var i = 0; i < data.length; i++) {
     var date = new Date(data[i][1]);
     data[i][1] = date.toLocaleString();
-}
+  }
 
-
+  //make table
   $('#runningJobs').dataTable( {
     "aaData": data,
     "bLengthChange": false,
@@ -74,8 +59,6 @@ for (var i = 0; i < data.length; i++) {
         return '<div class="progress progress-success progress-striped"><div class="bar" style="width: '+ratio+'%"></div></div>';}
 
     },
-
-
     { "sTitle": "Max Jobs", "sClass": "control", "bVisible": false}
     ]
   } );

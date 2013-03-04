@@ -6,7 +6,7 @@
 {% block head %}
 <script src="static/js/d3.min.js"></script> 
 <script src="static/js/d3.layout.min.js"></script> 
-<script src="static/js/rickshaw.min.js"></script>  
+<script src="static/js/rickshaw.js"></script>  
 {% endblock %}
 
 {% block content %}
@@ -15,36 +15,39 @@
   <div class="span3">
     <div class="well">
       <h4>Router Information</h4>
-      Total # of routers: 11<br />
-      Last update router: 10.0.10.7<br />
-    </div>
+      Total number of routers: <span id="numOfRouters">0</span><br />
+      Last updated router: <span id="lastUpdated">0.0.0.0</span><br />
+    </br>
+    Overall information:<br />
+    <div id="routerInfo"></div>
   </div>
+</div>
 
 
-  <div class="span9">
-    <div class="well">
-      <h4>Routers List</h4>
-      <table id="routers">
-        <thead>
-          <tr>
-            <th>Router IP</th>
-            <th>Last Seen</th>
-            <th>Flows Per Hour</th>
-            <th>Packets Per Hour</th>
-            <th>Bytes Per Hour</th>
-            <th>Progress</th>
-            <th>Progress</th>
-            <th>Progress</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Loading...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<div class="span9">
+  <div class="well">
+    <h4>Routers List</h4>
+    <table id="routers">
+      <thead>
+        <tr>
+          <th>Router IP</th>
+          <th>Last Seen</th>
+          <th>Flows Per Hour</th>
+          <th>Packets Per Hour</th>
+          <th>Bytes Per Hour</th>
+          <th>Progress</th>
+          <th>Progress</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Loading...</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</div>
 </div>
 {% endblock %}
 

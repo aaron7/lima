@@ -5,7 +5,7 @@
 {% block head %}
 <script src="static/js/d3.min.js"></script> 
 <script src="static/js/d3.layout.min.js"></script> 
-<script src="static/js/rickshaw.min.js"></script>  
+<script src="static/js/rickshaw.js"></script>  
 {% endblock %}
 
 {% block content %}
@@ -14,8 +14,10 @@
   <div class="span3">
     <div class="well">
       <h4>Event Information</h4>
-      Total # of active events: 4<br />
-      Other info coming soon...<br />
+      Total number of active events: <span id="numOfEvents">0</span><br />
+      <br />
+      Other information:<br />
+      <div id="eventInfo"></div>
     </div>
   </div>
 

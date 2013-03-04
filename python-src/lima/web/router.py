@@ -57,6 +57,7 @@ class RouterHandler():
             #if our local copy is out of date push all changes and update our local copy
             self.red.publish("routerUpdates",json.dumps(sorted(list(updatesSet))))
             self.routersList = tempList #update our local copy
+            self.allLargeDataNew = True #re-cache
     
     """
     Called when a job is to be added to a router
@@ -112,6 +113,7 @@ class RouterHandler():
         #store the results in cache and return
         self.allLargeDataCache = data
         self.allLargeDataNew = False
+        
         return data
     
     """
@@ -136,12 +138,12 @@ class RouterHandler():
                 continue
             
             #append onto our result
-            ICMPCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:ICMPCount"])})
-            TCPCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:TCPCount"])})
-            UDPCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:UDPCount"])})
-            flowCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
-            packetCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
-            totalDataSize.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
+            ICMPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:ICMPCount"])})
+            TCPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:TCPCount"])})
+            UDPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:UDPCount"])})
+            flowCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
+            packetCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
+            totalDataSize.append({"x":time, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
         
         return [ICMPCount,TCPCount,UDPCount,flowCount,packetCount,totalDataSize]
         
@@ -156,6 +158,7 @@ class RouterHandler():
     Return the threat data for a particular event from the Threat table in HBase
     """
     def getThreatData(self,timestamp,routerIP,threatType,startTime,endTime):
+        print timestamp,routerIP,threatType,startTime,endTime
         #scan the HBase table
         table = self.hbaseDB.getTable("Threat")
         data = self.hbaseDB.getRow(table,timestamp+"+"+routerIP+"+"+threatType+"+"+startTime)
@@ -175,7 +178,9 @@ class RouterHandler():
     Return all of the data in the Statistic table in HBase for a particular event
     """
     def getLargeDataForEvent(self, routerIP, startTime, endTime):
-        #set up the inital values
+        print "STATISTICS: ", routerIP,startTime,endTime
+        
+        #set up the initial values
         ICMPCount = []
         TCPCount = []
         UDPCount = []
@@ -192,12 +197,12 @@ class RouterHandler():
                 continue #discard empty data
             
             #append to result
-            ICMPCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:ICMPCount"])})
-            TCPCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:TCPCount"])})
-            UDPCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:UDPCount"])})
-            flowCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
-            packetCount.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
-            totalDataSize.append({"x":time/1000, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
+            ICMPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:ICMPCount"])})
+            TCPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:TCPCount"])})
+            UDPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:UDPCount"])})
+            flowCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
+            packetCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
+            totalDataSize.append({"x":time, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
         
         return [ICMPCount,TCPCount,UDPCount,flowCount,packetCount,totalDataSize]
 

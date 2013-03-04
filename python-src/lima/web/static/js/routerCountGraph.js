@@ -1,3 +1,10 @@
+/*
+This file contains the scripts to control the objects on the dashboard page
+*/
+
+/*
+This section creates the HTML string to show router information
+*/
 function fnFormatDetails(routerIP, numEvents)
 {
 
@@ -7,102 +14,94 @@ function fnFormatDetails(routerIP, numEvents)
   <br /> \
   <div id="routerCountGraph"> \
   <div id="chart-'+routerIP.replace(/\./g,"-")+'"></div> \
+  <div id="slider-'+routerIP.replace(/\./g,"-")+'"></div> \
   </div> \
   </div>';
-
-
 
   return sOut;
 }
 
 /*
-function fnGetEventData( routerIP ) {
-  $.getJSON("/get?id=eventData&router="+routerIP, function(data){
-    console.log("EVENT DATA",data);
-  }
-}*/
-
+This section creates the graph with the data from the server
+*/
 
 function fnMakeGraph( routerIP ) {
   $.getJSON("/get?id=largeData&router="+routerIP, function(routerData){
-    console.log("LARGE DATA",routerData)
-    console.log("#chart-"+routerIP.replace(/\./g,"-"));
     var graph = new Rickshaw.Graph( {
       element: document.querySelector("#chart-"+routerIP.replace(/\./g,"-")),
       width: $('#routers').width(),
-      height: 200,
-      interpolation: 'basis',
+      height: 150,
       renderer: 'area',
       stroke: true,
       series: [ {
         data: routerData[1],
-        color: 'lightblue'
+        color: '#FFCC00',
+        name: 'Total TCP Flows'
       }, {
         data: routerData[2],
-        color: 'steelblue'
+        color: '#FF9900',
+        name: 'Total UDP Flows'
       } ]
     } );
     graph.renderer.unstack = true;
+
+    //axes
+    var x_axis = new Rickshaw.Graph.Axis.Time( { graph: graph } );
+    //axes
+    var y_axis = new Rickshaw.Graph.Axis.Y( {
+      graph: graph,
+      orientation: 'left',
+      tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
+      element: document.getElementById('y_axis'),
+    } );
     graph.render();
 
+    //re-render graph when window resize
     $(window).resize(function() {
-      graph.configure({ width: $('#routers').width(), height: 200 }); 
+      graph.configure({ width: $('#routers').width(), height: 150 }); 
       graph.render();
     });
 
+  //hover detail for graph
+  var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+    graph: graph,
+    xFormatter: function(x) { var date = new Date(x); return date.toLocaleString();},
+    yFormatter: function(y) { return y }
   } );
+
+  //time slider
+  var slider = new Rickshaw.Graph.RangeSlider({
+    graph: graph,
+    element: document.querySelector('#slider-'+routerIP.replace(/\./g,"-"))
+  });
+} );
 }
 
-
-$(document).ready(function() {
-        //consider putting sse and other load stuff here
-
-        var anOpen = [];
 /*
-
-$(document).on('mouseenter', '#routers td.control',  function(){
-          var nTr = this.parentNode;
-         var i = $.inArray( nTr, anOpen );
-          //$('img', this).attr( 'src', sImageUrl+"details_close.png" );
-          var oData = $('#routers').dataTable().fnGetData( nTr );
-          var nDetailsRow = $('#routers').dataTable().fnOpen( nTr, fnFormatDetails($('#routers').dataTable(), nTr,oData[0]), 'details' );
-          $('div.innerDetails', nDetailsRow).slideDown();
-          anOpen.push( nTr );
-          fnGetLargeData(oData[0]);
-}).on('mouseleave', '#routers td.control', function() {
-          var nTr = this.parentNode;
-         var i = $.inArray( nTr, anOpen );
-
-          //$('img', this).attr( 'src', sImageUrl+"details_open.png" );
-          $('div.innerDetails', $(nTr).next()[0]).slideUp( function () {
-           $('#routers').dataTable().fnClose( nTr );
-           anOpen.splice( i, 1 );
-          } );
-}); */
-
-
-
+This section handles the control of the extra router information
+*/
+$(document).ready(function() {
+  var anOpen = [];
+  //show router information on click
   $(document).on("click", '#routers td.control', function () {
    var nTr = this.parentNode;
    var i = $.inArray( nTr, anOpen );
 
    if ( i === -1 ) {
-          var oData = $('#routers').dataTable().fnGetData( nTr );
-          $.getJSON("/get?id=eventData&router="+oData[0], function(eventData){
-            //$('img', this).attr( 'src', sImageUrl+"details_close.png" );
+    //closed, so open and get info
+    var oData = $('#routers').dataTable().fnGetData( nTr );
+    $.getJSON("/get?id=eventData&router="+oData[0], function(eventData){
             var nDetailsRow = $('#routers').dataTable().fnOpen( nTr, fnFormatDetails(oData[0],eventData.length), 'details' );
             $('div.innerDetails', nDetailsRow).slideDown();
             anOpen.push( nTr );
             fnMakeGraph(oData[0]);
           });
-
-
-    } else {
-          //$('img', this).attr( 'src', sImageUrl+"details_open.png" );
+  } else {
+    //open, so close
           $('div.innerDetails', $(nTr).next()[0]).slideUp( function () {
             $('#routers').dataTable().fnClose( nTr );
             anOpen.splice( i, 1 );
           } );
-    }
-  } );
+        }
+      } );
 });

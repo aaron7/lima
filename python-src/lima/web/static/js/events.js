@@ -1,8 +1,13 @@
+/*
+This file contains the scripts to control the Events page
+*/
 
+/*
+This section gets the events and shows them in the table
+*/
 $.getJSON("/get?id=events", function(data){
-  console.debug("INITAL GET", data)
-
-
+  
+  //create the table
   $('#events').dataTable( {
     "aaData": data,
     "bLengthChange": false,
@@ -19,29 +24,22 @@ $.getJSON("/get?id=events", function(data){
     ]
   } );
 
+  //update info
+  $("#numOfEvents").text(data.length);
+
 });
 
-$(document).ready(function() {
-        //consider putting sse and other load stuff here
-      } );
-
-      //SSE (server side events - push) - CURRENTLY ONLY WORKS ON ALL BROWSERS EXCEPT IE - will use polyfill later
-      function sse() {
-        var source = new EventSource('/stream?channels=events');
-        source.onmessage = function(e) {
-          console.log("NEW MESSAGE: ", JSON.parse(e.data))
-          var jsondata = JSON.parse(e.data)[0]; //data
-          var channel = JSON.parse(e.data)[1]; //channel
-          console.log("0: ", jsondata);
-          console.log("1: ", channel);
-
-
-          
-          if(typeof jsondata === 'object' && channel == 'events'){
-            console.log("ADDED NEW ROW");
-            $('#events').dataTable().fnAddData(jsondata);
-          }
-          //$('#packet-count').text(data.count); //update the packet count from json info
-          //$('.tablelist').text(data.tables); //update the table list from json info
-        };
-      } sse();
+/*
+This section creates the channel streams to the server
+*/
+//SSE (server side events - push) - CURRENTLY ONLY WORKS ON ALL BROWSERS EXCEPT IE - will use polyfill later
+function sse() {
+  var source = new EventSource('/stream?channels=events');
+  source.onmessage = function(e) {
+    var jsondata = JSON.parse(e.data)[0]; //data
+    var channel = JSON.parse(e.data)[1]; //channel
+    if(typeof jsondata === 'object' && channel == 'events'){
+      $('#events').dataTable().fnAddData(jsondata);
+    }
+  };
+} sse();
