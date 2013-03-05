@@ -37,7 +37,10 @@ $('#routers').dataTable( {
         },
 
   "aoColumns": [
-  { "sTitle": "Router IP", "sClass": "control"},
+  { "sTitle": "Router IP", "sClass": "control",
+      "mRender": function ( data, type, full ) {
+        return "<i class=\"icon-chevron-right\"></i> " + data;
+      }},
   { "sTitle": "Last Seen", "sClass": "control" },
   { "sTitle": "Flows Per Hour", "sClass": "control",
       "mRender": function ( data, type, full ) {

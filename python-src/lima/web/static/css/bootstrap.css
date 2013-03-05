@@ -2595,6 +2595,7 @@ table th[class*="span"],
 
 .icon-chevron-right {
   background-position: -456px -72px;
+  margin-left: -8px;
 }
 
 .icon-plus-sign {
@@ -2643,6 +2644,7 @@ table th[class*="span"],
 
 .icon-arrow-right {
   background-position: -264px -96px;
+  margin-left: -8px;
 }
 
 .icon-arrow-up {
@@ -2651,6 +2653,7 @@ table th[class*="span"],
 
 .icon-arrow-down {
   background-position: -312px -96px;
+  margin-left: -8px;
 }
 
 .icon-share-alt {
@@ -2732,6 +2735,7 @@ table th[class*="span"],
 
 .icon-chevron-down {
   background-position: -313px -119px;
+  margin-left: -8px;
 }
 
 .icon-retweet {

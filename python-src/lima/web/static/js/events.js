@@ -74,7 +74,10 @@ $.getJSON("/get?id=events", function(data){
 
         },
     "aoColumns": [
-    { "sTitle": "Event ID", "sClass": "control"},
+    { "sTitle": "Event ID", "sClass": "control",
+      "mRender": function ( data, type, full ) {
+        return "<i class=\"icon-chevron-right\"></i> " + data;
+      }},
     { "sTitle": "Router IP" , "sClass": "control"},
     { "sTitle": "Type", "sClass": "control" ,
       "mRender": function ( data, type, full ) {
