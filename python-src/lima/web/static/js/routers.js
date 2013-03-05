@@ -31,9 +31,9 @@ $('#routers').dataTable( {
                 iTotalBytes += aaData[i][4]*1;
             }
             
-            $("#avgFlows").text((iTotalFlows/numRouters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-            $("#avgPackets").text((iTotalPackets/numRouters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-            $("#avgBytes").text((iTotalBytes/numRouters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $("#avgFlows").text((Math.round(iTotalFlows/numRouters)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $("#avgPackets").text((Math.round(iTotalPackets/numRouters)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $("#avgBytes").text((Math.round(iTotalBytes/numRouters)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         },
 
   "aoColumns": [
