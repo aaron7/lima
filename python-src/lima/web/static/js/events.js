@@ -15,7 +15,20 @@ $.getJSON("/get?id=events", function(data){
     "aoColumns": [
     { "sTitle": "Event ID", "sClass": "control"},
     { "sTitle": "Router IP" , "sClass": "control"},
-    { "sTitle": "Type", "sClass": "control" },
+    { "sTitle": "Type", "sClass": "control" ,
+      "mRender": function ( data, type, full ) {
+        switch(data)
+        {
+          case "dos": return "Dos Attack"; break;
+          case "tcpFlooding": return "TCP Flooding"; break;
+          case "udpFlooding": return "UDP Flooding"; break;
+          case "fraggleAttack": return "Fraggle Attack"; break;
+          case "pingPong": return "Ping Pong Attack"; break;
+          case "icmpFlooding": return "ICMP Flooding"; break;
+          case "portScan": return "Port Scan"; break;
+          default: return "Unknown threat type";
+        };
+      }},
     { "sTitle": "Status", "sClass": "control"},
     { "sTitle": "Message", "sClass": "control"},
     { "sTitle": "Start Time", "sClass": "control",
