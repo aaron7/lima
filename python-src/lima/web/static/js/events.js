@@ -41,7 +41,26 @@ $.getJSON("/get?id=events", function(data){
                 case "landAttack": land += 1; break;
                 default: unknown += 1;;
               };
+
+              //last event, put it in summary
+              if (i == aaData.length - 1) {
+                console.log(aaData[i][2]);
+                var lastThreat = "";
+                switch(aaData[i][2])
+                {
+                case "dos": lastThreat = "DoS Attack"; break;
+                case "tcpFlooding": lastThreat = "TCP Flooding"; break;
+                case "udpFlooding": lastThreat = "UDP Flooding"; break;
+                case "fraggleAttack": lastThreat = "Fraggle Attack"; break;
+                case "pingPong": lastThreat = "Ping-pong Attack"; break;
+                case "icmpFlooding": lastThreat = "ICMP Flooding"; break;
+                case "portScan": lastThreat = "Port Scan"; break;
+                case "landAttack": lastThreat = "Land Attack"; break;
+                default: lastThreat = "Unknown";
+              }
+              $("#lastThreat").text(lastThreat + " - " + aaData[i][1]);
             }
+          }
           piechartData = [
           { label: "TCP flooding",  data: tcp},
           { label: "Land Attack",  data: land},
