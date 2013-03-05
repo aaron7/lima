@@ -124,6 +124,8 @@ def get():
         return json.dumps(routerHandler.getRunningJobs())
     elif request.args['id'] == 'allLargeData':
         return json.dumps(routerHandler.getAllLargeData())
+    elif request.args['id'] == 'pieChart':
+        return json.dumps(routerHandler.getPieChart())
     else:
         return "Error: did not understand arguments"
 

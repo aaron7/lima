@@ -4,6 +4,8 @@ Lima Web UI
 
 import json
 import string
+import time
+import datetime
 
 #define fields for SQL queries
 routerFields = "\"routerIP\",\"lastSeen\",\"flowsPH\",\"packetsPH\",\"bytesPH\",\"timestamp\",\"status\",\"maxJobs\""
@@ -65,8 +67,8 @@ class RouterHandler():
     Called when a job is to be added to a router
     """
     def addJob(self,ip,timestamp,numJobs):
-        #TODO: time.mktime(datetime.datetime.now().timetuple()) * 1000 last seen
-        curUpdate = self.pgDB.executeQuery("UPDATE router SET \"timestamp\"=%s, \"maxJobs\"=%s WHERE \"routerIP\"='%s'" % (timestamp,numJobs,ip))
+        lastSeen = time.mktime(datetime.datetime.now().timetuple()) * 1000
+        curUpdate = self.pgDB.executeQuery("UPDATE router SET \"timestamp\"=%s, \"maxJobs\"=%s, \"lastSeen\"=%s WHERE \"routerIP\"='%s'" % (timestamp,numJobs,lastSeen,ip))
         curUpdate.query
         self.pgDB.commit()
         self.checkRouterUpdates()
@@ -75,24 +77,29 @@ class RouterHandler():
     Called when a job is to be updated for a router
     """
     def updateJob(self,ip,timestamp,status):
-        #TODO: time.mktime(datetime.datetime.now().timetuple()) lastseen * 1000 last seen
+        lastSeen = time.mktime(datetime.datetime.now().timetuple()) * 1000
         if status == 0:
             #Complete = false - only increment the status
-            curUpdate = self.pgDB.executeQuery("UPDATE router SET \"timestamp\"=%s, \"status\"=status+1 WHERE \"routerIP\"='%s'" % (timestamp,ip))
+            curUpdate = self.pgDB.executeQuery("UPDATE router SET \"timestamp\"=%s, \"status\"=status+1, \"lastSeen\"=%s WHERE \"routerIP\"='%s'" % (timestamp,lastSeen,ip))
             curUpdate.query
             self.pgDB.commit()
             self.checkRouterUpdates()
         if status == 1:
             #Complete = true - finish the job
-            curUpdate = self.pgDB.executeQuery("UPDATE router SET \"timestamp\"=0, \"status\"=0, \"maxJobs\"=0 WHERE \"routerIP\"='%s'" % format(ip))
+            curUpdate = self.pgDB.executeQuery("UPDATE router SET \"timestamp\"=0, \"status\"=0, \"maxJobs\"=0, \"lastSeen\"=%s WHERE \"routerIP\"='%s'" % (lastSeen,ip))
             curUpdate.query
             self.pgDB.commit()
             self.checkRouterUpdates()
             
+    def getPieChart(self):
+        return self.pieChart
+    
     """
     Return all of the data in the Statistic table in HBase from all routers by reducing into a total count
     """
     def getAllLargeData(self):
+        routerShare = []
+        
         #if we have a cache then return the cache
         if self.allLargeDataNew == False:
             return self.allLargeDataCache
@@ -102,8 +109,12 @@ class RouterHandler():
         for router in self.routersList:
             if data == []:
                 data = self.getLargeData(router[0]) #get the first lot of router data
+                if data[6] > 0:
+                    routerShare.append({"label":router[0], "data":data[6]})
             else:
                 temp = self.getLargeData(router[0])
+                if temp[6] > 0:
+                    routerShare.append({"label":router[0], "data":temp[6]})
                 #for each count, add up the counts using previous value
                 for x in range(0,6):
                     for key, value in temp[x]:
@@ -111,8 +122,12 @@ class RouterHandler():
                             data[x][key] = data[x][key] + value
                         else:
                             data[x][key] = value
-            
+                            
         #store the results in cache and return
+        if len(routerShare) == 1:
+            routerShare.append({"label":"Other", "data":1})
+        self.pieChart = routerShare
+        print self.pieChart
         self.allLargeDataCache = data
         self.allLargeDataNew = False
         
@@ -130,6 +145,9 @@ class RouterHandler():
         packetCount = []
         totalDataSize = []
         
+        #flow count
+        counter = 0
+        
         #scan the table
         table = self.hbaseDB.getTable("Statistic")
         for key, data in table.scan(row_prefix="IP("+routerIP+")"):
@@ -146,8 +164,10 @@ class RouterHandler():
             flowCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
             packetCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
             totalDataSize.append({"x":time, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
+            
+            counter = counter + self.hbaseDB.toInt(data["f1:flowCount"])
         
-        return [ICMPCount,TCPCount,UDPCount,flowCount,packetCount,totalDataSize]
+        return [ICMPCount,TCPCount,UDPCount,flowCount,packetCount,totalDataSize,counter]
         
     """
     Return the events for a particular router from PostgreSQL

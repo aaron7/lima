@@ -5,16 +5,13 @@ This file contains the scripts to control the piechart on the dashboard
 /*
 This section gets the large data for the pie chart information and draws the pie chart
 */
-$.getJSON("/get?id=allLargeData", function(largeData){
+$.getJSON("/get?id=pieChart", function(largeData){
     var data = [
     { label: "0.0.0.0",  data: 40},
-    { label: "10.0.10.1",  data: 20},
-    { label: "10.0.10.2",  data: 10},
-    { label: "10.0.10.3",  data: 15},
-    { label: "10.0.10.4",  data: 15}];
+    { label: "0.0.0.0",  data: 40}];
 
-
-$.plot('#piechart', data, {
+console.log("HERE",largeData)
+$.plot('#piechart', largeData, {
     series: {
         pie: {
             show: true,
