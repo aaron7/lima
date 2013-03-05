@@ -40,10 +40,6 @@ $('#routers').dataTable( {
   ]
 } );
 
-
-
-return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
 //update info
 $("#numOfRouters").text(data.length);
 
