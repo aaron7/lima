@@ -43,6 +43,10 @@ class EventsHandler():
             self.lastEventID = newEvents[len(newEvents)-1][0] #update last event ID
             self.eventsList.extend(newEvents)
             
+    def purge(self):
+        curEvents = self.pgDB.executeQuery("SELECT "+eventFields+" FROM event ORDER BY \"eventID\" ASC")
+        self.eventsList = curEvents.fetchall()
+        
     """
     Return the last 5 events
     """

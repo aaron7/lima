@@ -63,6 +63,11 @@ def updateEvents():
 def updateRouters():
     routerHandler.checkRouterUpdates()
     return ("Done")
+@app.route("/purgeCache")
+def purgeCache():
+    routerHandler.checkRouterUpdates()
+    routerHandler.purge()
+    eventsHandler.purge()
 
 """
 Interface for the Java map reduce jobs and the Event Monitor

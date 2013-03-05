@@ -37,6 +37,8 @@ class RouterHandler():
     def getRoutersList(self):
         return self.routersList
     
+    def purge(self):
+        self.allLargeDataNew = True
     """
     Returns all of the routers stored in PostgreSQL
     """
