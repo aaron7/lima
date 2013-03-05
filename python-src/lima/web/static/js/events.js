@@ -24,6 +24,7 @@ $.getJSON("/get?id=events", function(data){
     "aaData": data,
     "bLengthChange": false,
     "bPaginate": false,
+    "bAutoWidth": false,
   "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
     //make pie chart
             for ( var i=0 ; i<aaData.length ; i++ )
