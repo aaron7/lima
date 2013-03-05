@@ -186,15 +186,19 @@ status open
 
 \begin_deeper
 \begin_layout Itemize
-First data only for a couple of routers from their entire network
+Logs only contain 0.1% of network traffic
 \end_layout
 
 \begin_layout Itemize
-Generated logs only contain 0.1% of network traffic
+Log we were given was for midnight to 1AM, a slow period
 \end_layout
 
 \begin_layout Itemize
-This log alone was still nine million lines and 1.3 GB!
+Log was only for a couple of routers from BT's network
+\end_layout
+
+\begin_layout Itemize
+The file was still nine million lines and 1.3 GB!
 \end_layout
 
 \end_deeper
