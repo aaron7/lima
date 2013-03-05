@@ -22,14 +22,27 @@ $('#routers').dataTable( {
   "aoColumns": [
   { "sTitle": "Router IP", "sClass": "control"},
   { "sTitle": "Last Seen", "sClass": "control" },
-  { "sTitle": "Flows Per Hour", "sClass": "control" },
-  { "sTitle": "Packets Per Hour", "sClass": "control"},
-  { "sTitle": "Bytes Per Hour", "sClass": "control"},
+  { "sTitle": "Flows Per Hour", "sClass": "control",
+      "mRender": function ( data, type, full ) {
+        return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }},
+  { "sTitle": "Packets Per Hour", "sClass": "control",
+      "mRender": function ( data, type, full ) {
+        return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }},
+  { "sTitle": "Bytes Per Hour", "sClass": "control",
+      "mRender": function ( data, type, full ) {
+        return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }},
   { "sTitle": "JobTimestamp", "sClass": "control" },
   { "sTitle": "JobStatus", "sClass": "control"},
   { "sTitle": "JobMax", "sClass": "control"},
   ]
 } );
+
+
+
+return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 //update info
 $("#numOfRouters").text(data.length);
