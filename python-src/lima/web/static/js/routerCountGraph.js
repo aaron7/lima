@@ -94,7 +94,7 @@ $(document).ready(function() {
 
    if ( i === -1 ) {
     //closed, so open and get info
-    $('i', this).attr( 'class', "icon-chevron-down" );
+    $('i', this.parent).attr( 'class', "icon-chevron-down" );
     var oData = $('#routers').dataTable().fnGetData( nTr );
     $.getJSON("/get?id=eventData&router="+oData[0], function(eventData){
             var nDetailsRow = $('#routers').dataTable().fnOpen( nTr, fnFormatDetails(oData[0],eventData.length), 'details' );
@@ -104,7 +104,7 @@ $(document).ready(function() {
           });
   } else {
     //open, so close
-    $('i', this).attr( 'class', "icon-chevron-right" );
+    $('i', this.parent).attr( 'class', "icon-chevron-right" );
           $('div.innerDetails', $(nTr).next()[0]).slideUp( function () {
             $('#routers').dataTable().fnClose( nTr );
             anOpen.splice( i, 1 );
