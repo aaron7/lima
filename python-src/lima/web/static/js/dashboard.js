@@ -56,7 +56,7 @@ $.getJSON("/get?id=runningJobs", function(data){
 
     "mDataProp": function (source, type, val) {
         ratio = (source[2] / source[3]) * 100;
-        return '<div class="progress progress-warning progress-striped"><div class="bar" style="width: '+ratio+'%"></div></div>';}
+        return '<div class="progress progress-warning progress-striped" style="margin-bottom: 0px;""><div class="bar" style="width: '+ratio+'%"></div></div>';}
 
     },
     { "sTitle": "Max Jobs", "sClass": "control", "bVisible": false}
