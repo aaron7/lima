@@ -14,22 +14,27 @@ $.getJSON("/get?id=allLargeData", function(largeData){
     { label: "10.0.10.4",  data: 15}];
 
 
-    $.plot('#piechart', data, {
-        series: {
-            pie: {
-                show: true
+$.plot('#piechart', data, {
+    series: {
+        pie: {
+            show: true,
+            radius: 1,
+            label: {
+                show: true,
+                radius: 2/3,
+                formatter: labelFormatter,
+                threshold: 0.1
             }
-        },
-
-        grid: {
-            hoverable: true,
-            clickable: true
         }
-    });
+    },
+    legend: {
+        show: false
+    }
+});
 
 	// A custom label formatter used by several of the plots
 	function labelFormatter(label, series) {
-		return "<div style='font-size:8pt; text-align:center; padding:2px; color:white;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
+		return "<div style='font-size:8pt; text-align:center; padding:2px; color:black;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
 	}
 
     //when resizing the window then redraw the pie chart
