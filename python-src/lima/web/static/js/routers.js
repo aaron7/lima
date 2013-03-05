@@ -52,8 +52,13 @@ $('#routers').dataTable( {
         return data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }},
   { "sTitle": "JobTimestamp", "sClass": "control" },
-  { "sTitle": "JobStatus", "sClass": "control"},
-  { "sTitle": "JobMax", "sClass": "control"},
+  { "sTitle": "JobStatus", "sClass": "control",
+    "mDataProp": function (source, type, val) {
+        if (source[7] === 0){ return 'No jobs running'}
+        ratio = (source[6] / source[7]) * 100;
+        return '<div class="progress progress-warning progress-striped"><div class="bar" style="width: '+ratio+'%"></div></div>';
+    }},
+  { "sTitle": "JobMax", "sClass": "control", "bVisible": false}
   ]
 } );
 
