@@ -2,16 +2,57 @@
 This file contains the scripts to control the Events page
 */
 
+piechartData = [];
+
 /*
 This section gets the events and shows them in the table
 */
 $.getJSON("/get?id=events", function(data){
   
+  var dos = 0;
+  var tcp = 0;
+  var udp = 0;
+  var fraggle = 0;
+  var ping = 0;
+  var icmp = 0;
+  var portscan = 0;
+  var land = 0;
+  var unknown = 0;
+
   //create the table
   $('#events').dataTable( {
     "aaData": data,
     "bLengthChange": false,
     "bPaginate": false,
+  "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+    //make pie chart
+            for ( var i=0 ; i<aaData.length ; i++ )
+            {
+              switch(aaData[i][2])
+              {
+                case "dos": dos += 1; break;
+                case "tcpFlooding": tcp += 1; break;
+                case "udpFlooding": udp += 1; break;
+                case "fraggleAttack": fraggle += 1; break;
+                case "pingPong": ping += 1; break;
+                case "icmpFlooding": icmp += 1; break;
+                case "portScan": portscan += 1; break;
+                case "landAttack": land += 1; break;
+                default: unknown += 1;;
+              };
+            }
+          piechartData = [
+          { label: "TCP flooding",  data: tcp},
+          { label: "Land Attack",  data: land},
+          { label: "UDP Flooding",  data: udp},
+          { label: "Fraggle Attack",  data: fraggle},
+          { label: "Ping-pong",  data: ping},
+          { label: "ICMP Flooding",  data: icmp},
+          { label: "Port Scan",  data: portscan},
+          { label: "DoS Attack",  data: dos},
+          { label: "Unknown",  data: unknown}];
+
+        },
     "aoColumns": [
     { "sTitle": "Event ID", "sClass": "control"},
     { "sTitle": "Router IP" , "sClass": "control"},
@@ -19,13 +60,14 @@ $.getJSON("/get?id=events", function(data){
       "mRender": function ( data, type, full ) {
         switch(data)
         {
-          case "dos": return "Dos Attack"; break;
+          case "dos": return "DoS Attack"; break;
           case "tcpFlooding": return "TCP Flooding"; break;
           case "udpFlooding": return "UDP Flooding"; break;
           case "fraggleAttack": return "Fraggle Attack"; break;
-          case "pingPong": return "Ping Pong Attack"; break;
+          case "pingPong": return "Ping-pong Attack"; break;
           case "icmpFlooding": return "ICMP Flooding"; break;
           case "portScan": return "Port Scan"; break;
+          case "landAttack": return "Land Attack"; break;
           default: return "Unknown threat type";
         };
       }},
@@ -62,18 +104,27 @@ for (var i = 0; i < data.length; i++) {
   data[i][5] = date.toLocaleString();
 }
 
-});
+//make piechart
+          $.plot('#piechart', piechartData, {
+            series: {
+            pie: {
+              show: true,
+              radius: 1,
+              label: {
+                show: true,
+                radius: 2/3,
+                formatter: labelFormatter,
+                threshold: 0.1
+              }
+            }
+          },
+          legend: {
+            show: false
+          }
+          });
 
-//pie chart
-var data = [
-    { label: "TCP flooding",  data: 1},
-    { label: "Land Attack",  data: 1},
-    { label: "UDP Flooding",  data: 1},
-    { label: "Fraggle Attack",  data: 1},
-    { label: "PingPong",  data: 1},
-    { label: "ICMP Flooding",  data: 1},
-    { label: "Port Scan",  data: 1},
-    { label: "DOS Attack",  data: 1}];
+
+});
 
   // A custom label formatter used by several of the plots
 
@@ -81,24 +132,6 @@ var data = [
     return "<div style='font-size:8pt; text-align:center; padding:2px; color:black;'>" + label + "<br/>" + Math.round(series.percent) + "%</div>";
   }
 
-
-$.plot('#piechart', data, {
-    series: {
-        pie: {
-            show: true,
-            radius: 1,
-            label: {
-                show: true,
-                radius: 2/3,
-                formatter: labelFormatter,
-                threshold: 0.1
-            }
-        }
-    },
-    legend: {
-        show: false
-    }
-});
 
 
 /*
