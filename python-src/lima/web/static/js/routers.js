@@ -56,7 +56,7 @@ $('#routers').dataTable( {
     "mDataProp": function (source, type, val) {
         if (source[7] === 0){ return 'No jobs running'}
         ratio = (source[6] / source[7]) * 100;
-        return '<div class="progress progress-warning progress-striped"><div class="bar" style="width: '+ratio+'%"></div></div>';
+        return '<div class="progress progress-warning progress-striped" style="margin-bottom: 0px;"><div class="bar" style="width: '+ratio+'%"></div></div>';
     }},
   { "sTitle": "JobMax", "sClass": "control", "bVisible": false}
   ]
