@@ -94,13 +94,25 @@ This section handles the interactivity of the data table to display the extra in
 $(document).ready(function() {
   var anOpen = [];
 
+  //clicking on a row in the table changes icon
+  $(document).on("click", '#events tr', function () {
+    var nTr = this;
+    var i = $.inArray( nTr, anOpen );
+    if ( i === -1 ) {
+      $('i', this).attr( 'class', "icon-chevron-down" );
+    }
+    else {
+      $('i', this).attr( 'class', "icon-chevron-right" );
+    }
+  });
+
   //clicking on a row in the table shows the extra information
   $(document).on("click", '#events td.control', function () {
    var nTr = this.parentNode;
    var i = $.inArray( nTr, anOpen );
    if ( i === -1 ) {
           //closed, so get the data and open
-          $('i', this.parent).attr( 'class', "icon-chevron-down" );
+          //$('i', this).attr( 'class', "icon-chevron-down" );
           var oData = $('#events').dataTable().fnGetData( nTr );
           $.getJSON("/get?id=threatData&timestamp="+oData[7]+"&routerIP=IP("+oData[1]+")&type="+oData[2]+"&startTime="+oData[5]+"&endTime="+oData[6], function(threatData){
             var nDetailsRow = $('#events').dataTable().fnOpen( nTr, fnFormatDetails(oData[0],threatData["f1:destIP"],threatData["f1:flowCount"],threatData["f1:flowDataAvg"],threatData["f1:flowDataTotal"],threatData["f1:srcIP"],threatData["f1:packetCount"]), 'details' );
@@ -111,7 +123,7 @@ $(document).ready(function() {
         }
         else {
           //open, so close the extra details
-          $('i', this.parent).attr( 'class', "icon-chevron-right" );
+          //$('i', this).attr( 'class', "icon-chevron-right" );
           $('div.innerDetails', $(nTr).next()[0]).slideUp( function () {
            $('#events').dataTable().fnClose( nTr );
            anOpen.splice( i, 1 );
