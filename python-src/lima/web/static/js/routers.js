@@ -19,6 +19,23 @@ $('#routers').dataTable( {
   "aaData": data,
   "bLengthChange": false,
   "bPaginate": false,
+  "fnFooterCallback": function ( nRow, aaData, iStart, iEnd, aiDisplay ) {
+            var numRouters = data.length;
+            var iTotalFlows = 0;
+            var iTotalPackets = 0;
+            var iTotalBytes = 0;
+            for ( var i=0 ; i<aaData.length ; i++ )
+            {
+                iTotalFlows += aaData[i][2]*1;
+                iTotalPackets += aaData[i][3]*1;
+                iTotalBytes += aaData[i][4]*1;
+            }
+            
+            $("#avgFlows").text((iTotalFlows/numRouters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $("#avgPackets").text((iTotalPackets/numRouters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $("#avgBytes").text((iTotalBytes/numRouters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        },
+
   "aoColumns": [
   { "sTitle": "Router IP", "sClass": "control"},
   { "sTitle": "Last Seen", "sClass": "control" },
