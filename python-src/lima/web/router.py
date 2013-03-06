@@ -133,7 +133,7 @@ class RouterHandler():
                         else:
                             #print "FOUND"
                             #else add
-                            data[x][pos] = {"x": data[x][pos]["x"] + stat["x"], "y": data[x][pos]["y"] + stat["y"]}
+                            data[x][pos] = {"x": stat["x"], "y": data[x][pos]["y"] + stat["y"]}
                             
         #store the results in cache and return
         if len(routerShare) == 1:
