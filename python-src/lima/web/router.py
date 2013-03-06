@@ -157,15 +157,17 @@ class RouterHandler():
             if self.hbaseDB.toInt(data["f1:ICMPCount"]) == 0:
                 continue
             
+            #print data["f1:ICMPCount"]
+            #print data["f1:totalDataSize"]
             #append onto our result
-            ICMPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:ICMPCount"])})
-            TCPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:TCPCount"])})
-            UDPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:UDPCount"])})
-            flowCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
-            packetCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
-            totalDataSize.append({"x":time, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
+            ICMPCount.append({"x":time, "y":int(data["f1:ICMPCount"])})
+            TCPCount.append({"x":time, "y":int(data["f1:TCPCount"])})
+            UDPCount.append({"x":time, "y":int(data["f1:UDPCount"])})
+            flowCount.append({"x":time, "y":int(data["f1:flowCount"])})
+            packetCount.append({"x":time, "y":int(data["f1:packetCount"])})
+            totalDataSize.append({"x":time, "y":long(data["f1:totalDataSize"])})
             
-            counter = counter + self.hbaseDB.toInt(data["f1:flowCount"])
+            counter = counter + int(data["f1:flowCount"])
         
         return [ICMPCount,TCPCount,UDPCount,flowCount,packetCount,totalDataSize,counter]
         
@@ -188,9 +190,9 @@ class RouterHandler():
             if key == "f1:destIP" or key == "f1:srcIP" or key == "f1:type" or key == "f1:routerId":
                 data[key] = self.hbaseDB.toString(data[key]) #parse HBase String
             elif key == "f1:packetCount":
-                data[key] = self.hbaseDB.toInt(data[key]) #parse HBase Int
+                data[key] = int(data[key]) #parse HBase Int
             else:
-                data[key] = self.hbaseDB.toLong(data[key]) #parse HBase Long
+                data[key] = long(data[key]) #parse HBase Long
                 
         #add on the data for the graphs (Large Data)
         data["largeData"] = self.getLargeDataForEvent(routerIP,startTime,endTime)
@@ -219,12 +221,12 @@ class RouterHandler():
                 continue #discard empty data
             
             #append to result
-            ICMPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:ICMPCount"])})
-            TCPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:TCPCount"])})
-            UDPCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:UDPCount"])})
-            flowCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:flowCount"])})
-            packetCount.append({"x":time, "y":self.hbaseDB.toInt(data["f1:packetCount"])})
-            totalDataSize.append({"x":time, "y":self.hbaseDB.toInt(data["f1:totalDataSize"])})
+            ICMPCount.append({"x":time, "y":int(data["f1:ICMPCount"])})
+            TCPCount.append({"x":time, "y":int(data["f1:TCPCount"])})
+            UDPCount.append({"x":time, "y":int(data["f1:UDPCount"])})
+            flowCount.append({"x":time, "y":int(data["f1:flowCount"])})
+            packetCount.append({"x":time, "y":int(data["f1:packetCount"])})
+            totalDataSize.append({"x":time, "y":int(data["f1:totalDataSize"])})
         
         return [ICMPCount,TCPCount,UDPCount,flowCount,packetCount,totalDataSize]
 
