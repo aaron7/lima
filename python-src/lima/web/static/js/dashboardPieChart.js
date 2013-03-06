@@ -38,16 +38,22 @@ $.plot('#piechart', largeData, {
     $(window).resize(function() {
         $("#piechart").height( $('#piechart').width() );
         //re-render
-        $.plot('#piechart', data, {
-            series: {
-                pie: {
-                    show: true
-                }
-            },
-            grid: {
-                hoverable: true,
-                clickable: true
+$.plot('#piechart', largeData, {
+    series: {
+        pie: {
+            show: true,
+            radius: 1,
+            label: {
+                show: true,
+                radius: 2/3,
+                formatter: labelFormatter,
+                threshold: 0.1
             }
-        });
+        }
+    },
+    legend: {
+        show: false
+    }
+});
     });
 });
