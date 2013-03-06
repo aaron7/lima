@@ -23,7 +23,21 @@ $.getJSON("/get?id=latestEvents", function(data){
     "aoColumns": [
     { "sTitle": "Event ID", "sClass": "control", "bVisible": false },
     { "sTitle": "Router IP" , "sClass": "control"},
-    { "sTitle": "Type", "sClass": "control" },
+    { "sTitle": "Type", "sClass": "control" ,
+      "mRender": function ( data, type, full ) {
+        switch(data)
+        {
+          case "dos": return "DoS Attack"; break;
+          case "tcpFlooding": return "TCP Flooding"; break;
+          case "udpFlooding": return "UDP Flooding"; break;
+          case "fraggleAttack": return "Fraggle Attack"; break;
+          case "pingPong": return "Ping-pong Attack"; break;
+          case "icmpFlooding": return "ICMP Flooding"; break;
+          case "portScan": return "Port Scan"; break;
+          case "landAttack": return "Land Attack"; break;
+          default: return "Unknown threat type";
+        };
+      }},
     { "sTitle": "Time Submitted", "sClass": "control" }
     ]
 } );
