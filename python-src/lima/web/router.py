@@ -94,6 +94,12 @@ class RouterHandler():
     def getPieChart(self):
         return self.pieChart
     
+    def find(self, lst, key, value):
+        for i, dic in enumerate(lst):
+            if dic[key] == value:
+                return i
+        return -1
+    
     """
     Return all of the data in the Statistic table in HBase from all routers by reducing into a total count
     """
@@ -112,16 +118,22 @@ class RouterHandler():
                 if data[6] > 0:
                     routerShare.append({"label":router[0], "data":data[6]})
             else:
+                #print data
                 temp = self.getLargeData(router[0])
                 if temp[6] > 0:
                     routerShare.append({"label":router[0], "data":temp[6]})
                 #for each count, add up the counts using previous value
                 for x in range(0,6):
-                    for key, value in temp[x]:
-                        if key in data:
-                            data[x][key] = data[x][key] + value
+                    for stat in temp[x]:
+                        pos = self.find(data[x],"x",stat["x"])
+                        if pos == -1:
+                            pass
+                            #not in data list so create new
+                            #data[x].append({"x": stat["x"], "y": stat["y"]})
                         else:
-                            data[x][key] = value
+                            print "FOUND"
+                            #else add
+                            data[x][pos] = {"x": data[x][pos]["x"] + stat["x"], "y": data[x][pos]["y"] + stat["y"]}
                             
         #store the results in cache and return
         if len(routerShare) == 1:
@@ -154,7 +166,7 @@ class RouterHandler():
             time = long(string.split(key,'+')[1])
             
             #if we have empty data then discard this row
-            if self.hbaseDB.toInt(data["f1:ICMPCount"]) == 0:
+            if int(data["f1:ICMPCount"]) == 0:
                 continue
             
             #print data["f1:ICMPCount"]
