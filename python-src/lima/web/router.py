@@ -131,7 +131,7 @@ class RouterHandler():
                             #not in data list so create new
                             #data[x].append({"x": stat["x"], "y": stat["y"]})
                         else:
-                            print "FOUND"
+                            #print "FOUND"
                             #else add
                             data[x][pos] = {"x": data[x][pos]["x"] + stat["x"], "y": data[x][pos]["y"] + stat["y"]}
                             
